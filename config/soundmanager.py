@@ -10,12 +10,13 @@ class SoundManager:
 
         self.__volume = 1  # Volume geral (Todo som vai ter o mesmo volume)
     
-    def load_music(self, file):
+    def add_music(self, file):
         self.music.append(file)
-        pygame.mixer.music.load(file)
     
     def play_queued_music(self, loop: int = 0, start: int = 0, fade_ms: int = 0):
+        pygame.mixer.music.load(self.music[0])
         pygame.mixer.music.play(loop, start, fade_ms)
+        self.music.pop(0)
     
     def stop(self):
         pygame.mixer.music.stop()

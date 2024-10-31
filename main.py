@@ -3,7 +3,7 @@ from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 
-from screens.menu import Menu
+from screens.start import Start
 
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
@@ -26,14 +26,14 @@ class Game:
 
         # Iniciando os Gerenciadores
         self.sound_manager = SoundManager()
-        self.game_state_manager = GameStateManager('menu')
+        self.game_state_manager = GameStateManager('start')
 
         # Definindo as cenas do jogo
-        self.Menu = Menu('menu', self.display, self.sound_manager, self.game_state_manager)
+        self.Menu = Start('start', self.display, self.sound_manager, self.game_state_manager)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         self.game_state_manager.states = {
-            'menu': self.Menu
+            'start': self.Menu
         }
 
     def run(self):
