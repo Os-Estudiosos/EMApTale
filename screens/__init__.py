@@ -19,6 +19,10 @@ class State(ABC):
 
     @property
     @abstractmethod
+    def font_manager(self):...
+
+    @property
+    @abstractmethod
     def name(self):...
 
     @abstractmethod

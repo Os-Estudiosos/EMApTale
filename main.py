@@ -2,6 +2,7 @@ import pygame
 from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
+from config.fontmanager import FontManager
 
 from screens.start import Start
 
@@ -10,10 +11,9 @@ class Game:
     e outras opções, carregamento das informações e etc.
     """
     def __init__(self):
-        pygame.init()
-
         # Colocando o tamanho da Tela
-        self.display = pygame.display.set_mode(MEASURES)
+        self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        self.is_fullsize = False
 
         # Variável que indica se o jogo da rodando
         self.running = True
@@ -27,9 +27,10 @@ class Game:
         # Iniciando os Gerenciadores
         self.sound_manager = SoundManager()
         self.game_state_manager = GameStateManager('start')
+        self.font_manager = FontManager()
 
         # Definindo as cenas do jogo
-        self.Menu = Start('start', self.display, self.sound_manager, self.game_state_manager)
+        self.Menu = Start('start', self.display, self.sound_manager, self.game_state_manager, self.font_manager)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         self.game_state_manager.states = {
@@ -42,7 +43,6 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
             game.display.fill((0, 0, 0))
 
             # FAZER GAME AQUI
@@ -60,6 +60,7 @@ class Game:
 
 
 if __name__ == '__main__':
+    pygame.init()
     game = Game()
     game.run()
     pygame.quit()

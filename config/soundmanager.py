@@ -3,8 +3,6 @@ import pygame
 
 class SoundManager:
     def __init__(self):
-        pygame.mixer.init()
-
         self.music = []  # Músicas que estão ou serão tocadas
         self.audios = []  # Áudios que estão ou serão tocados
 
