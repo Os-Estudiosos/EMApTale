@@ -1,2 +1,4 @@
 
 MEASURES = ( 780, 500 )
+FPS = 60
+GAME_NAME = 'EMApTale'
