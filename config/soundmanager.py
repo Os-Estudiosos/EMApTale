@@ -1,15 +1,24 @@
 import pygame
+import os.path as pth
 
 
 class SoundManager:
     def __init__(self):
         self.music = []  # Músicas que estão ou serão tocadas
-        self.audios = []  # Áudios que estão ou serão tocados
+        self.audios: dict[str, pygame.mixer.Sound] = {
+        }  # Dicionários dos sons carregados
 
         self.__volume = 1  # Volume geral (Todo som vai ter o mesmo volume)
     
     def add_music(self, file):
         self.music.append(file)
+    
+    def load_sound_list(self, sound_list: list[str]):
+        for sound in sound_list:
+            self.audios[pth.basename(sound)] = pygame.mixer.Sound(sound)
+    
+    def play_sound(self, sound_name):
+        self.audios[sound_name].play()
     
     def play_queued_music(self, loop: int = 0, start: int = 0, fade_ms: int = 0):
         pygame.mixer.music.load(self.music[0])
