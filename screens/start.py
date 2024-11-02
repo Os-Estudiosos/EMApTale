@@ -25,6 +25,8 @@ class Start(State):
         self.__game_state_manager: GameStateManager = game_state_manager
         self.__font_manager: FontManager = font_manager
 
+        self.__execution_counter = 0
+
         # Opções do Menu
         self.menu_options = [
             {
@@ -49,10 +51,10 @@ class Start(State):
         self.cursor_icon = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')), 1.5)
         self.cursor_rect = self.cursor_icon.get_rect()
         self.cursor_trying_to_move = False  # Marca se eu estou tentando mexer o cursor
-
+    
+    def on_first_execution(self):
         # Inicializando a Música
-        self.__sound_manager.add_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'the_field_of_dreams.mp3'))
-        self.__sound_manager.play_queued_music()
+        self.__sound_manager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'the_field_of_dreams.mp3'))
         self.__sound_manager.load_sound_list([
             os.path.join(GET_PROJECT_PATH(), 'sounds', 'select.wav')
         ])
@@ -99,6 +101,16 @@ class Start(State):
         
         self.__display.blit(self.cursor_icon, self.cursor_rect)
 
+        if not self.__execution_counter > 0:
+            self.on_first_execution()
+            self.__execution_counter += 1
+
+    def on_last_execution(self):
+        self.__execution_counter = 0
+
+    @property
+    def execution_counter(self):
+        return self.execution_counter
 
     @property
     def display(self):

@@ -4,14 +4,18 @@ import os.path as pth
 
 class SoundManager:
     def __init__(self):
-        self.music = []  # Músicas que estão ou serão tocadas
         self.audios: dict[str, pygame.mixer.Sound] = {
         }  # Dicionários dos sons carregados
 
         self.__volume = 1  # Volume geral (Todo som vai ter o mesmo volume)
     
-    def add_music(self, file):
-        self.music.append(file)
+    def play_music(self, file, loop: int = 0, start: int = 0, fade_ms: int = 0):
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load(file)
+        pygame.mixer.music.play(loop, start, fade_ms)
+    
+    def unload_music(self):
+        pygame.mixer.music.unload()
     
     def load_sound_list(self, sound_list: list[str]):
         for sound in sound_list:
@@ -20,18 +24,13 @@ class SoundManager:
     def play_sound(self, sound_name):
         self.audios[sound_name].play()
     
-    def play_queued_music(self, loop: int = 0, start: int = 0, fade_ms: int = 0):
-        pygame.mixer.music.load(self.music[0])
-        pygame.mixer.music.play(loop, start, fade_ms)
-        self.music.pop(0)
-    
-    def stop(self):
+    def stop_music(self):
         pygame.mixer.music.stop()
     
-    def pause(self):
+    def pause_music(self):
         pygame.mixer.music.pause()
     
-    def resume(self):
+    def resume_music(self):
         pygame.mixer.music.unpause()
     
 

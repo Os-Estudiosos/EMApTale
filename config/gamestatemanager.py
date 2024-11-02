@@ -14,5 +14,6 @@ class GameStateManager:
         return self.states[self.current_state]
 
     def set_state(self, current_state) -> None:
+        self.get_current_state().on_last_execution()
         self.current_state = current_state
 

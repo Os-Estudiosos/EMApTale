@@ -4,7 +4,9 @@ from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 
+# Importando minhas cenas
 from screens.start import Start
+from screens.combat import Combat
 
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
@@ -31,10 +33,12 @@ class Game:
 
         # Definindo as cenas do jogo
         self.Menu = Start('start', self.display, self.sound_manager, self.game_state_manager, self.font_manager)
+        self.Combat = Combat('combat', self.display, self.sound_manager, self.game_state_manager, self.font_manager)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         self.game_state_manager.states = {
-            'start': self.Menu
+            'start': self.Menu,
+            'combat': self.Combat
         }
 
     def run(self):
@@ -43,6 +47,11 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1:
+                        self.game_state_manager.set_state('start')
+                    if event.key == pygame.K_2:
+                        self.game_state_manager.set_state('combat')
             game.display.fill((0, 0, 0))
 
             # FAZER GAME AQUI

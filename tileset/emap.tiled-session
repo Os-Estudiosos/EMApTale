@@ -1,0 +1,31 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "Todos os Ficheiros (*)",
+    "fileStates": {
+        "emap.tmx": {
+            "expandedGroupLayers": [
+                6
+            ],
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1041.5,
+                "y": 220.5
+            }
+        },
+        "emap.tmx#EMAp_Tileset": {
+            "scaleInDock": 1
+        }
+    },
+    "map.height": 18,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 50,
+    "openFiles": [
+    ],
+    "project": "emap.tiled-project",
+    "recentFiles": [
+        "emap.tmx"
+    ]
+}
