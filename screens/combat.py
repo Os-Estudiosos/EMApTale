@@ -30,9 +30,10 @@ class Combat(State):
         # Criando o grupo de sprites das opções
         self.buttons_group = pygame.sprite.Group()
 
+        # Carrgando o sprite do cursor
         self.cursor = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png'))
 
-        self.options: list[CombatButton] = [
+        self.options: list[CombatButton] = [  # Lista com cada botão
             CombatButton(
                 'fight',
                 lambda: print('Lutar'),
@@ -63,17 +64,22 @@ class Combat(State):
                 [ self.buttons_group ],
             ),
         ]
-        self.selected_option = 0
-        self.trying_to_move_cursor = False
+        self.selected_option = 0  # A opção que eu estou analisando agora
+        self.trying_to_move_cursor = False  # Variável responsável por controlar e mexer apenas uma opção por vez, sem que o cursor mexa que nem doido
     
 
-    def move_cursor(self, increment):
-        if self.selected_option + increment >= len(self.options):
-            self.selected_option = 0
-        elif self.selected_option + increment < 0:
-            self.selected_option = len(self.options)-1
-        else:
-            self.selected_option += increment
+    def move_cursor(self, increment: int):
+        """Função responsável por atualizar o índice do cursor
+
+        Args:
+            increment (int): Quanto a opção deve aumentar ou diminuir
+        """
+        if self.selected_option + increment >= len(self.options):  # Se passar da quantidade de opções
+            self.selected_option = 0  # Volto para a primeira
+        elif self.selected_option + increment < 0:  # Se for menor que 0
+            self.selected_option = len(self.options)-1  # Vou para a última opção
+        else:  # Se não
+            self.selected_option += increment  # Só ando quantas vezes foi pedido
 
     
     def on_first_execution(self):
@@ -88,28 +94,29 @@ class Combat(State):
         self.__display.fill((0,0,0))
 
         # Mexendo cursor
-        if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:
-            self.move_cursor(-1)
-            self.trying_to_move_cursor = True
-            self.__sound_manager.play_sound('select.wav')
-        elif keys[pygame.K_RIGHT] and not self.trying_to_move_cursor:
+        if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
+            self.move_cursor(-1)  # Movo uma opção
+            self.trying_to_move_cursor = True  # Estou tentando mexer o cursor
+            self.__sound_manager.play_sound('select.wav')  # Toco o som de trocar opção
+        elif keys[pygame.K_RIGHT] and not self.trying_to_move_cursor:  # Se eu aprtar para a direita e não tiver nenhuma seta sendo segurada
             self.move_cursor(1)
             self.trying_to_move_cursor = True
             self.__sound_manager.play_sound('select.wav')
         
         if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+            # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
             self.trying_to_move_cursor = False
 
         # Ajustando Posição dos botões e suas propriedades
         for i, button in enumerate(self.options):
-            if i == self.selected_option:
-                button.activated = True
+            if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
+                button.activated = True  # Eu marco a propriedade de ativado
             else:
-                button.activated = False
+                button.activated = False  # Eu removo a propriedade de ativado
 
-            button.rect.center = (
-                (i+1)*(self.__display.get_width()/(len(self.options)+1)),
-                self.__display.get_height()-(button.rect.height+40)
+            button.rect.center = (  # Centralizo o botão
+                (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
+                self.__display.get_height()-(button.rect.height+40)  # Mais matemática pra posicionamento
             )
 
         # Desenhando Tudo

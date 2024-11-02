@@ -79,21 +79,24 @@ class Start(State):
         if keys[pygame.K_z] or keys[pygame.K_RETURN]:  # Se eu apertar enter em alguma opção
             self.menu_options[self.selected_option]['func']()
         
-        if not keys[pygame.K_DOWN] and not keys[pygame.K_UP]:  # Se eu n tiver tentando mexer
+        if not keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
+            # Só deixo mover o cursor se eu soltar a tecla e apertar de novo
             self.cursor_trying_to_move = False
 
         self.cursor_rect.center = (  # Mexo o centro do cursor
-            self.menu_options[self.selected_option]['label'].rect.center[0] + 300,
-            self.menu_options[self.selected_option]['label'].rect.center[1]
+            self.menu_options[self.selected_option]['label'].rect.center[0] + 300,  # Matemática para mexer o cursor
+            self.menu_options[self.selected_option]['label'].rect.center[1]  # Centralizando o cursor
         )
 
         # Desenho cada uma das opções
         for i, option in enumerate(self.menu_options):
+            # Matemática para centralizar as opções
             option['label'].rect.center = (
                 self.display_info.current_w/2,
                 (self.option_measures[1]/2) + (self.option_measures[1]*(i)) + (self.display_info.current_h-self.option_measures[1]*len(self.menu_options))/2,
             )
             
+            # Desenhando o texto da opção
             option['label'].draw(self.__display)
         
         self.__display.blit(self.cursor_icon, self.cursor_rect)

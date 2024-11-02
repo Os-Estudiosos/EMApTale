@@ -57,8 +57,7 @@ class Game:
                         self.game_state_manager.set_state('combat')
             game.display.fill((0, 0, 0))
 
-            # FAZER GAME AQUI
-            
+            # Trocando de Cena
             self.game_state_manager.get_current_state().run()
 
             # Atualizando

@@ -4,6 +4,9 @@ from config import GET_PROJECT_PATH
 
 
 class FontManager:
+    """Classe responsável por armazenas o caminho de todas as fontes
+    (Não carrega a fonte direto pois eu posso querer usar várias cores, tamanhos e etc.)
+    """
     def __init__(self):
         pygame.font.init()
 
