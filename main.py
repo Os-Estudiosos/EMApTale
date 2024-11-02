@@ -31,6 +31,9 @@ class Game:
         self.game_state_manager = GameStateManager('start')
         self.font_manager = FontManager()
 
+        # Inicializando outras coisas
+        self.sound_manager.load_all_sounds()  # Carregando todos os efeitos sonoros do jogo
+
         # Definindo as cenas do jogo
         self.Menu = Start('start', self.display, self.sound_manager, self.game_state_manager, self.font_manager)
         self.Combat = Combat('combat', self.display, self.sound_manager, self.game_state_manager, self.font_manager)

@@ -1,5 +1,6 @@
 import pygame
-import os.path as pth
+import os
+from config import GET_PROJECT_PATH
 
 
 class SoundManager:
@@ -17,9 +18,15 @@ class SoundManager:
     def unload_music(self):
         pygame.mixer.music.unload()
     
-    def load_sound_list(self, sound_list: list[str]):
-        for sound in sound_list:
-            self.audios[pth.basename(sound)] = pygame.mixer.Sound(sound)
+    def load_all_sounds(self):
+        # for sound in scan_
+        base_path = os.path.join(GET_PROJECT_PATH(), 'sounds')
+        for sound in os.scandir(base_path):
+            self.audios[sound.name] = pygame.mixer.Sound(os.path.join(base_path, sound.name))
+    
+    def unload_sounds(self):
+        for key in self.audios.keys():
+            del self.audios[key]
     
     def play_sound(self, sound_name):
         self.audios[sound_name].play()

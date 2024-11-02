@@ -54,10 +54,7 @@ class Start(State):
     
     def on_first_execution(self):
         # Inicializando a Música
-        self.__sound_manager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'the_field_of_dreams.mp3'))
-        self.__sound_manager.load_sound_list([
-            os.path.join(GET_PROJECT_PATH(), 'sounds', 'select.wav')
-        ])
+        self.__sound_manager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'))
 
     def move_cursor(self, increment):
         if self.selected_option + increment >= len(self.menu_options):
