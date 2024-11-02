@@ -2,7 +2,8 @@ import pygame
 from screens import State
 from config import *
 
-from classes.button.button import CombatButton
+from classes.battle.button import CombatButton
+from classes.battle.container import BattleContainer
 
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
@@ -26,6 +27,9 @@ class Combat(State):
         self.__font_manager: FontManager = font_manager
 
         self.__execution_counter = 0
+
+        # Variável que gerencia o turno
+        self.turn = 'player'  # "player" ou "boss"
 
         # Criando o grupo de sprites das opções
         self.buttons_group = pygame.sprite.Group()
@@ -66,6 +70,18 @@ class Combat(State):
         ]
         self.selected_option = 0  # A opção que eu estou analisando agora
         self.trying_to_move_cursor = False  # Variável responsável por controlar e mexer apenas uma opção por vez, sem que o cursor mexa que nem doido
+
+        # Carregando o background da batalha
+        self.background = pygame.transform.scale(
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'battle-background.png')),
+            (self.__display.get_width()/1.2, 300)
+        )
+        self.background_rect = self.background.get_rect()
+        self.background_rect.centerx = self.__display.get_width()/2
+        self.background_rect.y = 10
+
+        # Iniciando o container da Batalha
+        self.battle_container = BattleContainer(self.__display)
     
 
     def move_cursor(self, increment: int):
@@ -87,11 +103,11 @@ class Combat(State):
         self.__sound_manager.stop_music()
 
     def run(self):
+        # Desenhando o background
+        self.__display.blit(self.background, self.background_rect)
+
         # Pegando as teclas apertadas
         keys = pygame.key.get_pressed()
-
-        # Preenchendo a tela
-        self.__display.fill((0,0,0))
 
         # Mexendo cursor
         if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
@@ -121,9 +137,11 @@ class Combat(State):
 
         # Desenhando Tudo
         self.buttons_group.draw(self.__display)
+        self.battle_container.draw()
 
         # Dando Update em todos os elementos
         self.buttons_group.update()
+        self.battle_container.update()
 
         # Fim do ciclo de vida da cena
         if not self.__execution_counter > 0:
