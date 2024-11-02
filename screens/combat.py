@@ -5,6 +5,8 @@ from config import *
 from classes.battle.button import CombatButton
 from classes.battle.container import BattleContainer
 
+from classes.text.dynamic_text import DynamicText
+
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
@@ -27,9 +29,6 @@ class Combat(State):
         self.__font_manager: FontManager = font_manager
 
         self.__execution_counter = 0
-
-        # Variável que gerencia o turno
-        self.turn = 'player'  # "player" ou "boss"
 
         # Criando o grupo de sprites das opções
         self.buttons_group = pygame.sprite.Group()
@@ -82,6 +81,11 @@ class Combat(State):
 
         # Iniciando o container da Batalha
         self.battle_container = BattleContainer(self.__display)
+
+        # Variável que gerencia o turno
+        self.turn = 'player'  # "player" ou "boss"
+
+        self.texto_teste = DynamicText('Olá Mundo!', self.__font_manager.fonts['Gamer'], 30, 40)
     
 
     def move_cursor(self, increment: int):
@@ -105,43 +109,50 @@ class Combat(State):
     def run(self):
         # Desenhando o background
         self.__display.blit(self.background, self.background_rect)
-
-        # Pegando as teclas apertadas
-        keys = pygame.key.get_pressed()
-
-        # Mexendo cursor
-        if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
-            self.move_cursor(-1)  # Movo uma opção
-            self.trying_to_move_cursor = True  # Estou tentando mexer o cursor
-            self.__sound_manager.play_sound('select.wav')  # Toco o som de trocar opção
-        elif keys[pygame.K_RIGHT] and not self.trying_to_move_cursor:  # Se eu aprtar para a direita e não tiver nenhuma seta sendo segurada
-            self.move_cursor(1)
-            self.trying_to_move_cursor = True
-            self.__sound_manager.play_sound('select.wav')
         
-        if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
-            # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
-            self.trying_to_move_cursor = False
+        if self.turn == 'player':
+            # Pegando as teclas apertadas
+            keys = pygame.key.get_pressed()
 
-        # Ajustando Posição dos botões e suas propriedades
-        for i, button in enumerate(self.options):
-            if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
-                button.activated = True  # Eu marco a propriedade de ativado
-            else:
-                button.activated = False  # Eu removo a propriedade de ativado
+            # Mexendo cursor
+            if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
+                self.move_cursor(-1)  # Movo uma opção
+                self.trying_to_move_cursor = True  # Estou tentando mexer o cursor
+                self.__sound_manager.play_sound('select.wav')  # Toco o som de trocar opção
+            elif keys[pygame.K_RIGHT] and not self.trying_to_move_cursor:  # Se eu aprtar para a direita e não tiver nenhuma seta sendo segurada
+                self.move_cursor(1)
+                self.trying_to_move_cursor = True
+                self.__sound_manager.play_sound('select.wav')
+            
+            if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+                # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
+                self.trying_to_move_cursor = False
 
-            button.rect.center = (  # Centralizo o botão
-                (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
-                self.__display.get_height()-(button.rect.height+40)  # Mais matemática pra posicionamento
-            )
+            # Ajustando Posição dos botões e suas propriedades
+            for i, button in enumerate(self.options):
+                if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
+                    button.activated = True  # Eu marco a propriedade de ativado
+                else:
+                    button.activated = False  # Eu removo a propriedade de ativado
+
+                button.rect.center = (  # Centralizo o botão
+                    (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
+                    self.__display.get_height()-(button.rect.height+40)  # Mais matemática pra posicionamento
+                )
+        
+        else:
+            for btn in self.options:
+                btn.activated = False
 
         # Desenhando Tudo
         self.buttons_group.draw(self.__display)
         self.battle_container.draw()
+        self.texto_teste.draw(self.__display)
 
         # Dando Update em todos os elementos
         self.buttons_group.update()
         self.battle_container.update()
+        self.texto_teste.update()
 
         # Fim do ciclo de vida da cena
         if not self.__execution_counter > 0:
