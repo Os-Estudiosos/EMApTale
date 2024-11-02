@@ -1,31 +1,67 @@
 import pygame
-from classes.game import Game
 from config import *
+from config.soundmanager import SoundManager
+from config.gamestatemanager import GameStateManager
+from config.fontmanager import FontManager
 
-pygame.init()
+from screens.start import Start
 
-def main():
-    # Inicializando o Pygame
-    game = Game(MEASURES, "EMApTale")
-    running = True
+class Game:
+    """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
+    e outras opções, carregamento das informações e etc.
+    """
+    def __init__(self):
+        # Colocando o tamanho da Tela
+        self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        self.is_fullsize = False
 
-    while running:
-        # Checando os eventos
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+        # Variável que indica se o jogo da rodando
+        self.running = True
 
-        game.display.fill((0, 0, 0))
+        # Colocando o nome da tela
+        pygame.display.set_caption(GAME_NAME)
 
-        # FAZER GAME AQUI
-        
+        # Criando o objeto do relógio
+        self.clock = pygame.time.Clock()
 
+        # Iniciando os Gerenciadores
+        self.sound_manager = SoundManager()
+        self.game_state_manager = GameStateManager('start')
+        self.font_manager = FontManager()
 
-        # Atualizando
-        pygame.display.flip()
+        # Definindo as cenas do jogo
+        self.Menu = Start('start', self.display, self.sound_manager, self.game_state_manager, self.font_manager)
+
+        # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
+        self.game_state_manager.states = {
+            'start': self.Menu
+        }
+
+    def run(self):
+        while self.running:
+            # Checando os eventos
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+            game.display.fill((0, 0, 0))
+
+            # FAZER GAME AQUI
+            
+            self.game_state_manager.get_current_state().run()
+
+            # Atualizando
+            pygame.display.flip()
+
+            # Limitando FPS
+            self.clock.tick(FPS)
+    
+    def change_window_name(self, name: str):
+        pygame.display.set_caption(name)
 
 
 if __name__ == '__main__':
-    main()
+    pygame.init()
+    game = Game()
+    game.run()
     pygame.quit()
 
