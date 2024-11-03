@@ -39,6 +39,7 @@ class Heart(pygame.sprite.Sprite):
 
         self.image = self.sprites['normal']
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (
             pygame.display.get_window_size()[0]/2,
             pygame.display.get_window_size()[1]/2
@@ -66,20 +67,19 @@ class Heart(pygame.sprite.Sprite):
         if direction.length() != 0:  # Normalizo para andar sempre na mesma velocidade
             direction = direction.normalize()
 
-        # # Mexendo na colisão
-        if not self.container.out_rect.collidepoint(self.rect.x + direction.x, self.rect.y):
-            direction.x = 0
-        if not self.container.out_rect.collidepoint(self.rect.x, self.rect.y + direction.y):
-            direction.y = 0
-            
-
         if self.effect == 'inverse':  # Aplico efeito da inversa se tiver
             direction = pygame.math.Vector2(
                 direction.x * -1,
                 direction.y * -1
             )
 
+        # Mexendo na colisão
+        # Esse código detecta se um ponto na frente do player está saindo do retangulo, se sair, eu paro de mexer o player
+        if not self.container.out_rect.collidepoint(self.rect.centerx + (self.speed+self.mask.get_rect().width/2-7)*direction.x, self.rect.centery):
+            direction.x = 0
+        if not self.container.out_rect.collidepoint(self.rect.centerx, self.rect.centery + (self.speed+self.mask.get_rect().height/2-7)*direction.y):
+            direction.y = 0
+
         # Mexo na posição
-        # print(direction)
         self.rect.x += self.speed * direction.x
         self.rect.y += self.speed * direction.y

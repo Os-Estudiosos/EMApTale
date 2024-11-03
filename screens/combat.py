@@ -176,7 +176,7 @@ class Combat(State):
             self.player_group.draw(self.__display)
             
             # Updates que são apenas do turno do boss
-            self.player_group.update()
+            self.player_group.update(display=self.__display)
 
         # Fim do ciclo de vida da cena
         if not self.__execution_counter > 0:
