@@ -14,11 +14,11 @@ class CombatButton(pygame.sprite.Sprite):
         self.sprites = {
             'activated': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'combat', f'yellow-{type}.png')),
-                1.4
+                1.7
             ),
             'normal': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'combat', f'orange-{type}.png')),
-                1.4
+                1.7
             )
         }
 
