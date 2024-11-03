@@ -143,7 +143,7 @@ class Combat(State):
 
             button.rect.center = (  # Centralizo o botão
                 (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
-                self.__display.get_height()-(button.rect.height+40)  # Mais matemática pra posicionamento
+                self.__display.get_height()-(button.rect.height)  # Mais matemática pra posicionamento
             )
         
         # Se for o turno do Player
