@@ -11,6 +11,8 @@ from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 
+from classes.battle.heart import Heart
+
 
 class Combat(State):
     def __init__(
@@ -29,6 +31,7 @@ class Combat(State):
         # Criando os groups de sprites
         self.buttons_group = pygame.sprite.Group()  # Grupo dos botões
         self.text_groups = pygame.sprite.Group()  # Grupo dos textos
+        self.player_group = pygame.sprite.Group()  # Grupo do player
 
         # Carrgando o sprite do cursor
         self.cursor = pygame.transform.scale_by(
@@ -83,16 +86,19 @@ class Combat(State):
         self.battle_container = BattleContainer(self.__display)
 
         # Variável que gerencia o turno
-        self.turn = 'player'  # "player" ou "boss"
+        self.turn = 'boss'  # "player" ou "boss"
 
-        self.interaction_text = DynamicText(
-            'Um inimigo se aproxima',
-            FontManager.fonts['Gamer'],
-            30,
-            40,
-            [ self.text_groups ],
-            (self.battle_container.inner_rect.x + 10, self.battle_container.inner_rect.y + 10)
-        )
+        # Variáveis do Jogador
+        self.player = Heart(self.battle_container, self.player_group)
+
+        # self.interaction_text = DynamicText(
+        #     'Um inimigo se aproxima',
+        #     FontManager.fonts['Gamer'],
+        #     30,
+        #     40,
+        #     [ self.text_groups ],
+        #     (self.battle_container.inner_rect.x + 10, self.battle_container.inner_rect.y + 10)
+        # )
     
 
     def move_cursor(self, increment: int):
@@ -117,11 +123,32 @@ class Combat(State):
         # Desenhando o background
         self.__display.blit(self.background, self.background_rect)
 
+        # Desenhando Tudo
+        self.buttons_group.draw(self.__display)
+        self.battle_container.draw()
+
+        # Dando Update em todos os elementos
+        self.buttons_group.update()
+        self.battle_container.update()
+
         # Pegando as teclas apertadas
         keys = pygame.key.get_pressed()
+
+        # Ajustando Posição dos botões e suas propriedades
+        for i, button in enumerate(self.options):
+            if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
+                button.activated = True  # Eu marco a propriedade de ativado
+            else:
+                button.activated = False  # Eu removo a propriedade de ativado
+
+            button.rect.center = (  # Centralizo o botão
+                (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
+                self.__display.get_height()-(button.rect.height+40)  # Mais matemática pra posicionamento
+            )
         
+        # Se for o turno do Player
         if self.turn == 'player':
-            self.battle_container.resize(1000, 300)
+            self.battle_container.resize(1000, 300)  # Redesenho o container da batalha
 
             # Mexendo cursor
             if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
@@ -136,33 +163,20 @@ class Combat(State):
             if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
                 # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
                 self.trying_to_move_cursor = False
+        else:  # Sen não for o turno do player
+            self.battle_container.resize(400, 300)  # Redimensiono o container da batalha
 
-            # Ajustando Posição dos botões e suas propriedades
-            for i, button in enumerate(self.options):
-                if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
-                    button.activated = True  # Eu marco a propriedade de ativado
-                else:
-                    button.activated = False  # Eu removo a propriedade de ativado
-
-                button.rect.center = (  # Centralizo o botão
-                    (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
-                    self.__display.get_height()-(button.rect.height+40)  # Mais matemática pra posicionamento
-                )
-        else:
-            self.battle_container.resize(400, 300)
-
-            for btn in self.options:
+            for btn in self.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False
-
-        # Desenhando Tudo
-        self.buttons_group.draw(self.__display)
-        self.battle_container.draw()
-        self.text_groups.draw(self.__display)
-
-        # Dando Update em todos os elementos
-        self.buttons_group.update()
-        self.battle_container.update()
-        self.interaction_text.update()
+            
+            if keys[pygame.K_u]:
+                self.player.apply_effect('inverse')
+            
+            # Draws que são apenas no turno do boss
+            self.player_group.draw(self.__display)
+            
+            # Updates que são apenas do turno do boss
+            self.player_group.update()
 
         # Fim do ciclo de vida da cena
         if not self.__execution_counter > 0:

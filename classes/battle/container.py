@@ -30,10 +30,14 @@ class BattleContainer:
         """
 
         if self.resizing:
+            previous_center = self.out_rect.center
             self.out_rect.height += 10 * sign(-self.out_rect.height + self.resize_new_height)
             self.out_rect.width += 10 * sign(-self.out_rect.width + self.resize_new_width)
+            self.out_rect.center = previous_center
+            del previous_center
 
             self.inner_rect.size = (self.out_rect.width-10, self.out_rect.height-10)
+            self.inner_rect.center = self.out_rect.center
             
             if self.out_rect.width == self.resize_new_width and self.out_rect.height == self.resize_new_height:
                 self.resizing = False
