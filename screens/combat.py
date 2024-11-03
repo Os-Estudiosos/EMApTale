@@ -17,16 +17,12 @@ class Combat(State):
         self,
         name: str,
         display: pygame.Surface,
-        sound_manager: SoundManager,
         game_state_manager: GameStateManager,
-        font_manager: FontManager
     ):
         # Variáveis padrão de qualquer Cenário
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__sound_manager: SoundManager = sound_manager
         self.__game_state_manager: GameStateManager = game_state_manager
-        self.__font_manager: FontManager = font_manager
 
         self.__execution_counter = 0
 
@@ -35,7 +31,10 @@ class Combat(State):
         self.text_groups = pygame.sprite.Group()  # Grupo dos textos
 
         # Carrgando o sprite do cursor
-        self.cursor = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png'))
+        self.cursor = pygame.transform.scale_by(
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')),
+            1.8
+        )
 
         self.options: list[CombatButton] = [  # Lista com cada botão
             CombatButton(
@@ -86,9 +85,9 @@ class Combat(State):
         # Variável que gerencia o turno
         self.turn = 'player'  # "player" ou "boss"
 
-        self.texto_teste = DynamicText(
-            'Olá Mundo!',
-            self.__font_manager.fonts['Gamer'],
+        self.interaction_text = DynamicText(
+            'Um inimigo se aproxima',
+            FontManager.fonts['Gamer'],
             30,
             40,
             [ self.text_groups ],
@@ -112,7 +111,7 @@ class Combat(State):
 
     def on_first_execution(self):
         # Limpando os sons
-        self.__sound_manager.stop_music()
+        SoundManager.stop_music()
 
     def run(self):
         # Desenhando o background
@@ -128,11 +127,11 @@ class Combat(State):
             if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
                 self.move_cursor(-1)  # Movo uma opção
                 self.trying_to_move_cursor = True  # Estou tentando mexer o cursor
-                self.__sound_manager.play_sound('select.wav')  # Toco o som de trocar opção
+                SoundManager.play_sound('select.wav')  # Toco o som de trocar opção
             elif keys[pygame.K_RIGHT] and not self.trying_to_move_cursor:  # Se eu aprtar para a direita e não tiver nenhuma seta sendo segurada
                 self.move_cursor(1)
                 self.trying_to_move_cursor = True
-                self.__sound_manager.play_sound('select.wav')
+                SoundManager.play_sound('select.wav')
             
             if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
                 # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
@@ -163,7 +162,7 @@ class Combat(State):
         # Dando Update em todos os elementos
         self.buttons_group.update()
         self.battle_container.update()
-        self.texto_teste.update()
+        self.interaction_text.update()
 
         # Fim do ciclo de vida da cena
         if not self.__execution_counter > 0:
@@ -182,16 +181,8 @@ class Combat(State):
         return self.display
     
     @property
-    def sound_manager(self):
-        return self.__sound_manager
-    
-    @property
     def game_state_manager(self):
         return self.__game_state_manager
-    
-    @property
-    def font_manager(self):
-        return self.__font_manager
     
     @property
     def name(self):

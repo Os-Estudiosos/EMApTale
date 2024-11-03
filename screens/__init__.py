@@ -18,18 +18,8 @@ class State(ABC):
 
     @property
     @abstractmethod
-    def sound_manager(self):
-        """Toda cena deve ter o gerenciador de som"""
-
-    @property
-    @abstractmethod
     def game_state_manager(self):
         """Toda cena deve ter o gerenciador de cenas caso queiram mudar dinamicamente"""
-
-    @property
-    @abstractmethod
-    def font_manager(self):
-        """Toda cena deve ter o gerenciador de fontes"""
 
     @property
     @abstractmethod

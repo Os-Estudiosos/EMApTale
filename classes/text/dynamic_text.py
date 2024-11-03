@@ -1,11 +1,22 @@
 import pygame
 from config import FPS
 
+from config.soundmanager import SoundManager
+
 
 class DynamicText(pygame.sprite.Sprite):
     """Classe mostra o texto dinamicamente, letra por letra
     """
-    def __init__(self, text: str, font: str, letters_per_second: int, size: int = 12, groups: list[pygame.sprite.Sprite] = [], positon: tuple[float] = (0,0), color: pygame.Color = (255,255,255)):
+    def __init__(
+        self,
+        text: str,
+        font: str,
+        letters_per_second: int,
+        size: int = 12,
+        groups: list[pygame.sprite.Sprite] = [],
+        positon: tuple[float] = (0,0),
+        color: pygame.Color = (255,255,255)
+    ):
         """Inicialização da classe
 
         Args:

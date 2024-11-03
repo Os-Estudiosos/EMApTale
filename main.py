@@ -27,16 +27,14 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Iniciando os Gerenciadores
-        self.sound_manager = SoundManager()
         self.game_state_manager = GameStateManager('start')
-        self.font_manager = FontManager()
 
         # Inicializando outras coisas
-        self.sound_manager.load_all_sounds()  # Carregando todos os efeitos sonoros do jogo
+        SoundManager.load_all_sounds()  # Carregando todos os efeitos sonoros do jogo
 
         # Definindo as cenas do jogo
-        self.Menu = Start('start', self.display, self.sound_manager, self.game_state_manager, self.font_manager)
-        self.Combat = Combat('combat', self.display, self.sound_manager, self.game_state_manager, self.font_manager)
+        self.Menu = Start('start', self.display, self.game_state_manager)
+        self.Combat = Combat('combat', self.display, self.game_state_manager)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         self.game_state_manager.states = {

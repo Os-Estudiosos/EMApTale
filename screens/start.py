@@ -14,32 +14,28 @@ class Start(State):
         self,
         name: str,
         display: pygame.Surface,
-        sound_manager: SoundManager,
         game_state_manager: GameStateManager,
-        font_manager: FontManager
     ):
         # Variáveis padrão de qualquer Cenário
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__sound_manager: SoundManager = sound_manager
         self.__game_state_manager: GameStateManager = game_state_manager
-        self.__font_manager: FontManager = font_manager
 
         self.__execution_counter = 0
 
         # Opções do Menu
         self.menu_options = [
             {
-                'label': Text('NOVO JOGO', self.__font_manager.fonts['Gamer'], 50)
+                'label': Text('NOVO JOGO', FontManager.fonts['Gamer'], 50)
             },
             {
-                'label': Text('CARREGAR JOGO', self.__font_manager.fonts['Gamer'], 50)
+                'label': Text('CARREGAR JOGO', FontManager.fonts['Gamer'], 50)
             },
             {
-                'label': Text('OPÇÕES', self.__font_manager.fonts['Gamer'], 50)
+                'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50)
             },
             {
-                'label': Text('SAIR', self.__font_manager.fonts['Gamer'], 50),
+                'label': Text('SAIR', FontManager.fonts['Gamer'], 50),
                 'func': lambda: pygame.quit()
             }
         ]
@@ -54,7 +50,7 @@ class Start(State):
     
     def on_first_execution(self):
         # Inicializando a Música
-        self.__sound_manager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'))
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'))
 
     def move_cursor(self, increment):
         if self.selected_option + increment >= len(self.menu_options):
@@ -70,11 +66,11 @@ class Start(State):
         if keys[pygame.K_DOWN] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
             self.move_cursor(1)  # Movo uma opção pra baixo
             self.cursor_trying_to_move = True
-            self.__sound_manager.play_sound('select.wav')
+            SoundManager.play_sound('select.wav')
         elif keys[pygame.K_UP] and not self.cursor_trying_to_move:  # Se eu apertar para cima
             self.move_cursor(-1)  # Movo uma opção pra cima
             self.cursor_trying_to_move = True
-            self.__sound_manager.play_sound('select.wav')
+            SoundManager.play_sound('select.wav')
 
         if keys[pygame.K_z] or keys[pygame.K_RETURN]:  # Se eu apertar enter em alguma opção
             self.menu_options[self.selected_option]['func']()
@@ -117,16 +113,8 @@ class Start(State):
         return self.display
     
     @property
-    def sound_manager(self):
-        return self.__sound_manager
-    
-    @property
     def game_state_manager(self):
         return self.__game_state_manager
-    
-    @property
-    def font_manager(self):
-        return self.__font_manager
     
     @property
     def name(self):

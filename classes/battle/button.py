@@ -36,7 +36,7 @@ class CombatButton(pygame.sprite.Sprite):
     def update(self, *args, **kwargs):
         # Alterar lugar onde o cursor está sendo desenhado posterioremente
         self.cursor_rect.center = (
-            self.rect.centerx - 55,
+            self.rect.centerx - 70,
             self.rect.centery
         )
 
