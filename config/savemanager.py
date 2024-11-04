@@ -47,3 +47,7 @@ class SaveManager:
                 cls.loaded_save = json.load(save_file)
         except FileNotFoundError as err:
             raise FileNotFoundError("Este erro não deveria acontecer, pois o player conseguiu pedir um slot que não existe") from err
+    
+    @classmethod
+    def save(cls):
+        raise NotImplementedError
