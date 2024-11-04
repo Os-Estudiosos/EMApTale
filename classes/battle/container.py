@@ -12,7 +12,7 @@ class BattleContainer:
             display (pygame.Surface): Janela que ele vai ser desenhado (Pra ja ficar armazenado bonitinho)
         """
         self.display = display
-        self.out_rect = pygame.Rect(0, 0, 1000, 300)
+        self.out_rect = pygame.Rect(0, 0, self.display.get_width()/2, 300)
         self.out_rect_color = pygame.Color(255, 255, 255)
         self.inner_rect = pygame.Rect(0, 0, self.out_rect.width-10, self.out_rect.height-10)
         self.inner_rect_color = pygame.Color(0,0,0)

@@ -143,7 +143,7 @@ class Combat(State):
 
             button.rect.center = (  # Centralizo o botão
                 (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
-                self.__display.get_height()-(button.rect.height+40)  # Mais matemática pra posicionamento
+                self.__display.get_height()-(button.rect.height)  # Mais matemática pra posicionamento
             )
         
         # Se for o turno do Player
@@ -164,7 +164,7 @@ class Combat(State):
                 # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
                 self.trying_to_move_cursor = False
         else:  # Sen não for o turno do player
-            self.battle_container.resize(400, 300)  # Redimensiono o container da batalha
+            self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
 
             for btn in self.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False

@@ -3,6 +3,7 @@ from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
+from config.savemanager import SaveManager
 
 # Importando minhas cenas
 from screens.start import Start
@@ -31,6 +32,7 @@ class Game:
 
         # Inicializando outras coisas
         SoundManager.load_all_sounds()  # Carregando todos os efeitos sonoros do jogo
+        print(SaveManager.get_save_folder_path())
 
         # Definindo as cenas do jogo
         self.Menu = Start('start', self.display, self.game_state_manager)
