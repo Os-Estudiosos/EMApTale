@@ -49,7 +49,7 @@ class Heart(pygame.sprite.Sprite):
 
         self.effect = 'normal'
 
-        self.speed = 3
+        self.speed = 5
     
     def apply_effect(self, effect: str):
         self.image = self.sprites[effect]
