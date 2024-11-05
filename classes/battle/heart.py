@@ -2,10 +2,12 @@ import pygame
 import os
 from config import GET_PROJECT_PATH
 from utils import sign
+
 from classes.battle.container import BattleContainer
+from classes.player import Player
 
 
-class Heart(pygame.sprite.Sprite):
+class Heart(Player):
     def __init__(self, container: BattleContainer, *groups):
         """Inicialização da classe
 

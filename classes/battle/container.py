@@ -31,21 +31,23 @@ class BattleContainer:
         """Função que vai rodar em todo loop do jogo
         """
 
+        # Aqui eu controlo o redimensionamento do container
+
+        # Se a diferença entre o tamanho atual e o novo tamanho for menor que 10 eu paro de redimensionar
         if abs(self.out_rect.width - self.resize_new_width)<=10:
             self.resizing_w = False
         if abs(self.out_rect.height - self.resize_new_height)<=10:
             self.resizing_h = False
 
-        previous_center = self.out_rect.center
+        previous_center = self.out_rect.center  # Centro antigo
 
-        if self.resizing_w:
+        if self.resizing_w:  # Se eu estiver redimensionando a largura
             self.out_rect.width += 10 * sign(-self.out_rect.width + self.resize_new_width)
 
-        if self.resizing_h:
+        if self.resizing_h:  # Se eu estiver redimensionando a altura
             self.out_rect.height += 10 * sign(-self.out_rect.height + self.resize_new_height)
 
-        self.out_rect.center = previous_center
-        del previous_center
+        self.out_rect.center = previous_center  # Centralizo novamente onde estava
 
         self.inner_rect.size = (self.out_rect.width-10, self.out_rect.height-10)
         self.inner_rect.center = self.out_rect.center

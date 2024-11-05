@@ -34,8 +34,8 @@ class SaveManager:
 
 
     @classmethod
-    def load(cls, slot: int) -> dict:
-        """Função que carrega um arquivo de save
+    def load(cls, slot: int):
+        """Função que carrega um arquivo de save e coloca as devidas variáveis nos locais corretos
 
         Args:
             slot (int): Qual dos arquivos vão ser carregados (0 a 3)

@@ -14,6 +14,9 @@ class Game:
     e outras opções, carregamento das informações e etc.
     """
     def __init__(self):
+        # Essa parte é apenas para a elaboração das coisas, vai ser removido depois
+        SaveManager.load(1)
+        
         # Colocando o tamanho da Tela
         self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
         self.is_fullsize = False

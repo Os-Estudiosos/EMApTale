@@ -9,7 +9,7 @@ from classes.text.dynamic_text import DynamicText
 
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
-from config.fontmanager import FontManager
+from config.savemanager import SaveManager
 
 from classes.battle.heart import Heart
 
@@ -86,19 +86,10 @@ class Combat(State):
         self.battle_container = BattleContainer(self.__display)
 
         # Variável que gerencia o turno
-        self.turn = 'boss'  # "player" ou "boss"
+        self.turn = 'player'  # "player" ou "boss"
 
         # Variáveis do Jogador
         self.player = Heart(self.battle_container, self.player_group)
-
-        # self.interaction_text = DynamicText(
-        #     'Um inimigo se aproxima',
-        #     FontManager.fonts['Gamer'],
-        #     30,
-        #     40,
-        #     [ self.text_groups ],
-        #     (self.battle_container.inner_rect.x + 10, self.battle_container.inner_rect.y + 10)
-        # )
     
 
     def move_cursor(self, increment: int):

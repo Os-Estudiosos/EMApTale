@@ -32,7 +32,7 @@ class SaveManagerTests(unittest.TestCase):
         game_dict_key_types = {
             'day': int,
             'inventory': list,
-            'player_pos': list
+            'player': dict
         }
 
         saves_que_vao_retornar_algo = []
