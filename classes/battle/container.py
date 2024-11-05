@@ -23,24 +23,32 @@ class BattleContainer:
         self.resize_counter = 0  # Contador para o controle do redimensionamento
         self.resize_new_width = 0
         self.resize_new_height = 0
-        self.resizing = False
+        self.resizing_w = False
+        self.resizing_h = False
+        self.initial_size = self.out_rect.size
 
     def update(self):
         """Função que vai rodar em todo loop do jogo
         """
 
-        if self.resizing:
-            previous_center = self.out_rect.center
-            self.out_rect.height += 10 * sign(-self.out_rect.height + self.resize_new_height)
-            self.out_rect.width += 10 * sign(-self.out_rect.width + self.resize_new_width)
-            self.out_rect.center = previous_center
-            del previous_center
+        if abs(self.out_rect.width - self.resize_new_width)<=10:
+            self.resizing_w = False
+        if abs(self.out_rect.height - self.resize_new_height)<=10:
+            self.resizing_h = False
 
-            self.inner_rect.size = (self.out_rect.width-10, self.out_rect.height-10)
-            self.inner_rect.center = self.out_rect.center
-            
-            if self.out_rect.width == self.resize_new_width and self.out_rect.height == self.resize_new_height:
-                self.resizing = False
+        previous_center = self.out_rect.center
+
+        if self.resizing_w:
+            self.out_rect.width += 10 * sign(-self.out_rect.width + self.resize_new_width)
+
+        if self.resizing_h:
+            self.out_rect.height += 10 * sign(-self.out_rect.height + self.resize_new_height)
+
+        self.out_rect.center = previous_center
+        del previous_center
+
+        self.inner_rect.size = (self.out_rect.width-10, self.out_rect.height-10)
+        self.inner_rect.center = self.out_rect.center
 
     def draw(self):
         """Função que desenha as caixas
@@ -55,6 +63,8 @@ class BattleContainer:
             new_width (float): Nova Largura
             new_height (float): Nova Altura
         """
-        self.resizing = True
+        self.resizing_w = True
+        self.resizing_h = True
         self.resize_new_height = new_height
         self.resize_new_width = new_width
+        self.initial_size = ( self.out_rect.width, self.out_rect.height )
