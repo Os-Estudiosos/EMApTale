@@ -1,4 +1,5 @@
 import pygame
+import os
 
 from config import *
 from config.soundmanager import SoundManager
@@ -9,7 +10,9 @@ from config.savemanager import SaveManager
 from classes.player import Player
 
 # Importando minhas cenas
-from screens.start import Start
+from screens.menu.start import Start
+from screens.menu.options import Options
+
 from screens.combat import Combat
 
 class Game:
@@ -39,17 +42,28 @@ class Game:
 
         # Inicializando outras coisas
         SoundManager.load_all_sounds()  # Carregando todos os efeitos sonoros do jogo
-        print(SaveManager.get_save_folder_path())
 
-        # Definindo as cenas do jogo
+        # === Definindo as cenas do jogo ===
+        # Cenas do Menu
         self.Menu = Start('start', self.display, self.game_state_manager)
+        self.Options = Options('options', self.display, self.game_state_manager)
+
+        # Cenas mais genéricas
         self.Combat = Combat('combat', self.display, self.game_state_manager)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         self.game_state_manager.states = {
+            # Cenas do menu
             'start': self.Menu,
-            'combat': self.Combat
+            'options': self.Options,
+
+            # Cenas genéricas
+            'combat': self.Combat,
         }
+
+        self.mouse_sprite = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'mouse.png')), 0.6)
+        self.mouse_rect = self.mouse_sprite.get_rect()
+        pygame.mouse.set_visible(False)
 
     def run(self):
         while self.running:
@@ -66,6 +80,10 @@ class Game:
 
             # Trocando de Cena
             self.game_state_manager.get_current_state().run()
+
+            # Ajustando e Desenhando o Mouse
+            self.mouse_rect.center = pygame.mouse.get_pos()
+            self.display.blit(self.mouse_sprite, self.mouse_rect)
 
             # Atualizando
             pygame.display.flip()
