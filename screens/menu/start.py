@@ -1,5 +1,6 @@
 import pygame
 import os
+import time
 from screens import State
 from config import *
 from config.soundmanager import SoundManager
@@ -23,16 +24,22 @@ class Start(State):
 
         self.__execution_counter = 0
 
+        def change_test():
+            self.__game_state_manager.set_state('options')
+
         # Opções do Menu
         self.menu_options = [
             {
-                'label': Text('NOVO JOGO', FontManager.fonts['Gamer'], 50)
+                'label': Text('NOVO JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: print('Novo Jogo')
             },
             {
-                'label': Text('CARREGAR JOGO', FontManager.fonts['Gamer'], 50)
+                'label': Text('CARREGAR JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: print("Carregar Jogo")
             },
             {
-                'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50)
+                'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50),
+                'func': change_test
             },
             {
                 'label': Text('SAIR', FontManager.fonts['Gamer'], 50),

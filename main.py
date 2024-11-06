@@ -76,6 +76,7 @@ class Game:
                         self.game_state_manager.set_state('start')
                     if event.key == pygame.K_2:
                         self.game_state_manager.set_state('combat')
+            
             game.display.fill((0, 0, 0))
 
             # Trocando de Cena

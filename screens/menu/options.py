@@ -26,11 +26,12 @@ class Options(State):
         # Opções do Menu
         self.menu_options = [
             {
-                'label': Text('VOLUME', FontManager.fonts['Gamer'], 50)
+                'label': Text('VOLUME', FontManager.fonts['Gamer'], 50),
+                'func': lambda: print('Volume')
             },
             {
                 'label': Text('VOLTAR', FontManager.fonts['Gamer'], 50),
-                'func': lambda: pygame.quit()
+                'func': lambda: self.__game_state_manager.set_state('start')
             }
         ]
         self.selected_option = 0  # Opção que está selecionada
