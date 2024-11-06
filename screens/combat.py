@@ -117,15 +117,9 @@ class Combat(State):
         SoundManager.stop_music()
 
     def run(self):
-        print(Player.life)
         # ============ AJUSTANDO OS COMPONENTES DO HUD ============
         # Ajustando Posição dos botões e suas propriedades
         for i, button in enumerate(self.options):
-            if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
-                button.activated = True  # Eu marco a propriedade de ativado
-            else:
-                button.activated = False  # Eu removo a propriedade de ativado
-
             button.rect.center = (  # Centralizo o botão
                 (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
                 self.__display.get_height()-(button.rect.height)  # Mais matemática pra posicionamento
@@ -143,9 +137,6 @@ class Combat(State):
             text_player_name.rect.centery
         ]
 
-        # Ajustando o container da batalha para ficar em cima da vida do jogador
-        self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50
-
         # ============ DESENHANDO O BACKGROUND ============
         self.__display.blit(self.background, self.background_rect)
 
@@ -159,6 +150,16 @@ class Combat(State):
         self.battle_container.draw()
         text_player_name.draw(self.__display)
         hp_container.draw(self.__display)
+        for btn in self.options:
+            btn.draw_cursor(self.__display)
+
+        # Fim do ciclo de vida da cena
+        if not self.__execution_counter > 0:
+            self.on_first_execution()
+            self.__execution_counter += 1
+
+        # Ajustando o container da batalha para ficar em cima da vida do jogador
+        self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50
 
         # Pegando as teclas apertadas
         keys = pygame.key.get_pressed()
@@ -171,6 +172,13 @@ class Combat(State):
         if self.turn == 'player':
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(self.options[len(self.options)-1].rect.right - self.options[0].rect.left, self.__display.get_height()/2.4)  # Redesenho o container da batalha
+
+            # ============ AJUSTANDO OS BOTÕES NO HUD (APARECENDO A OPÇÃO SELECIONADA) ============
+            for i, button in enumerate(self.options):
+                if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
+                    button.activated = True  # Eu marco a propriedade de ativado
+                else:
+                    button.activated = False  # Eu removo a propriedade de ativado
 
             # Mexendo cursor
             if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
@@ -185,7 +193,7 @@ class Combat(State):
             if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
                 # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
                 self.trying_to_move_cursor = False
-        else:  # Sen não for o turno do player
+        else:  # Se não for o turno do player
             self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
 
             for btn in self.options:  # Ajustando para nenhum botão ficar selecionado
@@ -199,11 +207,6 @@ class Combat(State):
             
             # Updates que são apenas do turno do boss
             self.player_group.update(display=self.__display)
-
-        # Fim do ciclo de vida da cena
-        if not self.__execution_counter > 0:
-            self.on_first_execution()
-            self.__execution_counter += 1
     
     def on_last_execution(self):
         self.__execution_counter = 0

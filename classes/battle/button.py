@@ -39,11 +39,12 @@ class CombatButton(pygame.sprite.Sprite):
             self.rect.centerx - 70,
             self.rect.centery
         )
-
-        if self.activated:
-            self.display.blit(self.cursor_sprite, self.cursor_rect)
         
         return super().update(*args, **kwargs)
+    
+    def draw_cursor(self, screen):
+        if self.__activated:
+            self.display.blit(self.cursor_sprite, self.cursor_rect)
     
     
     @property

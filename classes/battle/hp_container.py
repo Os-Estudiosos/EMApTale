@@ -15,14 +15,13 @@ class HPContainer:
             player.max_life*10,
             30
         )
-        
+
         self.out_rect = self.inner_rect.copy()
         self.out_rect.width *= (player.life/player.max_life)
 
         self.life_text = Text(f'{player.life}/{player.max_life}', FontManager.fonts['Gamer'], 45)
     
     def update(self):
-        # print(self.actual_player_hp)
         self.out_rect.topleft = self.inner_rect.topleft
         self.life_text.rect.topright = (
             self.inner_rect.topleft[0] - 40,

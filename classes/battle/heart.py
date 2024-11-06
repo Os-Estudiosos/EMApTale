@@ -70,10 +70,7 @@ class Heart(Player):
             direction = direction.normalize()
 
         if self.effect == 'inverse':  # Aplico efeito da inversa se tiver
-            direction = pygame.math.Vector2(
-                direction.x * -1,
-                direction.y * -1
-            )
+            direction *= -1
 
         # Mexendo na colisão
         # Esse código detecta se um ponto na frente do player está saindo do retangulo, se sair, eu paro de mexer o player
