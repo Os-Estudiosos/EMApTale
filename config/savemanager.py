@@ -32,9 +32,8 @@ class SaveManager:
                 cls.create_save_folder_path(general_path)
                 return cls.get_save_folder_path()
 
-
     @classmethod
-    def load(cls, slot: int):
+    def load(cls):
         """Função que carrega um arquivo de save e coloca as devidas variáveis nos locais corretos
 
         Args:
@@ -43,7 +42,7 @@ class SaveManager:
         save_path = cls.get_save_folder_path()
 
         try:
-            with open(os.path.join(save_path, f'save_game_{slot}.json'), 'r') as save_file:
+            with open(os.path.join(save_path, f'save_file.json'), 'r') as save_file:
                 cls.loaded_save = json.load(save_file)
         except FileNotFoundError as err:
             raise FileNotFoundError("Este erro não deveria acontecer, pois o player conseguiu pedir um slot que não existe") from err

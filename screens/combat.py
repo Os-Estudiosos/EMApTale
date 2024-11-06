@@ -1,15 +1,18 @@
 import pygame
 from screens import State
+
 from config import *
 
 from classes.battle.button import CombatButton
 from classes.battle.container import BattleContainer
+from classes.battle.hp_container import HPContainer
 
 from classes.text.dynamic_text import DynamicText
+from classes.text.text import Text
 
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
-from config.savemanager import SaveManager
+from config.fontmanager import FontManager
 
 from classes.battle.heart import Heart
 
@@ -33,6 +36,7 @@ class Combat(State):
         self.text_groups = pygame.sprite.Group()  # Grupo dos textos
         self.player_group = pygame.sprite.Group()  # Grupo do player
 
+        # ============ VARIÁVEIS DO HUD ============
         # Carrgando o sprite do cursor
         self.cursor = pygame.transform.scale_by(
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')),
@@ -71,6 +75,7 @@ class Combat(State):
             ),
         ]
         self.selected_option = 0  # A opção que eu estou analisando agora
+
         self.trying_to_move_cursor = False  # Variável responsável por controlar e mexer apenas uma opção por vez, sem que o cursor mexa que nem doido
 
         # Carregando o background da batalha
@@ -85,11 +90,11 @@ class Combat(State):
         # Iniciando o container da Batalha
         self.battle_container = BattleContainer(self.__display)
 
-        # Variável que gerencia o turno
-        self.turn = 'player'  # "player" ou "boss"
-
         # Variáveis do Jogador
         self.player = Heart(self.battle_container, self.player_group)
+
+        # Variável que gerencia o turno
+        self.turn = 'player'  # "player" ou "boss"
     
 
     def move_cursor(self, increment: int):
@@ -111,20 +116,7 @@ class Combat(State):
         SoundManager.stop_music()
 
     def run(self):
-        # Desenhando o background
-        self.__display.blit(self.background, self.background_rect)
-
-        # Desenhando Tudo
-        self.buttons_group.draw(self.__display)
-        self.battle_container.draw()
-
-        # Dando Update em todos os elementos
-        self.buttons_group.update()
-        self.battle_container.update()
-
-        # Pegando as teclas apertadas
-        keys = pygame.key.get_pressed()
-
+        # ============ AJUSTANDO OS COMPONENTES DO HUD ============
         # Ajustando Posição dos botões e suas propriedades
         for i, button in enumerate(self.options):
             if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
@@ -137,6 +129,39 @@ class Combat(State):
                 self.__display.get_height()-(button.rect.height)  # Mais matemática pra posicionamento
             )
         
+        # Ajustando o nome do personagem
+        text_player_name = Text(self.player.name.upper(), FontManager.fonts['Gamer'], 60)
+        text_player_name.rect.x = self.options[0].rect.x
+        text_player_name.rect.y = self.options[0].rect.y - 1.5*text_player_name.rect.height
+
+        # Ajustando o HP do personagem (Na tela)
+        hp_container = HPContainer()
+        hp_container.inner_rect.center = [
+            self.__display.get_width()/2,
+            text_player_name.rect.centery
+        ]
+
+        # ============ DESENHANDO O BACKGROUND ============
+        self.__display.blit(self.background, self.background_rect)
+
+        # ============ DANDO UPDATE NOS ELEMENTOS GERAIS ============
+        self.buttons_group.update()
+        self.battle_container.update()
+        hp_container.update()
+
+        # ============ DESENHANDO TUDO ============
+        self.buttons_group.draw(self.__display)
+        self.battle_container.draw()
+        text_player_name.draw(self.__display)
+        hp_container.draw(self.__display)
+
+        # Pegando as teclas apertadas
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_SPACE]:
+            self.player.take_damage(6)
+
+        # ============ CÓDIGO RELACIONADO AOS TURNOS ============
         # Se for o turno do Player
         if self.turn == 'player':
             self.battle_container.resize(1000, 300)  # Redesenho o container da batalha

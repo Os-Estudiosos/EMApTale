@@ -1,9 +1,12 @@
 import pygame
+
 from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.savemanager import SaveManager
+
+from classes.player import Player
 
 # Importando minhas cenas
 from screens.start import Start
@@ -15,7 +18,8 @@ class Game:
     """
     def __init__(self):
         # Essa parte é apenas para a elaboração das coisas, vai ser removido depois
-        SaveManager.load(1)
+        SaveManager.load()
+        Player.load_infos()
         
         # Colocando o tamanho da Tela
         self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
