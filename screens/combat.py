@@ -15,6 +15,7 @@ from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 
 from classes.battle.heart import Heart
+from classes.player import Player
 
 
 class Combat(State):
@@ -94,7 +95,7 @@ class Combat(State):
         self.player = Heart(self.battle_container, self.player_group)
 
         # Variável que gerencia o turno
-        self.turn = 'player'  # "player" ou "boss"
+        self.turn = 'boss'  # "player" ou "boss"
     
 
     def move_cursor(self, increment: int):
@@ -116,6 +117,7 @@ class Combat(State):
         SoundManager.stop_music()
 
     def run(self):
+        print(Player.life)
         # ============ AJUSTANDO OS COMPONENTES DO HUD ============
         # Ajustando Posição dos botões e suas propriedades
         for i, button in enumerate(self.options):
@@ -135,11 +137,14 @@ class Combat(State):
         text_player_name.rect.y = self.options[0].rect.y - 1.5*text_player_name.rect.height
 
         # Ajustando o HP do personagem (Na tela)
-        hp_container = HPContainer()
+        hp_container = HPContainer(self.player)
         hp_container.inner_rect.center = [
             self.__display.get_width()/2,
             text_player_name.rect.centery
         ]
+
+        # Ajustando o container da batalha para ficar em cima da vida do jogador
+        self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50
 
         # ============ DESENHANDO O BACKGROUND ============
         self.__display.blit(self.background, self.background_rect)
@@ -164,7 +169,8 @@ class Combat(State):
         # ============ CÓDIGO RELACIONADO AOS TURNOS ============
         # Se for o turno do Player
         if self.turn == 'player':
-            self.battle_container.resize(1000, 300)  # Redesenho o container da batalha
+            # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
+            self.battle_container.resize(self.options[len(self.options)-1].rect.right - self.options[0].rect.left, self.__display.get_height()/2.4)  # Redesenho o container da batalha
 
             # Mexendo cursor
             if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
