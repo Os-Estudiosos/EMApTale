@@ -22,6 +22,8 @@ class CombatButton(pygame.sprite.Sprite):
             )
         }
 
+        self.func = button_on_click
+
         # Definindo as propriedades padrão
         self.display: pygame.Surface = display
         self.__activated = activated
@@ -32,6 +34,8 @@ class CombatButton(pygame.sprite.Sprite):
         self.cursor_sprite: pygame.Surface = cursor  # Sprite do cursor
         self.cursor_rect = self.cursor_sprite.get_rect()  # Retângulo do cursor
 
+    def on_click(self):
+        self.func()
 
     def update(self, *args, **kwargs):
         # Alterar lugar onde o cursor está sendo desenhado posterioremente

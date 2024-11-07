@@ -5,7 +5,7 @@ class GameStateManager:
     """Classe que gerencia qual a Cena do game está aparecendo
     """
     def __init__(self, initial_state):
-        self.states = {}  # Dicionário de todos os cenários
+        self.states: dict[str, State] = {}  # Dicionário de todos os cenários
         self.current_state = initial_state  # Cenário que está rodando agora
     
     def get_current_state_name(self) -> str:
@@ -38,4 +38,5 @@ class GameStateManager:
             raise KeyError('Você forneceu um nome de cenário que não está no dicionário geral')
         self.get_current_state().on_last_execution()
         self.current_state = current_state
+        self.get_current_state().variables = variables
 

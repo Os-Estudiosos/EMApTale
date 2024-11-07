@@ -5,7 +5,7 @@ from config import *
 from config.soundmanager import SoundManager
 
 from classes.battle.menus import BattleMenu
-
+from classes.battle.menus.battle_menu_manager import BattleMenuManager
 from classes.battle.button import CombatButton
 
 from classes.player import Player
@@ -35,21 +35,21 @@ class MainMenu(BattleMenu):
             ),
             CombatButton(
                 'act',
-                lambda: print('Lutar'),
+                lambda: print('Agir'),
                 self.__display,
                 self.cursor,
                 [ self.buttons_group ],
             ),
             CombatButton(
                 'item',
-                lambda: print('Lutar'),
+                lambda: BattleMenuManager.change_active_menu('InventoryMenu'),
                 self.__display,
                 self.cursor,
                 [ self.buttons_group ],
             ),
             CombatButton(
                 'mercy',
-                lambda: print('Lutar'),
+                lambda: print('Piedade'),
                 self.__display,
                 self.cursor,
                 [ self.buttons_group ],
@@ -86,20 +86,26 @@ class MainMenu(BattleMenu):
         keys = pygame.key.get_pressed()
         
         self.buttons_group.update()
+
+        print(BattleMenuManager.active_menu)
         
         # ============ CÓDIGO RELACIONADO AO CURSOR ============
-        # Mexendo cursor
-        if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
-            self.move_cursor(-1)  # Movo uma opção
-            self.trying_to_move_cursor = True  # Estou tentando mexer o cursor
-            SoundManager.play_sound('select.wav')  # Toco o som de trocar opção
-        elif keys[pygame.K_RIGHT] and not self.trying_to_move_cursor:  # Se eu aprtar para a direita e não tiver nenhuma seta sendo segurada
-            self.move_cursor(1)
-            self.trying_to_move_cursor = True
-            SoundManager.play_sound('select.wav')
-        
-        if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
-            self.trying_to_move_cursor = False
+        if self.__class__.__name__ == BattleMenuManager.active_menu:
+            # Mexendo cursor
+            if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
+                self.move_cursor(-1)  # Movo uma opção
+                self.trying_to_move_cursor = True  # Estou tentando mexer o cursor
+                SoundManager.play_sound('select.wav')  # Toco o som de trocar opção
+            elif keys[pygame.K_RIGHT] and not self.trying_to_move_cursor:  # Se eu aprtar para a direita e não tiver nenhuma seta sendo segurada
+                self.move_cursor(1)
+                self.trying_to_move_cursor = True
+                SoundManager.play_sound('select.wav')
+            
+            if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+                self.trying_to_move_cursor = False
+            
+            if keys[pygame.K_z] or keys[pygame.K_RETURN]:
+                self.__options[self.selected_option].on_click()
     
     def draw(self):
         self.buttons_group.draw(self.__display)

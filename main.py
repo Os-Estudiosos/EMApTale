@@ -80,7 +80,11 @@ class Game:
                     if event.key == pygame.K_1:
                         self.game_state_manager.set_state('start')
                     if event.key == pygame.K_2:
-                        self.game_state_manager.set_state('combat')
+                        self.game_state_manager.set_state('combat', {
+                            "enemy": {
+                                "name": "Yuri Saporito",
+                            }
+                        })
             
             game.display.fill((0, 0, 0))
 

@@ -25,6 +25,16 @@ class State(ABC):
     @abstractmethod
     def name(self):
         """Toda cena deve seu nome"""
+    
+    @property
+    @abstractmethod
+    def variables(self):
+        """Toda cena deve ter variáveis que são passadas dinamicamente pelo game state manager"""
+    
+    @variables.setter
+    @abstractmethod
+    def variables(self):
+        """É obrigatório ter o método setter das variáveis"""
 
     @property
     @abstractmethod
