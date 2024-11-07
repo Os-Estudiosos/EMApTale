@@ -86,11 +86,9 @@ class MainMenu(BattleMenu):
         keys = pygame.key.get_pressed()
         
         self.buttons_group.update()
-
-        print(BattleMenuManager.active_menu)
         
         # ============ CÓDIGO RELACIONADO AO CURSOR ============
-        if self.__class__.__name__ == BattleMenuManager.active_menu:
+        if not BattleMenuManager.active_menu:
             # Mexendo cursor
             if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
                 self.move_cursor(-1)  # Movo uma opção

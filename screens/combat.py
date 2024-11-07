@@ -9,6 +9,7 @@ from classes.battle.hp_container import HPContainer
 from classes.battle.menus.battle_menu_manager import BattleMenuManager
 
 from classes.battle.menus.main_menu import MainMenu
+from classes.battle.menus.inventory_menu import InventoryMenu
 
 from classes.text.dynamic_text import DynamicText
 from classes.text.text import Text
@@ -62,7 +63,12 @@ class Combat(State):
         # self.battle_menu_manager = BattleMenuManager()
 
         # Definindo todos os menus
+        self.inventory_menu = InventoryMenu(self.battle_container)
         self.main_menu = MainMenu(self.__display)
+
+        BattleMenuManager.menus = {
+            f'{self.inventory_menu.__class__.__name__}': self.inventory_menu
+        }
 
     def on_first_execution(self):
         # Limpando os sons
@@ -100,6 +106,11 @@ class Combat(State):
         text_player_name.draw(self.__display)
         hp_container.draw(self.__display)
         self.main_menu.draw()
+
+        # ============ FAZENDO ISSO TUDO COM O MENU ============
+        if BattleMenuManager.active_menu:
+            BattleMenuManager.active_menu.draw()
+            BattleMenuManager.active_menu.update()
 
         for btn in self.main_menu.options:
             btn.draw_cursor(self.__display)
