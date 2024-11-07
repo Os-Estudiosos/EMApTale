@@ -95,7 +95,10 @@ class Combat(State):
         self.player = Heart(self.battle_container, self.player_group)
 
         # Variável que gerencia o turno
-        self.turn = 'boss'  # "player" ou "boss"
+        self.turn = 'player'  # "player" ou "boss"
+
+        # Para testar o texto
+        self.text_dynamic = DynamicText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel justo volutpat, consectetur lorem sed, sagittis purus. Etiam aliquet felis iaculis, malesuada eros nec, posuere odio. Morbi id commodo libero. Ut mi mi, malesuada et velit non, mollis sagittis ipsum.', FontManager.fonts['Gamer'], 40, 50)
     
 
     def move_cursor(self, increment: int):
@@ -123,11 +126,20 @@ class Combat(State):
             self.__execution_counter += 1
         
         # ============ AJUSTANDO OS COMPONENTES DO HUD ============
+        # Ajustando o texto dinâmico
+        self.text_dynamic.position = (
+            self.battle_container.inner_rect.x + 10,
+            self.battle_container.inner_rect.y
+        )
+        self.text_dynamic.max_length = self.battle_container.inner_rect.width - 20
+
         # Ajustando Posição dos botões e suas propriedades
         for i, button in enumerate(self.options):
             button.rect.center = (  # Centralizo o botão
-                (i+1)*(self.__display.get_width()/(len(self.options)+1)),  # Matemática para centralizar os botão bonitinho
-                self.__display.get_height()-(button.rect.height)  # Mais matemática pra posicionamento
+                (i+1)*(self.__display.get_width()/(len(self.options)+1)),
+                # Matemática para centralizar os botão bonitinho
+                self.__display.get_height()-(button.rect.height)
+                # Mais matemática pra posicionamento
             )
         
         # Ajustando o nome do personagem
@@ -149,12 +161,15 @@ class Combat(State):
         self.buttons_group.update()
         self.battle_container.update()
         hp_container.update()
+        self.text_dynamic.update()
 
         # ============ DESENHANDO TUDO ============
         self.buttons_group.draw(self.__display)
         self.battle_container.draw()
         text_player_name.draw(self.__display)
         hp_container.draw(self.__display)
+        self.text_dynamic.draw(self.__display)
+
         for btn in self.options:
             btn.draw_cursor(self.__display)
 
@@ -171,7 +186,10 @@ class Combat(State):
         # Se for o turno do Player
         if self.turn == 'player':
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
-            self.battle_container.resize(self.options[len(self.options)-1].rect.right - self.options[0].rect.left, self.__display.get_height()/2.4)  # Redesenho o container da batalha
+            self.battle_container.resize(
+                self.options[len(self.options)-1].rect.right - self.options[0].rect.left,
+                self.__display.get_height()/2.4
+            )  # Redesenho o container da batalha
 
             # ============ AJUSTANDO OS BOTÕES NO HUD (APARECENDO A OPÇÃO SELECIONADA) ============
             for i, button in enumerate(self.options):
