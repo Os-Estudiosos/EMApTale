@@ -28,18 +28,18 @@ class DynamicText:
         """
 
         self.text = text  # Texto Completo
-        self.progressive_text = ''
-        self.font = pygame.font.Font(font, text_size)
+        self.progressive_text = ''  # Texto que vai ser alterado para dar o efeito de letra por letra
+        self.font = pygame.font.Font(font, text_size)  # Fonte que vai ser usada
 
-        self.max_length = max_length
-        self.position = positon
-        self.color = color
+        self.max_length = max_length  # Largura máxima
+        self.position = positon  # Posição do texto
+        self.color = color  # Cor do texto
 
-        self.list_texts = [
+        self.rows = [  # Lista que vai contar as linhas
             self.font.render(self.progressive_text, True, self.color)
         ]
-        self.wich_text_to_update = 0
-        self.letter_counter = 0
+        self.wich_row_to_update = 0  # Qual linha está sendo atualizada
+        self.letter_counter = 0  # Contador para saber a próxima letra
 
         self.counter = 0  # Variável que controla quando uma nova letra vai ser adicionada
         self.letter_rate = FPS/letters_per_second  # Frequência de letras por segundo
@@ -55,17 +55,19 @@ class DynamicText:
 
             new_text = self.font.render(self.progressive_text, True, self.color)
 
-            if new_text.get_rect().width >= self.max_length:
+            if new_text.get_rect().width >= self.max_length:  # Se a linha passar da largura máxima
                 self.progressive_text = self.text[self.letter_counter]
-                self.list_texts.append(self.font.render(self.progressive_text, True, self.color))
-                self.wich_text_to_update += 1
+                self.rows.append(self.font.render(self.progressive_text, True, self.color))
+                self.wich_row_to_update += 1
 
-            self.list_texts[self.wich_text_to_update] = new_text
+            # Atualizo a linha com o novo texto
+            self.rows[self.wich_row_to_update] = new_text
 
+            # Atualizo a próxima letra
             self.letter_counter += 1
         
     def draw(self, screen: pygame.Surface):
-        for i, text in enumerate(self.list_texts):
+        for i, text in enumerate(self.rows):
             text_rect = text.get_rect()
             text_rect.x = self.position[0]
             text_rect.y = self.position[1]+i*text_rect.height
