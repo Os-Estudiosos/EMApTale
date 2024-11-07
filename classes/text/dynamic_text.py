@@ -43,15 +43,23 @@ class DynamicText:
 
         self.counter = 0  # Variável que controla quando uma nova letra vai ser adicionada
         self.letter_rate = FPS/letters_per_second  # Frequência de letras por segundo
+
+        SoundManager.stop_sound('text.wav')
+
     
     def update(self, *args, **kwargs):
         self.counter += 1  # Aumenta a contagem
         
         # Se a montagem for maior que a frequência das letras e o contador de letras não for maior que a quantidade de letras
         if self.counter >= self.letter_rate and not self.letter_counter >= len(self.text):
+            SoundManager.stop_sound('text.wav')
+
             self.counter = 0  # Zera o contador
 
             self.progressive_text += self.text[self.letter_counter]
+
+            if self.text[self.letter_counter] != ' ':
+                SoundManager.play_sound('text.wav')
 
             new_text = self.font.render(self.progressive_text, True, self.color)
 

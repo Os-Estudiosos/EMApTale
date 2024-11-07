@@ -51,13 +51,22 @@ class SoundManager:
             del cls.audios[key]
     
     @classmethod
-    def play_sound(cls, sound_name: str):
+    def play_sound(cls, sound_name: str, loops: int = 0):
         """Tocar um son pelo nome passado
 
         Args:
             sound_name (str): Nome do arquivo que deve ser tocasdo
         """
-        cls.audios[sound_name].play()
+        cls.audios[sound_name].play(loops=loops)
+
+    @classmethod
+    def stop_sound(cls, sound_name: str):
+        """Para o som especificado
+
+        Args:
+            sound_name (str): Nome do som
+        """
+        cls.audios[sound_name].stop()
     
     @staticmethod
     def stop_music():

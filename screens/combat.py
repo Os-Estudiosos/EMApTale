@@ -98,7 +98,7 @@ class Combat(State):
         self.turn = 'player'  # "player" ou "boss"
 
         # Para testar o texto
-        self.text_dynamic = DynamicText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel justo volutpat, consectetur lorem sed, sagittis purus. Etiam aliquet felis iaculis, malesuada eros nec, posuere odio. Morbi id commodo libero. Ut mi mi, malesuada et velit non, mollis sagittis ipsum.', FontManager.fonts['Gamer'], 40, 50)
+        self.text_dynamic = DynamicText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel justo volutpat, consectetur lorem sed, sagittis purus. Etiam aliquet felis iaculis, malesuada eros nec, posuere odio. Morbi id commodo libero. Ut mi mi, malesuada et velit non, mollis sagittis ipsum.', FontManager.fonts['Gamer'], 10, 50)
     
 
     def move_cursor(self, increment: int):
@@ -126,13 +126,6 @@ class Combat(State):
             self.__execution_counter += 1
         
         # ============ AJUSTANDO OS COMPONENTES DO HUD ============
-        # Ajustando o texto dinâmico
-        self.text_dynamic.position = (
-            self.battle_container.inner_rect.x + 10,
-            self.battle_container.inner_rect.y
-        )
-        self.text_dynamic.max_length = self.battle_container.inner_rect.width - 20
-
         # Ajustando Posição dos botões e suas propriedades
         for i, button in enumerate(self.options):
             button.rect.center = (  # Centralizo o botão
@@ -161,14 +154,12 @@ class Combat(State):
         self.buttons_group.update()
         self.battle_container.update()
         hp_container.update()
-        self.text_dynamic.update()
 
         # ============ DESENHANDO TUDO ============
         self.buttons_group.draw(self.__display)
         self.battle_container.draw()
         text_player_name.draw(self.__display)
         hp_container.draw(self.__display)
-        self.text_dynamic.draw(self.__display)
 
         for btn in self.options:
             btn.draw_cursor(self.__display)
@@ -185,19 +176,28 @@ class Combat(State):
         # ============ CÓDIGO RELACIONADO AOS TURNOS ============
         # Se for o turno do Player
         if self.turn == 'player':
+            # ============ HUD QUE SÓ APARECE NO TURNO DO PLAYER ============
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
                 self.options[len(self.options)-1].rect.right - self.options[0].rect.left,
                 self.__display.get_height()/2.4
             )  # Redesenho o container da batalha
 
-            # ============ AJUSTANDO OS BOTÕES NO HUD (APARECENDO A OPÇÃO SELECIONADA) ============
+            # Ajustando o texto dinâmico
+            self.text_dynamic.position = (
+                self.battle_container.inner_rect.x + 10,
+                self.battle_container.inner_rect.y
+            )
+            self.text_dynamic.max_length = self.battle_container.inner_rect.width - 20
+
+            # Ajustando os botões do HUD
             for i, button in enumerate(self.options):
                 if i == self.selected_option:  # Se o botão que eu estiver analisando for a opção selecionada
                     button.activated = True  # Eu marco a propriedade de ativado
                 else:
                     button.activated = False  # Eu removo a propriedade de ativado
 
+            # ============ CÓDIGO RELACIONADO AO MENU ============
             # Mexendo cursor
             if keys[pygame.K_LEFT] and not self.trying_to_move_cursor:  # Se eu apertar para a esquerda e não tiver nenhuma seta sendo segurada
                 self.move_cursor(-1)  # Movo uma opção
@@ -207,10 +207,17 @@ class Combat(State):
                 self.move_cursor(1)
                 self.trying_to_move_cursor = True
                 SoundManager.play_sound('select.wav')
-            
+                    
             if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
                 # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
                 self.trying_to_move_cursor = False
+
+            # ========== ATUALIZANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
+            self.text_dynamic.update()
+
+            # ========== DESENHANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
+            self.text_dynamic.draw(self.__display)
+
         else:  # Se não for o turno do player
             self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
 
