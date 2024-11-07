@@ -1,6 +1,7 @@
 import unittest
 
 from SaveManagerTests import SaveManagerTests
+from InventoryTests import InventoryTests
 
 
 if __name__ == '__main__':
