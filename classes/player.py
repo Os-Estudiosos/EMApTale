@@ -4,6 +4,8 @@ from time import time
 from config.savemanager import SaveManager
 from config.soundmanager import SoundManager
 
+from classes.inventory import Inventory
+
 
 class Player(pygame.sprite.Sprite):
     # Definindo as variáveis do Player
@@ -21,7 +23,7 @@ class Player(pygame.sprite.Sprite):
         cls.name = SaveManager.loaded_save['name']
         cls.life = SaveManager.loaded_save['player']['life']
         cls.max_life = SaveManager.loaded_save['player']['max_life']
-        cls.inventory = SaveManager.loaded_save['inventory']
+        cls.inventory = Inventory(SaveManager.loaded_save['inventory'])
 
     @classmethod
     def take_damage(cls, value: int):
