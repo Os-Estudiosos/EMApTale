@@ -77,6 +77,12 @@ class SoundManager:
         """
         pygame.mixer.music.unpause()
     
+    @staticmethod
+    def is_playing():
+        """Retorna se o canal de música está sendo utilizado
+        """
+        pygame.mixer.music.get_busy()
+    
 
     # @property
     # def volume(self):

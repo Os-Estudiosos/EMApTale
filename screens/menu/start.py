@@ -1,5 +1,6 @@
 import pygame
 import os
+import time
 from screens import State
 from config import *
 from config.soundmanager import SoundManager
@@ -26,14 +27,17 @@ class Start(State):
         # Opções do Menu
         self.menu_options = [
             {
-                'label': Text('NOVO JOGO', FontManager.fonts['Gamer'], 50)
+                'label': Text('NOVO JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: self.__game_state_manager.set_state('new_game_confirmation')
             },
             {
-                'label': Text('CARREGAR JOGO', FontManager.fonts['Gamer'], 50)
+                'label': Text('CONTINUAR JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: self.__game_state_manager.set_state('emap')
             },
-            {
-                'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50)
-            },
+            # {
+            #     'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50),
+            #     'func': lambda: self.__game_state_manager.set_state('options')
+            # },
             {
                 'label': Text('SAIR', FontManager.fonts['Gamer'], 50),
                 'func': lambda: pygame.quit()
@@ -47,10 +51,21 @@ class Start(State):
         self.cursor_icon = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')), 1.5)
         self.cursor_rect = self.cursor_icon.get_rect()
         self.cursor_trying_to_move = False  # Marca se eu estou tentando mexer o cursor
+
+        # Essa variável é responsável por checar se o player entrou na cena com o botão
+        # de confirmação selecionado (Enter ou Z), assim eu posso evitar que ele entre
+        # na tela ja selecionando a opção por acidente
+        self.entered_holding_confirm_button = False
     
     def on_first_execution(self):
         # Inicializando a Música
-        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'))
+        if not SoundManager.is_playing():
+            SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'))
+
+        # Checo se ele não iniciou a cena segurando o botão de confirmar
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RETURN] or keys[pygame.K_z]:
+            self.entered_holding_confirm_button = True
 
     def move_cursor(self, increment):
         if self.selected_option + increment >= len(self.menu_options):
@@ -72,8 +87,12 @@ class Start(State):
             self.cursor_trying_to_move = True
             SoundManager.play_sound('select.wav')
 
-        if keys[pygame.K_z] or keys[pygame.K_RETURN]:  # Se eu apertar enter em alguma opção
+        if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_holding_confirm_button:  # Se eu apertar enter em alguma opção
             self.menu_options[self.selected_option]['func']()
+        
+        # Se ele estiver segurando o botão quando entrou na cena, ao soltar, podera clicar nas opções
+        if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:
+            self.entered_holding_confirm_button = False
         
         if not keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             # Só deixo mover o cursor se eu soltar a tecla e apertar de novo

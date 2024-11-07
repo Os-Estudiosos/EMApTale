@@ -32,7 +32,6 @@ class Player(pygame.sprite.Sprite):
         """
         actual_hit = time()
         if actual_hit - cls.last_hit >= 2:  # Aqui eu dou um delay de 1 segundo para dar dano
-            print("Tomou dano")
             if cls.life - value >= 0:
                 cls.life -= value
             else:
