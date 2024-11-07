@@ -3,4 +3,4 @@ import pygame
 
 class BattleMenuManager:
     def __init__(self):
-        pass
+        self.selected_option
