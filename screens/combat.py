@@ -117,6 +117,11 @@ class Combat(State):
         SoundManager.stop_music()
 
     def run(self):
+        # Inicio do ciclo de vida da cena
+        if not self.__execution_counter > 0:
+            self.on_first_execution()
+            self.__execution_counter += 1
+        
         # ============ AJUSTANDO OS COMPONENTES DO HUD ============
         # Ajustando Posição dos botões e suas propriedades
         for i, button in enumerate(self.options):
@@ -152,11 +157,6 @@ class Combat(State):
         hp_container.draw(self.__display)
         for btn in self.options:
             btn.draw_cursor(self.__display)
-
-        # Fim do ciclo de vida da cena
-        if not self.__execution_counter > 0:
-            self.on_first_execution()
-            self.__execution_counter += 1
 
         # Ajustando o container da batalha para ficar em cima da vida do jogador
         self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50

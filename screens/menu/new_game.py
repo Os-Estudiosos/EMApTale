@@ -9,7 +9,7 @@ from config.fontmanager import FontManager
 from classes.text.text import Text
 
 
-class Options(State):
+class NewGameConfirmation(State):
     def __init__(
         self,
         name: str,
@@ -26,11 +26,11 @@ class Options(State):
         # Opções do Menu
         self.menu_options = [
             {
-                'label': Text('VOLUME', FontManager.fonts['Gamer'], 50),
-                'func': lambda: print('Volume')
+                'label': Text('SIM', FontManager.fonts['Gamer'], 50),
+                'func': lambda: print('CONFIRMANDO')
             },
             {
-                'label': Text('VOLTAR', FontManager.fonts['Gamer'], 50),
+                'label': Text('CANCELAR', FontManager.fonts['Gamer'], 50),
                 'func': lambda: self.__game_state_manager.set_state('start')
             }
         ]
@@ -63,11 +63,6 @@ class Options(State):
             self.selected_option += increment
 
     def run(self):
-        # Inicio do ciclo de vida da Cena
-        if not self.__execution_counter > 0:
-            self.on_first_execution()
-            self.__execution_counter += 1
-        
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_DOWN] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
@@ -81,13 +76,13 @@ class Options(State):
 
         if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_holding_confirm_button:  # Se eu apertar enter em alguma opção
             self.menu_options[self.selected_option]['func']()
-
+        
         # Se ele estiver segurando o botão quando entrou na cena, ao soltar, podera clicar nas opções
         if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:
             self.entered_holding_confirm_button = False
         
-        # Só deixo mover o cursor se eu soltar a tecla e apertar de novo
         if not keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
+            # Só deixo mover o cursor se eu soltar a tecla e apertar de novo
             self.cursor_trying_to_move = False
 
         self.cursor_rect.center = (  # Mexo o centro do cursor
@@ -102,10 +97,15 @@ class Options(State):
                 self.display_info.current_w/2,
                 (self.option_measures[1]/2) + (self.option_measures[1]*(i)) + (self.display_info.current_h-self.option_measures[1]*len(self.menu_options))/2,
             )
+            
             # Desenhando o texto da opção
             option['label'].draw(self.__display)
         
         self.__display.blit(self.cursor_icon, self.cursor_rect)
+
+        if not self.__execution_counter > 0:
+            self.on_first_execution()
+            self.__execution_counter += 1
 
     def on_last_execution(self):
         self.__execution_counter = 0

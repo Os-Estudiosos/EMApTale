@@ -12,6 +12,7 @@ from classes.player import Player
 # Importando minhas cenas
 from screens.menu.start import Start
 from screens.menu.options import Options
+from screens.menu.new_game import NewGameConfirmation
 
 from screens.combat import Combat
 
@@ -46,7 +47,9 @@ class Game:
         # === Definindo as cenas do jogo ===
         # Cenas do Menu
         self.Menu = Start('start', self.display, self.game_state_manager)
-        self.Options = Options('options', self.display, self.game_state_manager)
+        self.NewGameConfirmation = NewGameConfirmation('new_game_confirmation', self.display, self.game_state_manager)
+        # self.Options = Options('options', self.display, self.game_state_manager)
+        # Considereando em tirar o menu de opções (Não há muitas opções, só volume)
 
         # Cenas mais genéricas
         self.Combat = Combat('combat', self.display, self.game_state_manager)
@@ -55,7 +58,8 @@ class Game:
         self.game_state_manager.states = {
             # Cenas do menu
             'start': self.Menu,
-            'options': self.Options,
+            'new_game_confirmation': self.NewGameConfirmation,
+            # 'options': self.Options,
 
             # Cenas genéricas
             'combat': self.Combat,
