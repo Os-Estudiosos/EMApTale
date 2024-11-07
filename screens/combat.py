@@ -67,6 +67,7 @@ class Combat(State):
         self.main_menu = MainMenu(self.__display)
 
         BattleMenuManager.menus = {
+            f'{self.main_menu.__class__.__name__}': self.main_menu,
             f'{self.inventory_menu.__class__.__name__}': self.inventory_menu
         }
 
@@ -108,7 +109,7 @@ class Combat(State):
         self.main_menu.draw()
 
         # ============ FAZENDO ISSO TUDO COM O MENU ============
-        if BattleMenuManager.active_menu:
+        if BattleMenuManager.active_menu != 'MainMenu':
             BattleMenuManager.active_menu.draw()
             BattleMenuManager.active_menu.update()
 
