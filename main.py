@@ -15,6 +15,7 @@ from screens.menu.options import Options
 from screens.menu.new_game import NewGameConfirmation
 
 from screens.combat import Combat
+from screens.emap import EMAp
 
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
@@ -53,6 +54,7 @@ class Game:
 
         # Cenas mais genéricas
         self.Combat = Combat('combat', self.display, self.game_state_manager)
+        self.EMAp = EMAp('emap', self.display, self.game_state_manager)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         self.game_state_manager.states = {
@@ -63,10 +65,9 @@ class Game:
 
             # Cenas genéricas
             'combat': self.Combat,
+            'emap': self.EMAp
         }
 
-        self.mouse_sprite = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'mouse.png')), 0.6)
-        self.mouse_rect = self.mouse_sprite.get_rect()
         pygame.mouse.set_visible(False)
 
     def run(self):
@@ -85,10 +86,6 @@ class Game:
 
             # Trocando de Cena
             self.game_state_manager.get_current_state().run()
-
-            # Ajustando e Desenhando o Mouse
-            self.mouse_rect.center = pygame.mouse.get_pos()
-            self.display.blit(self.mouse_sprite, self.mouse_rect)
 
             # Atualizando
             pygame.display.flip()

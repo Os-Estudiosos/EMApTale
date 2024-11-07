@@ -32,7 +32,7 @@ class Start(State):
             },
             {
                 'label': Text('CONTINUAR JOGO', FontManager.fonts['Gamer'], 50),
-                'func': lambda: print("Continuar Jogo")
+                'func': lambda: self.__game_state_manager.set_state('emap')
             },
             # {
             #     'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50),

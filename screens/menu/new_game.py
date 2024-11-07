@@ -29,7 +29,7 @@ class NewGameConfirmation(State):
         self.menu_options = [
             {
                 'label': Text('SIM', FontManager.fonts['Gamer'], 50),
-                'func': lambda: print('CONFIRMANDO')
+                'func': lambda: self.__game_state_manager.set_state('emap')
             },
             {
                 'label': Text('CANCELAR', FontManager.fonts['Gamer'], 50),
@@ -65,6 +65,10 @@ class NewGameConfirmation(State):
             self.selected_option += increment
 
     def run(self):
+        if not self.__execution_counter > 0:
+            self.on_first_execution()
+            self.__execution_counter += 1
+        
         keys = pygame.key.get_pressed()
 
         # Fazendo o texto de confirmação
@@ -72,7 +76,7 @@ class NewGameConfirmation(State):
         if SaveManager.save_exists():
             text_confirmation = 'Deseja sobrescrever seu progresso com um novo jogo?'
         else:
-            text_confirmation = 'Deseja mesmo criar um novo jogo?'
+            self.__game_state_manager.set_state('emap')
         text_object = Text(text_confirmation, FontManager.fonts['Gamer'], 60)
         text_object.rect.center = (
             self.__display.get_width()/2,
@@ -117,10 +121,6 @@ class NewGameConfirmation(State):
         
         self.__display.blit(self.cursor_icon, self.cursor_rect)
         text_object.draw(self.__display)
-
-        if not self.__execution_counter > 0:
-            self.on_first_execution()
-            self.__execution_counter += 1
 
     def on_last_execution(self):
         self.__execution_counter = 0
