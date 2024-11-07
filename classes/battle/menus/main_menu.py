@@ -8,6 +8,8 @@ from classes.battle.menus import BattleMenu
 
 from classes.battle.button import CombatButton
 
+from classes.player import Player
+
 class MainMenu(BattleMenu):
     def __init__(self, screen: pygame.Surface):
         self.__display = screen
