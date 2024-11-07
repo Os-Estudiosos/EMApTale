@@ -6,6 +6,7 @@ from config import *
 from classes.battle.button import CombatButton
 from classes.battle.container import BattleContainer
 from classes.battle.hp_container import HPContainer
+from classes.battle.battle_menu_manager import BattleMenuManager
 
 from classes.text.dynamic_text import DynamicText
 from classes.text.text import Text
@@ -97,8 +98,9 @@ class Combat(State):
         # Variável que gerencia o turno
         self.turn = 'player'  # "player" ou "boss"
 
-        # Para testar o texto
-        self.text_dynamic = DynamicText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel justo volutpat, consectetur lorem sed, sagittis purus. Etiam aliquet felis iaculis, malesuada eros nec, posuere odio. Morbi id commodo libero. Ut mi mi, malesuada et velit non, mollis sagittis ipsum.', FontManager.fonts['Gamer'], 10, 50)
+        # Variáveis relacionadas ao menu que do turno do player
+        self.battle_menu_manager = BattleMenuManager()
+        self.text_dynamic = DynamicText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel justo volutpat, consectetur lorem sed, sagittis purus. Etiam aliquet felis iaculis, malesuada eros nec, posuere odio. Morbi id commodo libero. Ut mi mi, malesuada et velit non, mollis sagittis ipsum.', FontManager.fonts['Gamer'], 20, 50)
     
 
     def move_cursor(self, increment: int):
