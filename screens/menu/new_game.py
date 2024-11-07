@@ -1,10 +1,12 @@
 import pygame
 import os
 from screens import State
+
 from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
+from config.savemanager import SaveManager
 
 from classes.text.text import Text
 
@@ -35,7 +37,7 @@ class NewGameConfirmation(State):
             }
         ]
         self.selected_option = 0  # Opção que está selecionada
-        self.option_measures = [500, 105]  # Medidas de cada Opção
+        self.option_measures = [220, 105]  # Medidas de cada Opção
         self.display_info = pygame.display.Info()  # Informações sobre a tela
 
         # Informações sobre o cursor que marca qual a opção selecionada
@@ -65,11 +67,23 @@ class NewGameConfirmation(State):
     def run(self):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_DOWN] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
+        # Fazendo o texto de confirmação
+        text_confirmation = ''
+        if SaveManager.save_exists():
+            text_confirmation = 'Deseja sobrescrever seu progresso com um novo jogo?'
+        else:
+            text_confirmation = 'Deseja mesmo criar um novo jogo?'
+        text_object = Text(text_confirmation, FontManager.fonts['Gamer'], 60)
+        text_object.rect.center = (
+            self.__display.get_width()/2,
+            self.__display.get_height()/2-60
+        )
+
+        if keys[pygame.K_RIGHT] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
             self.move_cursor(1)  # Movo uma opção pra baixo
             self.cursor_trying_to_move = True
             SoundManager.play_sound('select.wav')
-        elif keys[pygame.K_UP] and not self.cursor_trying_to_move:  # Se eu apertar para cima
+        elif keys[pygame.K_LEFT] and not self.cursor_trying_to_move:  # Se eu apertar para cima
             self.move_cursor(-1)  # Movo uma opção pra cima
             self.cursor_trying_to_move = True
             SoundManager.play_sound('select.wav')
@@ -81,27 +95,28 @@ class NewGameConfirmation(State):
         if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:
             self.entered_holding_confirm_button = False
         
-        if not keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
+        if not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             # Só deixo mover o cursor se eu soltar a tecla e apertar de novo
             self.cursor_trying_to_move = False
 
-        self.cursor_rect.center = (  # Mexo o centro do cursor
-            self.menu_options[self.selected_option]['label'].rect.center[0] + 300,  # Matemática para mexer o cursor
-            self.menu_options[self.selected_option]['label'].rect.center[1]  # Centralizando o cursor
-        )
+        # Ajustando o cursor
+        self.cursor_rect.topleft = self.menu_options[self.selected_option]['label'].rect.topright
 
         # Desenho cada uma das opções
         for i, option in enumerate(self.menu_options):
             # Matemática para centralizar as opções
             option['label'].rect.center = (
-                self.display_info.current_w/2,
-                (self.option_measures[1]/2) + (self.option_measures[1]*(i)) + (self.display_info.current_h-self.option_measures[1]*len(self.menu_options))/2,
+                # self.display_info.current_w/2,
+                # (self.option_measures[1]/2) + (self.option_measures[1]*(i)) + (self.display_info.current_h-self.option_measures[1]*len(self.menu_options))/2,
+                (self.option_measures[0]/2) + (self.option_measures[0]*(i)) + (self.display_info.current_w-self.option_measures[0]*len(self.menu_options))/2,
+                self.display_info.current_h/2,
             )
             
             # Desenhando o texto da opção
             option['label'].draw(self.__display)
         
         self.__display.blit(self.cursor_icon, self.cursor_rect)
+        text_object.draw(self.__display)
 
         if not self.__execution_counter > 0:
             self.on_first_execution()

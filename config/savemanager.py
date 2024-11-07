@@ -50,3 +50,8 @@ class SaveManager:
     @classmethod
     def save(cls):
         raise NotImplementedError
+    
+    @classmethod
+    def save_exists(cls) -> bool:
+        folder_path = cls.get_save_folder_path()
+        return os.path.exists(os.path.join(folder_path, 'save_file.json'))
