@@ -201,6 +201,9 @@ class Combat(State):
             
             if keys[pygame.K_u]:
                 self.player.apply_effect('inverse')
+
+            if keys[pygame.K_p]:
+                self.player.apply_effect('laugh')
             
             # Draws que são apenas no turno do boss
             self.player_group.draw(self.__display)

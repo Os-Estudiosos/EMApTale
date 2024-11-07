@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 from config import GET_PROJECT_PATH
 from utils import sign
 
@@ -71,6 +72,9 @@ class Heart(Player):
 
         if self.effect == 'inverse':  # Aplico efeito da inversa se tiver
             direction *= -1
+        
+        if self.effect == 'laugh':  # Aplico efeito da risada se tiver
+            direction = random.randint(1,)
 
         # Mexendo na colisão
         # Esse código detecta se um ponto na frente do player está saindo do retangulo, se sair, eu paro de mexer o player
