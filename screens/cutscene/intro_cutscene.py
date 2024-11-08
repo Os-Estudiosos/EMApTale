@@ -39,7 +39,7 @@ class IntroCutscene(State):
             letters_per_second=13,
             text_size=40,
             max_length=self.__display.get_width() - 40,
-            position=(20, self.__display.get_height() // 1.5)
+            position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6)
         )
         self.current_image = self.images[self.stage]
         self.wait_after_text = 2000 
@@ -58,7 +58,6 @@ class IntroCutscene(State):
             self.on_first_execution()
             self    .__execution_counter += 1
 
-        # Verificar se o número de textos e imagens está correto
         if len(self.texts) != len(self.images):
             raise TypeError("Quantidade diferente de imagens e textos")
 
@@ -79,7 +78,7 @@ class IntroCutscene(State):
                     letters_per_second=15,
                     text_size=40,
                     max_length=self.__display.get_width() - 40,
-                    position=(20, self.__display.get_height() // 1.5)  # Posição fixa do texto
+                    position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6)  # Posição fixa do texto
                 )
                 self.current_image = self.images[self.stage]
 
@@ -89,8 +88,8 @@ class IntroCutscene(State):
             screen_width, screen_height = self.__display.get_size()
             image_width, image_height = self.current_image.get_size()
 
-            # Redimensionar a imagem proporcionalmente (exemplo: 30% da largura da tela)
-            new_width = screen_width * 0.5  # 30% da largura da tela
+            # Redimensionar a imagem proporcionalmente
+            new_width = screen_width * 0.5  # 50% da largura da tela
             aspect_ratio = image_height / image_width  # Calcula a razão de aspecto original
             new_height = new_width * aspect_ratio  # Ajusta a altura proporcionalmente
 
@@ -99,13 +98,17 @@ class IntroCutscene(State):
 
             # Calcular a posição centralizada e levemente para cima
             x_pos = screen_width * 0.5 - new_width * 0.5  # Centraliza horizontalmente
-            y_pos = screen_height * 0.5 - new_height * 0.5 - screen_height * 0.2  # Centraliza verticalmente e sobe 10%
+            y_pos = screen_height * 0.5 - new_height * 0.5 - screen_height * 0.2  # Centraliza verticalmente e sobe 20%
 
             image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
             self.__display.blit(resized_image, image_rect)
 
+            # Ajustar o texto para que não ultrapasse a largura da imagem
+            text_max_width = new_width  # A largura máxima para o texto é a largura da imagem
+            self.current_text.max_length = int(text_max_width - 40)  # 40px de margem para o texto
             self.current_text.update()
-            self.current_text.draw(self.__display)
+            self.current_text.draw(self.__display)    
+
         else:
             self.__game_state_manager.set_state('emap')
 
@@ -132,7 +135,6 @@ class IntroCutscene(State):
     def name(self):
         return self.__name    
     
-
     @property
     def game_state_manager(self):
         return self.__game_state_manager
