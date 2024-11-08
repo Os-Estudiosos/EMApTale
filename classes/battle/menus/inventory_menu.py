@@ -59,43 +59,60 @@ class InventoryMenu(BattleMenu):
         self.selected_option = (self.selected_option+increment)%len(self.__options)
 
         self.page = math.floor(self.selected_option/(self.items_per_page))
+    
+    def on_first_execution(self):
+        keys = pygame.key.get_pressed()
+        self.runtime_counter += 1
+        if keys[pygame.K_z] or keys[pygame.K_RETURN]:
+            self.entered_pressing = True
 
     def update(self):
-        keys = pygame.key.get_pressed()
-
         if self.runtime_counter == 0:
-            self.runtime_counter += 1
-            self.entered_pressing = True if (keys[pygame.K_z] or keys[pygame.K_RETURN]) else False
+            self.on_first_execution()
 
-        self.cursor_rect.center = self.__options[self.selected_option]['text'].rect.center
-        self.cursor_rect.left = self.__options[self.selected_option]['text'].rect.right
+        keys = pygame.key.get_pressed()  # Pegando o dicinoário das teclas
 
-        if not self.trying_to_move_cursor:
-            if keys[pygame.K_DOWN]:
-                self.move_cursor(1)
-                self.trying_to_move_cursor = True
-                SoundManager.play_sound('select.wav')
-            if keys[pygame.K_UP]:
-                self.move_cursor(-1)
-                self.trying_to_move_cursor = True
-                SoundManager.play_sound('select.wav')
-            if keys[pygame.K_LEFT]:
-                self.move_cursor(-self.items_per_column)
-                self.trying_to_move_cursor = True
-                print(self.selected_option)
-            if keys[pygame.K_RIGHT]:
-                self.move_cursor(self.items_per_column)
-                self.trying_to_move_cursor = True
-                SoundManager.play_sound('select.wav')
-        
-        if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing:
-            self.__options[self.selected_option]['func']()
-            self.__options.pop(self.selected_option)
-            Player.inventory.remove_item(self.selected_option)
-        
-        if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
-            self.trying_to_move_cursor = False
+        # Ajustando o cursor
+        if len(self.__options) > 0:
+            self.cursor_rect.center = self.__options[self.selected_option]['text'].rect.center
+            self.cursor_rect.left = self.__options[self.selected_option]['text'].rect.right
 
+            # Movendo o cursor pelos itens do inventário
+            if not self.trying_to_move_cursor:
+                if keys[pygame.K_DOWN]:
+                    self.move_cursor(1)
+                    self.trying_to_move_cursor = True
+                    SoundManager.play_sound('select.wav')
+                if keys[pygame.K_UP]:
+                    self.move_cursor(-1)
+                    self.trying_to_move_cursor = True
+                    SoundManager.play_sound('select.wav')
+                if keys[pygame.K_LEFT]:
+                    self.move_cursor(-self.items_per_column)
+                    self.trying_to_move_cursor = True
+                    print(self.selected_option)
+                if keys[pygame.K_RIGHT]:
+                    self.move_cursor(self.items_per_column)
+                    self.trying_to_move_cursor = True
+                    SoundManager.play_sound('select.wav')
+            
+            # Selecionando um item
+            if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing:
+                self.__options[self.selected_option]['func']()
+                # print(self.__options[self.selected_option]['func'])
+                self.__options.pop(self.selected_option)
+                Player.inventory.remove_item(self.selected_option)
+                self.entered_pressing = True
+            
+            # Evitando que eu selecione vários itens ao mesmo tempo
+            if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:
+                self.entered_pressing = False
+            
+            # Evitando que eu mova vários itens ao mesmo tempo
+            if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
+                self.trying_to_move_cursor = False
+
+        # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
             BattleMenuManager.go_back()
     
@@ -113,7 +130,8 @@ class InventoryMenu(BattleMenu):
 
             self.__options[(i+self.items_per_page*self.page)]['text'].draw(self.display)
         
-        self.display.blit(self.cursor, self.cursor_rect)
+        if len(self.__options) > 0:
+            self.display.blit(self.cursor, self.cursor_rect)
     
     @property
     def options(self):

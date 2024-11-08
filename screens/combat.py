@@ -87,7 +87,7 @@ class Combat(State):
         text_player_name.rect.y = self.main_menu.options[0].rect.y - 1.5*text_player_name.rect.height
 
         # Ajustando o HP do personagem (Na tela)
-        hp_container = HPContainer(self.player)
+        hp_container = HPContainer()
         hp_container.inner_rect.center = [
             self.__display.get_width()/2,
             text_player_name.rect.centery

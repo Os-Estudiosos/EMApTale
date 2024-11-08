@@ -15,4 +15,4 @@ class Item:
         if self.type == 'miscellaneous':
             match self.effect:
                 case 'heal':
-                    return lambda: print("Ta saindo")
+                    return lambda: Player.heal(self.value)

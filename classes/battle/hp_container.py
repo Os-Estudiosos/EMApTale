@@ -6,20 +6,20 @@ from classes.player import Player
 from classes.text.text import Text
 
 class HPContainer:
-    def __init__(self, player: Player):
+    def __init__(self):
         self.out_color = pygame.Color(255, 255, 0)
         self.inner_color = pygame.Color(255, 0, 0)
 
         self.inner_rect = pygame.Rect(
             0,0,
-            player.max_life*10,
+            Player.max_life*10,
             30
         )
 
         self.out_rect = self.inner_rect.copy()
-        self.out_rect.width *= (player.life/player.max_life)
+        self.out_rect.width *= (Player.life/Player.max_life)
 
-        self.life_text = Text(f'{player.life}/{player.max_life}', FontManager.fonts['Gamer'], 45)
+        self.life_text = Text(f'{Player.life}/{Player.max_life}', FontManager.fonts['Gamer'], 45)
     
     def update(self):
         self.out_rect.topleft = self.inner_rect.topleft
