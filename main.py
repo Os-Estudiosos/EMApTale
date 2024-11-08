@@ -85,6 +85,8 @@ class Game:
                                 "name": "Yuri Saporito",
                             }
                         })
+                    if event.key == pygame.K_SPACE:
+                        Player.take_damage(10)
             
             game.display.fill((0, 0, 0))
 

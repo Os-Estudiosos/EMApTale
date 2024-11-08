@@ -31,13 +31,14 @@ class InventoryMenu(BattleMenu):
 
         # Adicionando os itens como minhas opções
         for i, item in enumerate(Player.inventory):
-            self.__options.append({
-                'text': Text(f'{i}.{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
-                'func': lambda: print(item.name)
-            })
+            if item.type == 'miscellaneous':
+                self.__options.append({
+                    'text': Text(item.name, FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                    'func': item.func
+                })
         
         self.page = 0
-        self.items_per_column = 0
+        self.items_per_column = 100
 
         for i, opt in enumerate(self.__options):
             if opt['text'].rect.height*i > self.container.inner_rect.height:
@@ -45,6 +46,9 @@ class InventoryMenu(BattleMenu):
                 break
         
         self.items_per_page = self.items_per_column * 2
+
+        self.runtime_counter = 0  # Previnir que entre clicando nos itens
+        self.entered_pressing = False
     
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
@@ -58,6 +62,10 @@ class InventoryMenu(BattleMenu):
 
     def update(self):
         keys = pygame.key.get_pressed()
+
+        if self.runtime_counter == 0:
+            self.runtime_counter += 1
+            self.entered_pressing = True if (keys[pygame.K_z] or keys[pygame.K_RETURN]) else False
 
         self.cursor_rect.center = self.__options[self.selected_option]['text'].rect.center
         self.cursor_rect.left = self.__options[self.selected_option]['text'].rect.right
@@ -79,6 +87,11 @@ class InventoryMenu(BattleMenu):
                 self.move_cursor(self.items_per_column)
                 self.trying_to_move_cursor = True
                 SoundManager.play_sound('select.wav')
+        
+        if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing:
+            self.__options[self.selected_option]['func']()
+            self.__options.pop(self.selected_option)
+            Player.inventory.remove_item(self.selected_option)
         
         if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
             self.trying_to_move_cursor = False

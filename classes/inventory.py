@@ -1,21 +1,17 @@
 
-class Item:
-    def __init__(self, properties: dict):
-        self.__dict__ = properties
-
-
 class Inventory:
     def __init__(self, items: list = []):
         self.items = []
         for item in items:
             self.add_item(item)
     
-    def add_item(self, item: dict|Item):
+    def add_item(self, item):
         """Método que adiciona um item no inventário
 
         Args:
             item (dict|Item): Dicionário com as informações do item ou uma instância de um item
         """
+        from classes.item import Item
         if isinstance(item, dict):
             self.items.append(Item(item))
         elif isinstance(item, Item):

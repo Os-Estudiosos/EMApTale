@@ -77,6 +77,10 @@ class Start(State):
             self.selected_option += increment
 
     def run(self):
+        if not self.__execution_counter > 0:
+            self.on_first_execution()
+            self.__execution_counter += 1
+        
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_DOWN] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
@@ -116,10 +120,6 @@ class Start(State):
             option['label'].draw(self.__display)
         
         self.__display.blit(self.cursor_icon, self.cursor_rect)
-
-        if not self.__execution_counter > 0:
-            self.on_first_execution()
-            self.__execution_counter += 1
 
     def on_last_execution(self):
         self.__execution_counter = 0

@@ -48,4 +48,7 @@ class Player(pygame.sprite.Sprite):
         Args:
             value (int): Valor da cura
         """
-        cls.life += value
+        if cls.life + value >= cls.max_life:
+            cls.life = cls.max_life
+        else:
+            cls.life += value
