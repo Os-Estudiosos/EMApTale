@@ -1,8 +1,9 @@
 import pygame
 import os
-import random
+import numpy as np
 from config import GET_PROJECT_PATH
 from utils import sign
+import random
 
 from classes.battle.container import BattleContainer
 from classes.player import Player
@@ -37,6 +38,10 @@ class Heart(Player):
             'prisioned': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'soledad-heart.png')),
                 1.3
+            ),
+            'vanished': pygame.transform.scale_by(
+                pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'pinho-heart.png')),
+                1.3
             )
         }
 
@@ -49,10 +54,13 @@ class Heart(Player):
         )
         
         self.container: BattleContainer = container
-
         self.effect = 'normal'
-
         self.speed = 5
+        self.delay_time = 2000
+        self.next_position_time = pygame.time.get_ticks() + self.delay_time
+        self.circle_drawn = False
+        self.next_x = self.rect.x
+        self.next_y = self.rect.y
     
     def apply_effect(self, effect: str):
         self.image = self.sprites[effect]
@@ -61,20 +69,95 @@ class Heart(Player):
     def update(self, *args, **kwargs):
         keys = pygame.key.get_pressed()
 
-        # # Movimentação
+        # Movimentação
         direction = pygame.math.Vector2(  # Faço um vetor que representa a direção que estou me movendo
             sign(keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]),
             sign(keys[pygame.K_DOWN] - keys[pygame.K_UP])
         )
-
-        if direction.length() != 0:  # Normalizo para andar sempre na mesma velocidade
+        
+        # Normalizo para andar sempre na mesma velocidade
+        if direction.length() != 0:  
             direction = direction.normalize()
 
-        if self.effect == 'inverse':  # Aplico efeito da inversa se tiver
-            direction *= -1
+        # Função para o efeito de inversa
+        def inverse(self):
+            nonlocal direction
+            direction *=-1
+
+        # Função para o efeito de risada
+        def laugh(self):
+            nonlocal direction
+
+            # Crio um vetor aleatório
+            random_vector = np.random.uniform(-1, 1, 2)
+            module = np.linalg.norm(random_vector)
+            random_vector = random_vector/module
+
+            # Mudo a direção causando uma pertubação
+            direction.x += random_vector[0]*random.random()/2*self.speed
+            direction.y += random_vector[1]*random.random()/2*self.speed
+
+        # Função para o efeito de sumiço
+        def vanished(self):
+            pass
+
+        # Função para o efeito de confusão
+        def confused(self):
+
+            # Armazeno o tempo passado do jogo
+            actual_time = pygame.time.get_ticks()
+
+            # Se já passou o tempo para desenhar o círculo
+            if actual_time >= self.next_position_time-500 and not self.circle_drawn:  # Desenha o círculo antes de mover
+                # Calcula a próxima posição aleatória onde o personagem vai aparecer
+                self.next_x = random.randint(
+                    self.container.inner_rect.left + self.rect.width,
+                    self.container.inner_rect.right - self.rect.width
+                )
+                self.next_y = random.randint(
+                    self.container.inner_rect.top + self.rect.height,
+                    self.container.inner_rect.bottom - self.rect.height
+                )
+
+                self.circle_drawn = True
+
+            # Desenha o círculo na posição futura
+            if self.circle_drawn and actual_time < self.next_position_time:
+                pygame.draw.circle(
+                    pygame.display.get_surface(),
+                    (255, 165, 0),
+                    (self.next_x + self.rect.width // 2, self.next_y + self.rect.height // 2),
+                    5
+                )
+
+            # Verifica se é o momento de atualizar a posição do personagem
+            if actual_time >= self.next_position_time:
+
+                # Move o personagem para a próxima posição
+                self.rect.x = self.next_x
+                self.rect.y = self.next_y
+                # Define o próximo tempo de atualização da posição
+                self.next_position_time = actual_time + self.delay_time
+                self.circle_drawn = False
+
+        def prisioned(self):
+            pass
+
+        # Aplicando os efeitos 
+        if self.effect == 'inverse':
+            inverse(self)
+
+        if self.effect == 'laugh':
+            laugh(self)
         
-        if self.effect == 'laugh':  # Aplico efeito da risada se tiver
-            direction = random.randint(1,)
+        if self.effect == 'vanished':
+            vanished(self)
+            
+        if self.effect == 'confused':
+            confused(self)
+
+        if self.effect == 'prisioned':
+            prisioned(self)
 
         # Mexendo na colisão
         # Esse código detecta se um ponto na frente do player está saindo do retangulo, se sair, eu paro de mexer o player

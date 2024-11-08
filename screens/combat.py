@@ -200,10 +200,7 @@ class Combat(State):
                 btn.activated = False
             
             if keys[pygame.K_u]:
-                self.player.apply_effect('inverse')
-
-            if keys[pygame.K_p]:
-                self.player.apply_effect('laugh')
+                self.player.apply_effect('prisioned')
             
             # Draws que são apenas no turno do boss
             self.player_group.draw(self.__display)
