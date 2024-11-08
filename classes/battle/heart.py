@@ -79,34 +79,28 @@ class Heart(Player):
         if direction.length() != 0:  
             direction = direction.normalize()
 
-        # Função para o efeito de inversa
-        def inverse(self):
-            nonlocal direction
+        # # Aplicando os efeitos 
+
+        if self.effect == 'inverse':
+            # Inverto as direções
             direction *=-1
 
-        # Função para o efeito de risada
-        def laugh(self):
-            nonlocal direction
-
+        if self.effect == 'laugh':
             # Crio um vetor aleatório
             random_vector = np.random.uniform(-1, 1, 2)
             module = np.linalg.norm(random_vector)
             random_vector = random_vector/module
-
             # Mudo a direção causando uma pertubação
             direction.x += random_vector[0]*random.random()/2*self.speed
             direction.y += random_vector[1]*random.random()/2*self.speed
-
-        # Função para o efeito de sumiço
-        def vanished(self):
+        
+        if self.effect == 'vanished':
+            # Apenas efeito visual
             pass
-
-        # Função para o efeito de confusão
-        def confused(self):
-
+            
+        if self.effect == 'confused':
             # Armazeno o tempo passado do jogo
             actual_time = pygame.time.get_ticks()
-
             # Se já passou o tempo para desenhar o círculo
             if actual_time >= self.next_position_time-500 and not self.circle_drawn:  # Desenha o círculo antes de mover
                 # Calcula a próxima posição aleatória onde o personagem vai aparecer
@@ -118,9 +112,7 @@ class Heart(Player):
                     self.container.inner_rect.top + self.rect.height,
                     self.container.inner_rect.bottom - self.rect.height
                 )
-
                 self.circle_drawn = True
-
             # Desenha o círculo na posição futura
             if self.circle_drawn and actual_time < self.next_position_time:
                 pygame.draw.circle(
@@ -129,10 +121,8 @@ class Heart(Player):
                     (self.next_x + self.rect.width // 2, self.next_y + self.rect.height // 2),
                     5
                 )
-
             # Verifica se é o momento de atualizar a posição do personagem
             if actual_time >= self.next_position_time:
-
                 # Move o personagem para a próxima posição
                 self.rect.x = self.next_x
                 self.rect.y = self.next_y
@@ -140,24 +130,17 @@ class Heart(Player):
                 self.next_position_time = actual_time + self.delay_time
                 self.circle_drawn = False
 
-        def prisioned(self):
-            pass
-
-        # Aplicando os efeitos 
-        if self.effect == 'inverse':
-            inverse(self)
-
-        if self.effect == 'laugh':
-            laugh(self)
-        
-        if self.effect == 'vanished':
-            vanished(self)
-            
-        if self.effect == 'confused':
-            confused(self)
-
         if self.effect == 'prisioned':
-            prisioned(self)
+            lines = pygame.draw.lines(
+                surface=pygame.display.get_surface(), 
+                color=(255,255,255),
+                points=[(self.container.inner_rect.centerx-100, self.container.inner_rect.centery),
+                        (self.container.inner_rect.centerx+100, self.container.inner_rect.centery),
+                        (self.container.inner_rect.centerx + 100, self.container.inner_rect.centery + 100),
+                        (self.container.inner_rect.centerx + 100, self.container.inner_rect.centery)], 
+                width=3,
+                closed=False
+                )
 
         # Mexendo na colisão
         # Esse código detecta se um ponto na frente do player está saindo do retangulo, se sair, eu paro de mexer o player
