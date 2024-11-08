@@ -57,7 +57,7 @@ class Game:
         self.Combat = Combat('combat', self.display, self.game_state_manager)
         self.EMAp = EMAp('emap', self.display, self.game_state_manager)
 
-        # Cenas do Brunão
+        # Cenas das Cutscenes
         self.IntroCutscene = IntroCutscene('intro_cutscene', self.display, self.game_state_manager)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
@@ -67,7 +67,8 @@ class Game:
             'new_game_confirmation': self.NewGameConfirmation,
             # 'options': self.Options,
 
-            'intro_cutscene': self.IntroCutscene, # Teste Brunão
+            # Cenas das Cutscenes
+            'intro_cutscene': self.IntroCutscene,
 
             # Cenas genéricas
             'combat': self.Combat,

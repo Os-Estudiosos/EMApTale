@@ -2,7 +2,7 @@ import pygame
 from config import FPS
 from config.soundmanager import SoundManager
 
-class DynamicText:
+class CDynamicText:
     """Classe mostra o texto dinamicamente, letra por letra."""
     def __init__(
         self,
@@ -50,7 +50,7 @@ class DynamicText:
             if self.text[self.letter_counter] != ' ':
                 #SoundManager.stop_sound('text.wav')
                 #SoundManager.play_sound('text.wav')
-                ...
+                ... 
                 
             self.counter = 0
             self.progressive_text += self.text[self.letter_counter]
