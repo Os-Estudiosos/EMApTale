@@ -16,6 +16,7 @@ from screens.menu.new_game import NewGameConfirmation
 
 from screens.combat import Combat
 from screens.emap import EMAp
+from screens.cutscene.intro_cutscene import IntroCutscene # Teste Brunão
 
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
@@ -56,6 +57,9 @@ class Game:
         self.Combat = Combat('combat', self.display, self.game_state_manager)
         self.EMAp = EMAp('emap', self.display, self.game_state_manager)
 
+        # Cenas do Brunão
+        self.IntroCutscene = IntroCutscene('intro_cutscene', self.display, self.game_state_manager)
+
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         self.game_state_manager.states = {
             # Cenas do menu
@@ -63,10 +67,15 @@ class Game:
             'new_game_confirmation': self.NewGameConfirmation,
             # 'options': self.Options,
 
+            'intro_cutscene': self.IntroCutscene, # Teste Brunão
+
             # Cenas genéricas
             'combat': self.Combat,
-            'emap': self.EMAp
+            'emap': self.EMAp,
+
         }
+
+
 
         pygame.mouse.set_visible(False)
 

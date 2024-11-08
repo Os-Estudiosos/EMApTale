@@ -1,57 +1,81 @@
 import pygame
 from config import FPS
-
 from config.soundmanager import SoundManager
 
-
-class DynamicText(pygame.sprite.Sprite):
-    """Classe mostra o texto dinamicamente, letra por letra
-    """
+class DynamicText:
+    """Classe mostra o texto dinamicamente, letra por letra."""
     def __init__(
         self,
         text: str,
         font: str,
         letters_per_second: int,
-        size: int = 12,
-        groups: list[pygame.sprite.Sprite] = [],
-        positon: tuple[float] = (0,0),
-        color: pygame.Color = (255,255,255)
+        text_size: int = 12,
+        max_length: float = 0,
+        position: tuple[float] = (0, 0),
+        color: pygame.Color = (255, 255, 255)
     ):
         """Inicialização da classe
 
         Args:
             text (str): Qual o texto deve ser exibido
             font (str): O nome da fonte que vai ser usada (Olhar no gerenciador de fontes)
-            size (int, optional): Tamanho da fonte. Defaults to 12.
-            color (pygame.Color, optional): Cor da fonte. Defaults to (255, 255, 255).
             letters_per_second (int): Quantas letras aparecem por segundo
+            text_size (int, optional): Tamanho da fonte. Defaults to 12.
+            max_length (float, optional): Largura máxima do texto. Defaults to 0.
+            position (tuple, optional): Posição do texto na tela. Defaults to (0, 0).
+            color (pygame.Color, optional): Cor da fonte. Defaults to (255, 255, 255).
         """
-        super().__init__(*groups)
+        self.text = text
+        self.progressive_text = ''
+        self.font = pygame.font.Font(font, text_size)
+        self.max_length = max_length
+        self.position = position
+        self.color = color
 
-        self.text = text  # Texto
-        self.progressive_text = ''  # O texto que vai ser exibido
-        self.letter_counter = 0  # Qual a próxima letra a ser adicionada
-        self.font = pygame.font.Font(font, size) # Fonte que vai ser usada
-        self.color = color  # Cor da fonte
-        self.image: pygame.Surface = self.font.render(self.progressive_text, True, self.color)  # Imagem do texto
-        self.rect = self.image.get_rect()  # Retângulo da imagem
-        self.position = positon
+        self.rows = [self.font.render(self.progressive_text, True, self.color)]
+        self.wich_row_to_update = 0
+        self.letter_counter = 0
 
-        self.rect.x = self.position[0]
-        self.rect.y = self.position[1]
+        self.counter = 0
+        self.letter_rate = FPS / letters_per_second
 
-        self.counter = 0  # Variável que controla quando uma nova letra vai ser adicionada
-        self.letter_rate = FPS/letters_per_second  # Frequência de letras por segundo
+        self.finished = False  # Indica se terminou de escrever o texto
     
-    def update(self, *args, **kwargs):
-        self.counter += 1  # Aumenta a contagem
+    def update(self):
+        if self.finished:
+            return
+
+        self.counter += 1
+        if self.counter >= self.letter_rate and self.letter_counter < len(self.text):
+            if self.text[self.letter_counter] != ' ':
+                #SoundManager.stop_sound('text.wav')
+                #SoundManager.play_sound('text.wav')
+                ...
+                
+            self.counter = 0
+            self.progressive_text += self.text[self.letter_counter]
+            new_text = self.font.render(self.progressive_text, True, self.color)
+
+            if new_text.get_rect().width >= self.max_length and self.max_length > 0:
+                self.progressive_text = self.text[self.letter_counter]
+                self.rows.append(self.font.render(self.progressive_text, True, self.color))
+                self.wich_row_to_update += 1
+                new_text = self.font.render(self.progressive_text, True, self.color)
+
+            self.rows[self.wich_row_to_update] = new_text
+            self.letter_counter += 1
+
+            # Verificar se terminou de escrever o texto
+            if self.letter_counter >= len(self.text):
+                self.finished = True
         
-        # Se a montagem for maior que a frequência das letras e o contador de letras não for maior que a quantidade de letras
-        if self.counter >= self.letter_rate and not self.letter_counter >= len(self.text):
-            self.counter = 0  # Zera o contador
-            self.progressive_text += self.text[self.letter_counter]  # Altero o texto
-            self.letter_counter += 1  # Aumento o contador da letra
-            self.image = self.font.render(self.progressive_text, True, self.color)  # Mudo a imagem do texto
-            self.rect = self.image.get_rect()
-            self.rect.x = self.position[0]
-            self.rect.y = self.position[1]
+    def draw(self, screen: pygame.Surface):
+        for i, text in enumerate(self.rows):
+            text_rect = text.get_rect()
+            text_rect.x = self.position[0]
+            text_rect.y = self.position[1] + i * text_rect.height
+            screen.blit(text, text_rect)
+    
+    @property
+    def is_finished(self):
+        return self.finished

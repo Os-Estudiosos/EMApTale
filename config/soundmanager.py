@@ -52,10 +52,10 @@ class SoundManager:
     
     @classmethod
     def play_sound(cls, sound_name: str):
-        """Tocar um son pelo nome passado
+        """Tocar um som pelo nome passado
 
         Args:
-            sound_name (str): Nome do arquivo que deve ser tocasdo
+            sound_name (str): Nome do arquivo que deve ser tocado
         """
         cls.audios[sound_name].play()
     
