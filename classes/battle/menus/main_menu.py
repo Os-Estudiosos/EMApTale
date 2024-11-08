@@ -14,11 +14,12 @@ class MainMenu(BattleMenu):
     def __init__(self, screen: pygame.Surface):
         self.__display = screen
 
-        # Carrgando o sprite do cursor
+        # Carregando o sprite do cursor
         self.cursor = pygame.transform.scale_by(
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')),
             1.8
         )
+        self.cursor_rect = self.cursor.get_rect()
 
         self.buttons_group = pygame.sprite.Group()  # Grupo dos botões
 
@@ -29,7 +30,6 @@ class MainMenu(BattleMenu):
                 'fight',
                 lambda: print('Lutar'),
                 self.__display,
-                self.cursor,
                 [ self.buttons_group ],
                 True
             ),
@@ -37,21 +37,18 @@ class MainMenu(BattleMenu):
                 'act',
                 lambda: print('Agir'),
                 self.__display,
-                self.cursor,
                 [ self.buttons_group ],
             ),
             CombatButton(
                 'item',
                 lambda: BattleMenuManager.change_active_menu('InventoryMenu'),
                 self.__display,
-                self.cursor,
                 [ self.buttons_group ],
             ),
             CombatButton(
                 'mercy',
                 lambda: print('Piedade'),
                 self.__display,
-                self.cursor,
                 [ self.buttons_group ],
             ),
         ]
@@ -84,9 +81,13 @@ class MainMenu(BattleMenu):
 
     def update(self):
         keys = pygame.key.get_pressed()
-        
-        self.buttons_group.update()
-        
+
+        # Alterar lugar onde o cursor está sendo desenhado posterioremente
+        self.cursor_rect.center = (
+            self.__options[self.selected_option].rect.centerx - 70,
+            self.__options[self.selected_option].rect.centery
+        )
+
         # ============ CÓDIGO RELACIONADO AO CURSOR ============
         if BattleMenuManager.active_menu  == self.__class__.__name__:
             # Mexendo cursor
@@ -107,6 +108,9 @@ class MainMenu(BattleMenu):
     
     def draw(self):
         self.buttons_group.draw(self.__display)
+
+        if BattleMenuManager.active_menu  == self.__class__.__name__:
+            self.display.blit(self.cursor, self.cursor_rect)
 
     @property
     def options(self):
