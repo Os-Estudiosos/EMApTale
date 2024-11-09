@@ -21,7 +21,7 @@ class SoundManager:
             start (int, float): Momento no tempo em que a música é tocada. Defaults to 0.
             fade_ms (int, optional): Em quantos milisegundos a música vai se esvair até o volume 0. Defaults to 0.
         """
-        pygame.mixer.music.unload()  # 
+        pygame.mixer.music.unload()  
         pygame.mixer.music.load(file)
         pygame.mixer.music.play(loop, start, fade_ms)
     

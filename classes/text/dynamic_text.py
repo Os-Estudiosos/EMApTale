@@ -48,9 +48,8 @@ class DynamicText:
         self.counter += 1
         if self.counter >= self.letter_rate and self.letter_counter < len(self.text):
             if self.text[self.letter_counter] != ' ':
-                #SoundManager.stop_sound('text.wav')
-                #SoundManager.play_sound('text.wav')
-                ...
+                SoundManager.play_sound('text.wav')
+                
                 
             self.counter = 0
             self.progressive_text += self.text[self.letter_counter]
