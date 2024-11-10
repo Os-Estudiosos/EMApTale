@@ -58,6 +58,12 @@ class SoundManager:
             sound_name (str): Nome do arquivo que deve ser tocado
         """
         cls.audios[sound_name].play()
+
+    @staticmethod
+    def stop_sound():
+        """Paro a música
+        """
+        pygame.mixer.Sound.stop()
     
     @staticmethod
     def stop_music():
