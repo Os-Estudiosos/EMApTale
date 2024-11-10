@@ -74,7 +74,7 @@ class InventoryMenu(BattleMenu):
     def on_first_execution(self):
         keys = pygame.key.get_pressed()
         self.runtime_counter += 1
-        self.no_items_text.restart()
+        self.no_items_text.restart()  # Reinicio o texto de não ter item no inventário
         if keys[pygame.K_z] or keys[pygame.K_RETURN]:
             self.entered_pressing = True
 
