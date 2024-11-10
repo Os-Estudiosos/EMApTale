@@ -44,7 +44,6 @@ class SaveManager:
         try:
             with open(os.path.join(save_path, f'save_file.json'), 'r') as save_file:
                 cls.loaded_save = json.load(save_file)
-                print("Jogo carregado com sucesso")
         except FileNotFoundError as err:
             raise FileNotFoundError("Este erro não deveria acontecer, pois o player conseguiu pedir um slot que não existe") from err
     

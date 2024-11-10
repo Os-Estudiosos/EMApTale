@@ -83,6 +83,7 @@ class Combat(State):
     def on_first_execution(self):
         # Limpando os sons
         SoundManager.stop_music()
+        self.act_menu.options = self.__variables['enemy']['act']
 
     def run(self):
         # Inicio do ciclo de vida da cena

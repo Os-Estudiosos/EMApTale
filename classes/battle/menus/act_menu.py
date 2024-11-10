@@ -52,7 +52,7 @@ class ActMenu(BattleMenu):
         keys = pygame.key.get_pressed()  # Pegando o dicinoário das teclas
 
         # ====== CÓDIGO AQUI ======
-        print("Ta entrando aqui")
+        print(self.__options)
 
         # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
@@ -64,3 +64,7 @@ class ActMenu(BattleMenu):
     @property
     def options(self):
         return self.__options
+
+    @options.setter
+    def options(self, value: list[dict]):
+        self.__options = value

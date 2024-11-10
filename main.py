@@ -1,5 +1,6 @@
 import pygame
 import os
+import json
 
 from config import *
 from config.soundmanager import SoundManager
@@ -80,11 +81,11 @@ class Game:
                     if event.key == pygame.K_1:
                         self.game_state_manager.set_state('start')
                     if event.key == pygame.K_2:
-                        self.game_state_manager.set_state('combat', {
-                            "enemy": {
-                                "name": "Yuri Saporito",
-                            }
-                        })
+                        with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json')) as file:
+                            yuri = json.load(file)
+                            self.game_state_manager.set_state('combat', {
+                                "enemy": yuri
+                            })
                     if event.key == pygame.K_SPACE:
                         Player.take_damage(10)
             
