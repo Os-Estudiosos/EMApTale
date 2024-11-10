@@ -10,6 +10,8 @@ from classes.battle.container import BattleContainer
 from classes.battle.menus import BattleMenu
 from classes.battle.menus.battle_menu_manager import BattleMenuManager
 
+from classes.text.dynamic_text import DynamicText
+
 class MercyMenu(BattleMenu):
     def __init__(self, battle_container: BattleContainer):
         self.__options: list[dict] = []  # Lista de opções
@@ -28,6 +30,14 @@ class MercyMenu(BattleMenu):
 
         self.runtime_counter = 0  # Previnir que entre clicando nos itens
         self.entered_pressing = False
+
+        self.text_to_show = DynamicText(
+            'Piedade não é uma opção',
+            FontManager.fonts['Gamer'],
+            10,
+            int((450*100)/self.display.get_height()),
+            self.container.inner_rect.width
+        )
     
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
@@ -52,14 +62,18 @@ class MercyMenu(BattleMenu):
         keys = pygame.key.get_pressed()  # Pegando o dicinoário das teclas
 
         # ====== CÓDIGO AQUI ======
-        print("Ta entrando aqui")
+        self.text_to_show.position = (
+            self.container.inner_rect.x+10,
+            self.container.inner_rect.y+10
+        )
+        self.text_to_show.update()
 
         # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
             BattleMenuManager.go_back()
     
     def draw(self):
-        ...
+        self.text_to_show.draw(self.display)
     
     @property
     def options(self):

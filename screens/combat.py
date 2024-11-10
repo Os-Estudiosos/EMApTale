@@ -66,11 +66,11 @@ class Combat(State):
         # self.battle_menu_manager = BattleMenuManager()
 
         # Definindo todos os menus
-        self.inventory_menu = InventoryMenu(self.battle_container)
         self.main_menu = MainMenu(self.__display)
-        self.act_menu = ActMenu(self.__display)
-        self.fight_menu = FightMenu(self.__display)
-        self.mercy_menu = MercyMenu(self.__display)
+        self.inventory_menu = InventoryMenu(self.battle_container)
+        self.act_menu = ActMenu(self.battle_container)
+        self.fight_menu = FightMenu(self.battle_container)
+        self.mercy_menu = MercyMenu(self.battle_container)
 
         BattleMenuManager.menus = {
             f'{self.main_menu.__class__.__name__}': self.main_menu,

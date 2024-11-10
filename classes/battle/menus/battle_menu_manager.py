@@ -1,4 +1,4 @@
-import pygame
+# import pygame
 
 class BattleMenuManager:
     active_menu = 'MainMenu'
