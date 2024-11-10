@@ -10,6 +10,9 @@ from classes.battle.menus.battle_menu_manager import BattleMenuManager
 
 from classes.battle.menus.main_menu import MainMenu
 from classes.battle.menus.inventory_menu import InventoryMenu
+from classes.battle.menus.act_menu import ActMenu
+from classes.battle.menus.fight_menu import FightMenu
+from classes.battle.menus.mercy_menu import MercyMenu
 
 from classes.text.dynamic_text import DynamicText
 from classes.text.text import Text
@@ -65,10 +68,16 @@ class Combat(State):
         # Definindo todos os menus
         self.inventory_menu = InventoryMenu(self.battle_container)
         self.main_menu = MainMenu(self.__display)
+        self.act_menu = ActMenu(self.__display)
+        self.fight_menu = FightMenu(self.__display)
+        self.mercy_menu = MercyMenu(self.__display)
 
         BattleMenuManager.menus = {
             f'{self.main_menu.__class__.__name__}': self.main_menu,
-            f'{self.inventory_menu.__class__.__name__}': self.inventory_menu
+            f'{self.inventory_menu.__class__.__name__}': self.inventory_menu,
+            f'{self.act_menu.__class__.__name__}': self.act_menu,
+            f'{self.fight_menu.__class__.__name__}': self.fight_menu,
+            f'{self.mercy_menu.__class__.__name__}': self.mercy_menu,
         }
 
     def on_first_execution(self):

@@ -28,14 +28,14 @@ class MainMenu(BattleMenu):
         self.__options: list[CombatButton] = [  # Lista com cada botão
             CombatButton(
                 'fight',
-                lambda: print('Lutar'),
+                lambda: BattleMenuManager.change_active_menu('FightMenu'),
                 self.__display,
                 [ self.buttons_group ],
                 True
             ),
             CombatButton(
                 'act',
-                lambda: print('Agir'),
+                lambda: BattleMenuManager.change_active_menu('ActMenu'),
                 self.__display,
                 [ self.buttons_group ],
             ),
@@ -47,7 +47,7 @@ class MainMenu(BattleMenu):
             ),
             CombatButton(
                 'mercy',
-                lambda: print('Piedade'),
+                lambda: BattleMenuManager.change_active_menu('MercyMenu'),
                 self.__display,
                 [ self.buttons_group ],
             ),
