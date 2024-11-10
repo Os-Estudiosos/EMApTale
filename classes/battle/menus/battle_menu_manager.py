@@ -10,6 +10,9 @@ class BattleMenuManager:
         if menu_name in cls.menus.keys():
             cls.previous_menu = cls.active_menu
             cls.active_menu = cls.menus[menu_name]
+
+            if 'runtime_counter' in vars(cls.menus[menu_name]).keys():
+                cls.menus[menu_name].runtime_counter = 0
     
     @classmethod
     def go_back(cls):

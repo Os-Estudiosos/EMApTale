@@ -12,6 +12,7 @@ from classes.battle.menus.battle_menu_manager import BattleMenuManager
 
 from classes.player import Player
 from classes.text.text import Text
+from classes.text.dynamic_text import DynamicText
 
 class InventoryMenu(BattleMenu):
     def __init__(self, battle_container: BattleContainer):
@@ -49,6 +50,19 @@ class InventoryMenu(BattleMenu):
 
         self.runtime_counter = 0  # Previnir que entre clicando nos itens
         self.entered_pressing = False
+
+        self.no_items_text = DynamicText(
+            'Você não tem itens no inventário',
+            FontManager.fonts['Gamer'],
+            20,
+            int((450*100)/self.display.get_height()),
+            self.container.inner_rect.width,
+            (
+                self.container.inner_rect.x,
+                self.container.inner_rect.y,
+            ),
+            sound=False
+        )
     
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
@@ -74,8 +88,8 @@ class InventoryMenu(BattleMenu):
 
         # Ajustando o cursor
         if len(self.__options) > 0:
-            self.cursor_rect.center = self.__options[self.selected_option]['text'].rect.center
-            self.cursor_rect.left = self.__options[self.selected_option]['text'].rect.right
+            self.cursor_rect.center = self.__options[self.selected_option%len(self.__options)]['text'].rect.center
+            self.cursor_rect.left = self.__options[self.selected_option%len(self.__options)]['text'].rect.right
 
             # Movendo o cursor pelos itens do inventário
             if not self.trying_to_move_cursor:
@@ -97,7 +111,7 @@ class InventoryMenu(BattleMenu):
                     SoundManager.play_sound('select.wav')
             
             # Selecionando um item
-            if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing:
+            if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing and 0 <= self.selected_option < len(self.__options):
                 self.__options[self.selected_option]['func']()
                 # print(self.__options[self.selected_option]['func'])
                 self.__options.pop(self.selected_option)
@@ -111,6 +125,9 @@ class InventoryMenu(BattleMenu):
             # Evitando que eu mova vários itens ao mesmo tempo
             if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
                 self.trying_to_move_cursor = False
+        # else:
+        #     self.no_items_text.update()
+        #     self.no_items_text.draw(self.display)
 
         # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
