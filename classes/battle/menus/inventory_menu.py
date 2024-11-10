@@ -57,11 +57,8 @@ class InventoryMenu(BattleMenu):
             20,
             int((450*100)/self.display.get_height()),
             self.container.inner_rect.width,
-            (
-                self.container.inner_rect.x,
-                self.container.inner_rect.y,
-            ),
-            sound=False
+            (0,0),
+            sound='text.wav'
         )
     
     def move_cursor(self, increment: int):
@@ -77,6 +74,7 @@ class InventoryMenu(BattleMenu):
     def on_first_execution(self):
         keys = pygame.key.get_pressed()
         self.runtime_counter += 1
+        self.no_items_text.restart()
         if keys[pygame.K_z] or keys[pygame.K_RETURN]:
             self.entered_pressing = True
 
@@ -86,8 +84,8 @@ class InventoryMenu(BattleMenu):
 
         keys = pygame.key.get_pressed()  # Pegando o dicinoário das teclas
 
-        # Ajustando o cursor
-        if len(self.__options) > 0:
+        if len(self.__options) > 0:  # Se eu tiver itens no inventário
+            # Ajusto o cursor
             self.cursor_rect.center = self.__options[self.selected_option%len(self.__options)]['text'].rect.center
             self.cursor_rect.left = self.__options[self.selected_option%len(self.__options)]['text'].rect.right
 
@@ -125,9 +123,13 @@ class InventoryMenu(BattleMenu):
             # Evitando que eu mova vários itens ao mesmo tempo
             if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
                 self.trying_to_move_cursor = False
-        # else:
-        #     self.no_items_text.update()
-        #     self.no_items_text.draw(self.display)
+        else: # Se não tiver itens
+            # Mostro na tela o texto de inventário vazio
+            self.no_items_text.update()
+            self.no_items_text.position = (
+                self.container.inner_rect.x+10,
+                self.container.inner_rect.y+10,
+            )
 
         # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
@@ -149,6 +151,8 @@ class InventoryMenu(BattleMenu):
         
         if len(self.__options) > 0:
             self.display.blit(self.cursor, self.cursor_rect)
+        else:
+            self.no_items_text.draw(self.display)
     
     @property
     def options(self):

@@ -16,7 +16,7 @@ class DynamicText:
         max_length: float = 0,
         positon: tuple[float] = (0,0),
         color: pygame.Color = (255,255,255),
-        sound: bool = True
+        sound: str = None
     ):
         """Inicialização da classe
 
@@ -47,6 +47,15 @@ class DynamicText:
 
         self.sound = sound
 
+    def restart(self):
+        self.progressive_text = ''
+        self.counter = 0
+        self.wich_row_to_update = 0
+        self.letter_counter = 0
+        self.rows = [
+            self.font.render(self.progressive_text, True, self.color)
+        ]
+
     
     def update(self, *args, **kwargs):
         self.counter += 1  # Aumenta a contagem
@@ -54,8 +63,8 @@ class DynamicText:
         # Se a montagem for maior que a frequência das letras e o contador de letras não for maior que a quantidade de letras
         if self.counter >= self.letter_rate and not self.letter_counter >= len(self.text):
             if self.text[self.letter_counter] != ' ' and self.sound:
-                SoundManager.stop_sound('text.wav')
-                SoundManager.play_sound('text.wav')
+                SoundManager.stop_sound(self.sound)
+                SoundManager.play_sound(self.sound)
             
             self.counter = 0  # Zera o contador
 
