@@ -1,5 +1,8 @@
 import pygame
+import os
 from screens import State
+
+from config import *
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
@@ -18,18 +21,18 @@ class IntroCutscene(State):
             "Conseguiu, com muito esforço, conquistar um CR 5.9, mas você quer - e precisa - mais do que isso!",
             "Buscando a redenção, você pretende encarar as Avaliações Suplementares para se provar digno de um CR 7+",
             "Mas não tenha otimismo, pois 5 Entidades da EMAp tentarão impedi-lo de conseguir!",
-            "                            ", 
+            "  ", 
 
         ]
         self.images = [
-            pygame.image.load("/home/brunofs/core/fgv/cdia/p2/lp/a2/EMApTale/sprites/cutscene/c11.png"),
-            pygame.image.load("/home/brunofs/core/fgv/cdia/p2/lp/a2/EMApTale/sprites/cutscene/c12.png"),
-            pygame.image.load("/home/brunofs/core/fgv/cdia/p2/lp/a2/EMApTale/sprites/cutscene/c16.png"), 
-            pygame.image.load("/home/brunofs/core/fgv/cdia/p2/lp/a2/EMApTale/sprites/cutscene/c15.png"),
-            pygame.image.load("/home/brunofs/core/fgv/cdia/p2/lp/a2/EMApTale/sprites/cutscene/c17.png"),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c11.png")),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c12.png")),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c16.png")), 
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c15.png")),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c17.png")),
 
         ]
-        self.letters_per_second = 200
+        self.letters_per_second = 17
 
         self.current_text = CDynamicText(
             text=self.texts[self.stage],
@@ -42,12 +45,19 @@ class IntroCutscene(State):
         )
         self.current_image = self.images[self.stage]
 
+        self.initial_time = 0 # tempo global, inicial da cutscenes
+        self.current_time_local = 0 # tempo local da cutscene, como se 0 inicia-se no mesmo momento
+        self.wait_a_second = 1600 # tempo do intervalo em si, tempo do intervalo entre
+        self.last_time_define = 0 # contador interno para verificar se o intervalo foi passado ou não
+
 
     def on_first_execution(self):
         # Define uma única vez, o tempo incial da cena
         SoundManager.stop_music()
         SoundManager.play_music("/home/brunofs/core/fgv/cdia/p2/lp/a2/EMApTale/sounds/intro_history.mp3")
-        
+        self.initial_time = pygame.time.get_ticks()
+
+
 
     def run(self):
 
@@ -56,11 +66,27 @@ class IntroCutscene(State):
             self.on_first_execution()
             self.__execution_counter += 1
 
+        # Define as variáveis de tempo atuais, global=currenti_time e local=self.current_time_local
+        current_time = pygame.time.get_ticks()
+        self.current_time_local = current_time - self.initial_time
+
+        # Define o last_time_define única e exclusivamente quando o texto acabou e seu valor for igual a zero 
+        if self.current_text.is_finished and self.last_time_define == 0:
+            self.last_time_define = self.current_time_local
+            
+            # Da útlima image history para o título do jogo, dar um intervalo maior (gerar suspense)
+            if  self.stage == len(self.images) -2:
+                self.wait_a_second += 1480 
+            else:
+                self.wait_a_second = 1600   
 
         # Verificar se o tempo de espera passou
-        if self.current_text.is_finished:
-            self.stage += 1
+        if self.current_text.is_finished and self.last_time_define + self.wait_a_second < self.current_time_local:
             
+            # Modifica as variáveis para continuar valendo o loop
+            self.stage += 1
+            self.last_time_define = 0            
+
             if self.stage < len(self.texts):
                 self.current_text = CDynamicText(
                     text=self.texts[self.stage],
@@ -78,12 +104,9 @@ class IntroCutscene(State):
         # Desenho da imagem e texto
         if self.stage < len(self.texts):  
             
+            # Define a largura/altura da tela e da imagem (todas as imagens tem o mesmo tamanho! 1280 x 720)
             screen_width, screen_height = self.__display.get_size()
             image_width, image_height = self.current_image.get_size()
-
-            if  self.stage == len(self.images)-2:
-                ...
-
 
             # Configura o tamano e a posição da imagem, para a última, deixa em tela cheia
             if  self.stage == len(self.images)-1:
