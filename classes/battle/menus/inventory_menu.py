@@ -102,7 +102,7 @@ class InventoryMenu(BattleMenu):
                 if keys[pygame.K_LEFT]:
                     self.move_cursor(-self.items_per_column)
                     self.trying_to_move_cursor = True
-                    print(self.selected_option)
+                    SoundManager.play_sound('select.wav')
                 if keys[pygame.K_RIGHT]:
                     self.move_cursor(self.items_per_column)
                     self.trying_to_move_cursor = True
