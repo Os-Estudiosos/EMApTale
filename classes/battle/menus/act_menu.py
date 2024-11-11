@@ -37,7 +37,8 @@ class ActMenu(BattleMenu):
         self.showing_act_response = False  # Controla quando mostra o texto das respostas
         self.act_response_to_show = 0  # Indice que indica qual resposta deve ser mostrada
         self.selected_responses = []  # Variável auxiliar com os textos que vão ser exibidos
-        self.response_text = DynamicText('', FontManager.fonts['Gamer'], 20, int((450*100)/self.display.get_height()))
+        self.response_text = DynamicText('', FontManager.fonts['Gamer'], 20, int((450*100)/self.display.get_height()), 0)
+        self.start_showing_text = False
     
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
@@ -88,6 +89,8 @@ class ActMenu(BattleMenu):
                 self.selected_responses = self.__options[self.selected_option]['responses']
                 self.showing_act_response = True
                 self.entered_pressing = True
+                self.act_response_to_show = 0
+                self.start_showing_text = True
             
             # Evitando que eu mova vários itens ao mesmo tempo
             if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
@@ -97,11 +100,29 @@ class ActMenu(BattleMenu):
             if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
                 BattleMenuManager.go_back()
         else:
+            self.response_text.max_length = self.container.inner_rect.width
+
+            if self.start_showing_text:
+                self.response_text.restart(self.selected_responses[self.act_response_to_show])
+                self.start_showing_text = False
 
             if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing:
+                if not self.response_text.finished:
+                    self.response_text.skip_text()
+                else:
+                    self.act_response_to_show += 1
+                    self.start_showing_text = True
+
+                    if self.act_response_to_show+1 > len(self.selected_responses):
+                        self.showing_act_response = False
+                
                 self.entered_pressing = True
 
             self.response_text.update()
+            self.response_text.position = (
+                self.container.inner_rect.x + 10,
+                self.container.inner_rect.y + 10,
+            )
         
         # Evitando que eu selecione vários itens ao mesmo tempo
         if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:

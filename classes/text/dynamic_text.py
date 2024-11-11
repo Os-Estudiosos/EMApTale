@@ -45,6 +45,8 @@ class DynamicText:
         self.counter = 0  # Variável que controla quando uma nova letra vai ser adicionada
         self.letter_rate = FPS/letters_per_second  # Frequência de letras por segundo
 
+        self.finished = False  # Variavel que diz se o texto ja foi todo escrito
+
         self.sound = sound
 
     def restart(self, new_text: str = None):
@@ -57,8 +59,29 @@ class DynamicText:
         self.rows = [
             self.font.render(self.progressive_text, True, self.color)
         ]
-
+        self.finished = False
     
+    def skip_text(self):
+        for letter in self.text:
+            self.progressive_text += letter
+
+            new_text = self.font.render(self.progressive_text, True, self.color)
+
+            if new_text.get_rect().width >= self.max_length:  # Se a linha passar da largura máxima
+                self.progressive_text = letter
+                self.rows.append(self.font.render(self.progressive_text, True, self.color))
+                self.wich_row_to_update += 1
+
+                new_text = self.font.render(self.progressive_text, True, self.color)
+
+            # Atualizo a linha com o novo texto
+            self.rows[self.wich_row_to_update] = new_text
+
+            # Atualizo a próxima letra
+            self.letter_counter += 1
+
+        self.finished = True
+        
     def update(self, *args, **kwargs):
         self.counter += 1  # Aumenta a contagem
         
@@ -86,6 +109,9 @@ class DynamicText:
 
             # Atualizo a próxima letra
             self.letter_counter += 1
+        
+        if self.letter_counter >= len(self.text):
+            self.finished = True
         
     def draw(self, screen: pygame.Surface):
         for i, text in enumerate(self.rows):
