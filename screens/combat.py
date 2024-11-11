@@ -136,7 +136,7 @@ class Combat(State):
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
                 self.main_menu.options[len(self.main_menu.options)-1].rect.right - self.main_menu.options[0].rect.left,
-                self.__display.get_height()/2-30
+                self.__display.get_height()*0.3
             )  # Redesenho o container da batalha
 
             # Ajustando os botões do HUD

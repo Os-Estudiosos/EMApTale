@@ -47,7 +47,9 @@ class DynamicText:
 
         self.sound = sound
 
-    def restart(self):
+    def restart(self, new_text: str = None):
+        if new_text:
+            self.text = new_text
         self.progressive_text = ''
         self.counter = 0
         self.wich_row_to_update = 0

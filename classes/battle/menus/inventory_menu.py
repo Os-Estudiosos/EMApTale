@@ -14,6 +14,8 @@ from classes.player import Player
 from classes.text.text import Text
 from classes.text.dynamic_text import DynamicText
 
+from utils import sign
+
 class InventoryMenu(BattleMenu):
     def __init__(self, battle_container: BattleContainer):
         self.__options: list[dict] = []  # Lista de opções
@@ -26,7 +28,7 @@ class InventoryMenu(BattleMenu):
         # Carregando o sprite do cursor
         self.cursor = pygame.transform.scale_by(
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')),
-            1.8
+            1.5
         )
         self.cursor_rect = self.cursor.get_rect()
 
@@ -34,13 +36,12 @@ class InventoryMenu(BattleMenu):
         for i, item in enumerate(Player.inventory):
             if item.type == 'miscellaneous':
                 self.__options.append({
-                    'text': Text(item.name, FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                    'text': Text(f'* {item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
                     'func': item.func
                 })
         
         self.page = 0
         self.items_per_column = 100
-
         for i, opt in enumerate(self.__options):
             if opt['text'].rect.height*i > self.container.inner_rect.height:
                 self.items_per_column = i
@@ -87,7 +88,7 @@ class InventoryMenu(BattleMenu):
         if len(self.__options) > 0:  # Se eu tiver itens no inventário
             # Ajusto o cursor
             self.cursor_rect.center = self.__options[self.selected_option%len(self.__options)]['text'].rect.center
-            self.cursor_rect.left = self.__options[self.selected_option%len(self.__options)]['text'].rect.right
+            self.cursor_rect.right = self.__options[self.selected_option%len(self.__options)]['text'].rect.left
 
             # Movendo o cursor pelos itens do inventário
             if not self.trying_to_move_cursor:
@@ -144,7 +145,7 @@ class InventoryMenu(BattleMenu):
             if (i+self.items_per_page*self.page) >= len(self.__options):
                 break
             
-            self.__options[(i+self.items_per_page*self.page)]['text'].rect.x = self.container.inner_rect.x + 10*abs(column-1) + self.container.inner_rect.width*column/2
+            self.__options[(i+self.items_per_page*self.page)]['text'].rect.x = self.container.inner_rect.x + 10*abs(column-1) + self.container.inner_rect.width*column/2 + (1 - 2 * column)*self.cursor_rect.width
             self.__options[(i+self.items_per_page*self.page)]['text'].rect.y = self.container.inner_rect.y + self.__options[(i+self.items_per_page*self.page)]['text'].rect.height*(i%self.items_per_column)
 
             self.__options[(i+self.items_per_page*self.page)]['text'].draw(self.display)
