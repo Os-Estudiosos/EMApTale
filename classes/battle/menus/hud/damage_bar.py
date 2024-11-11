@@ -31,11 +31,19 @@ class DamageBar(pygame.sprite.Sprite):
         self.random_dir = 0
         self.speed = 10
 
-        self.animated = False
-
         self.execution_counter = 0
 
+        self.animation_counter = 0
+        self.frame_changes_per_second = FPS/10
+        self.actual_sprite = 0
     
+    def change_sprite(self):
+        self.image = self.sprites[self.actual_sprite]
+        self.actual_sprite+=1
+        if self.actual_sprite >= len(self.sprites):
+            self.actual_sprite = 0
+        self.animation_counter = 0
+
     def choose_direction(self):
         self.random_dir = choice([1, -1])
         self.rect.centerx = self.container.inner_rect.centerx + (self.container.inner_rect.width/2)*self.random_dir
@@ -54,6 +62,10 @@ class DamageBar(pygame.sprite.Sprite):
 
         if not keys[pygame.K_RETURN] and not keys[pygame.K_z]:
             self.entered_pressing = False
+        
+        self.animation_counter += 1
+        if self.random_dir == 0 and self.animation_counter >= self.frame_changes_per_second:
+            self.change_sprite()
 
         self.rect.x += self.speed*self.random_dir*-1
         self.rect.centery = self.container.inner_rect.centery
