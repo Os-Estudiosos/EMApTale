@@ -120,8 +120,8 @@ class Combat(State):
 
         # ============ FAZENDO ISSO TUDO COM O MENU ============
         if BattleMenuManager.active_menu != 'MainMenu':
-            BattleMenuManager.active_menu.draw()
-            BattleMenuManager.active_menu.update()
+            BattleMenuManager.update()
+            BattleMenuManager.draw()
 
         # Ajustando o container da batalha para ficar em cima da vida do jogador
         self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50

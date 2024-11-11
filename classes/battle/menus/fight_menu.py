@@ -10,6 +10,8 @@ from classes.battle.container import BattleContainer
 from classes.battle.menus import BattleMenu
 from classes.battle.menus.battle_menu_manager import BattleMenuManager
 
+from classes.battle.menus.hud.damage_bar import DamageBar
+
 class FightMenu(BattleMenu):
     def __init__(self, battle_container: BattleContainer):
         self.__options: list[dict] = []  # Lista de opções
@@ -28,6 +30,14 @@ class FightMenu(BattleMenu):
 
         self.runtime_counter = 0  # Previnir que entre clicando nos itens
         self.entered_pressing = False
+
+        self.damage_indicator = pygame.transform.scale(
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'combat', 'damage_indicator.png')),
+            self.container.inner_rect.size
+        )
+        self.damage_indicator_rect = self.damage_indicator.get_rect()
+
+        self.damage_bar = DamageBar(self.container)
     
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
@@ -42,6 +52,7 @@ class FightMenu(BattleMenu):
     def on_first_execution(self):
         keys = pygame.key.get_pressed()
         self.runtime_counter += 1
+        self.damage_bar.choose_direction()
         if keys[pygame.K_z] or keys[pygame.K_RETURN]:
             self.entered_pressing = True
 
@@ -51,15 +62,25 @@ class FightMenu(BattleMenu):
 
         keys = pygame.key.get_pressed()  # Pegando o dicinoário das teclas
 
-        # ====== CÓDIGO AQUI ======
-        print("Ta entrando aqui")
+        self.damage_indicator = pygame.transform.scale(
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'combat', 'damage_indicator.png')),
+            self.container.inner_rect.size
+        )
+        self.damage_indicator_rect = self.damage_indicator.get_rect()
+
+        self.damage_indicator_rect.x = self.container.inner_rect.x
+        self.damage_indicator_rect.y = self.container.inner_rect.y
+
+        self.damage_bar.update()
 
         # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
             BattleMenuManager.go_back()
+
     
     def draw(self):
-        ...
+        self.display.blit(self.damage_indicator, self.damage_indicator_rect)
+        self.display.blit(self.damage_bar.image, self.damage_bar.rect)
     
     @property
     def options(self):

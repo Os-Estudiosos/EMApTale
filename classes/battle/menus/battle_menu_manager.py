@@ -9,7 +9,7 @@ class BattleMenuManager:
     def change_active_menu(cls, menu_name: str):
         if menu_name in cls.menus.keys():
             cls.previous_menu = cls.active_menu
-            cls.active_menu = cls.menus[menu_name]
+            cls.active_menu = menu_name
 
             if 'runtime_counter' in vars(cls.menus[menu_name]).keys():
                 cls.menus[menu_name].runtime_counter = 0
@@ -17,3 +17,11 @@ class BattleMenuManager:
     @classmethod
     def go_back(cls):
         cls.active_menu = cls.previous_menu
+    
+    @classmethod
+    def update(cls):
+        cls.menus[cls.active_menu].update()
+    
+    @classmethod
+    def draw(cls):
+        cls.menus[cls.active_menu].draw()
