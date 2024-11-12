@@ -11,6 +11,7 @@ from classes.battle.menus import BattleMenu
 from classes.battle.menus.battle_menu_manager import BattleMenuManager
 
 from classes.battle.menus.hud.damage_bar import DamageBar
+from classes.battle.menus.hud.cut import Cut
 
 class FightMenu(BattleMenu):
     def __init__(self, battle_container: BattleContainer):
@@ -38,6 +39,7 @@ class FightMenu(BattleMenu):
         self.damage_indicator_rect = self.damage_indicator.get_rect()
 
         self.damage_bar = DamageBar(self.container)
+        self.cut = Cut()
     
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
@@ -73,6 +75,10 @@ class FightMenu(BattleMenu):
 
         self.damage_bar.update()
 
+        if keys[pygame.K_RETURN] or keys[pygame.K_z]:
+            self.cut.animate()
+        self.cut.update()
+
         # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
             BattleMenuManager.go_back()
@@ -81,6 +87,7 @@ class FightMenu(BattleMenu):
     def draw(self):
         self.display.blit(self.damage_indicator, self.damage_indicator_rect)
         self.display.blit(self.damage_bar.image, self.damage_bar.rect)
+        self.display.blit(self.cut.image, self.cut.rect)
     
     @property
     def options(self):
