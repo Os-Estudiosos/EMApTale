@@ -60,7 +60,7 @@ class InventoryMenu(BattleMenu):
             int((450*100)/self.display.get_height()),
             self.container.inner_rect.width,
             (0,0),
-            sound='text.wav'
+            sound='text_2.wav'
         )
 
         self.used_item = False
@@ -71,7 +71,7 @@ class InventoryMenu(BattleMenu):
             int((450*100)/self.display.get_height()),
             self.container.inner_rect.width,
             (0,0),
-            sound='text.wav'
+            sound='text_2.wav'
         )
     ['after_effect_text']
     def move_cursor(self, increment: int):
