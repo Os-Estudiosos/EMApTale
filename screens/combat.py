@@ -90,11 +90,6 @@ class Combat(State):
             self.on_first_execution()
             self.__execution_counter += 1
         
-        for event in EventManager.events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_f:
-                    print("Apertei F")
-        
         # Ajustando o nome do personagem
         text_player_name = Text(self.player.name.upper(), FontManager.fonts['Gamer'], 60)
         text_player_name.rect.x = self.main_menu.options[0].rect.x
