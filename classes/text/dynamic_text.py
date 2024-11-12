@@ -113,6 +113,7 @@ class DynamicText:
         
         if self.letter_counter >= len(self.text):
             self.finished = True
+
         
     def draw(self, screen: pygame.Surface):
         for i, text in enumerate(self.rows):

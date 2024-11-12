@@ -30,7 +30,6 @@ class Game:
         
         # Colocando o tamanho da Tela
         self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-        self.is_fullsize = False
 
         # Variável que indica se o jogo da rodando
         self.running = True

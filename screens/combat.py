@@ -83,20 +83,20 @@ class Combat(State):
 
     def on_first_execution(self):
         # Limpando os sons
+        self.__execution_counter += 1
         SoundManager.stop_music()
         self.act_menu.options = self.__variables['enemy']['act']
 
     def handle_events(self):
         for event in EventManager.events:
             if event.type == BOSS_TURN_EVENT:
-                print("apareceu aqui")
                 CombatManager.set_boss_turn()
+                pygame.time.set_timer(BOSS_TURN_EVENT, 0)
 
     def run(self):
         # Inicio do ciclo de vida da cena
         if not self.__execution_counter > 0:
             self.on_first_execution()
-            self.__execution_counter += 1
         
         self.handle_events()
         
