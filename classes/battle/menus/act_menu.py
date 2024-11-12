@@ -2,6 +2,8 @@ import pygame
 import os
 import math
 
+from constants import BOSS_TURN_EVENT
+
 from config import *
 from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
@@ -108,6 +110,8 @@ class ActMenu(BattleMenu):
                             self.start_showing_text = True
 
                             if self.act_response_to_show+1 > len(self.selected_responses):
+                                print("Ta caindo aqui")
+                                pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
                                 self.showing_act_response = False
 
             self.response_text.update()

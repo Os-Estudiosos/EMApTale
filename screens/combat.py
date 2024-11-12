@@ -25,6 +25,8 @@ from config.eventmanager import EventManager
 
 from classes.battle.heart import Heart
 
+from constants import BOSS_TURN_EVENT, PLAYER_TURN_EVENT
+
 
 class Combat(State):
     def __init__(
@@ -84,11 +86,19 @@ class Combat(State):
         SoundManager.stop_music()
         self.act_menu.options = self.__variables['enemy']['act']
 
+    def handle_events(self):
+        for event in EventManager.events:
+            if event.type == BOSS_TURN_EVENT:
+                print("apareceu aqui")
+                CombatManager.set_boss_turn()
+
     def run(self):
         # Inicio do ciclo de vida da cena
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
+        
+        self.handle_events()
         
         # Ajustando o nome do personagem
         text_player_name = Text(self.player.name.upper(), FontManager.fonts['Gamer'], 60)
@@ -117,11 +127,6 @@ class Combat(State):
         hp_container.draw(self.__display)
         self.main_menu.draw()
 
-        # ============ FAZENDO ISSO TUDO COM O MENU ============
-        if BattleMenuManager.active_menu != 'MainMenu':
-            BattleMenuManager.update()
-            BattleMenuManager.draw()
-
         # Ajustando o container da batalha para ficar em cima da vida do jogador
         self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50
 
@@ -132,6 +137,12 @@ class Combat(State):
         # Se for o turno do Player
         if CombatManager.turn == 'player':
             # ============ HUD QUE SÓ APARECE NO TURNO DO PLAYER ============
+
+            # ============ FAZENDO ISSO TUDO COM O MENU ============
+            if BattleMenuManager.active_menu != 'MainMenu':
+                BattleMenuManager.update()
+                BattleMenuManager.draw()
+
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
                 self.main_menu.options[len(self.main_menu.options)-1].rect.right - self.main_menu.options[0].rect.left,
@@ -156,7 +167,7 @@ class Combat(State):
         elif CombatManager.turn == 'boss':  # Se não for o turno do player
             self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
 
-            for btn in self.battle_container.options:  # Ajustando para nenhum botão ficar selecionado
+            for btn in self.main_menu.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False
             
             if keys[pygame.K_u]:
