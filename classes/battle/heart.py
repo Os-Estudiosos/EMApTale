@@ -60,7 +60,7 @@ class Heart(Player):
     def update(self, *args, **kwargs):
         keys = pygame.key.get_pressed()
 
-        # # Movimentação
+        # Movimentação
         direction = pygame.math.Vector2(  # Faço um vetor que representa a direção que estou me movendo
             sign(keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]),
             sign(keys[pygame.K_DOWN] - keys[pygame.K_UP])
