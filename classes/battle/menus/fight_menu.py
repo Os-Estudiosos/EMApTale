@@ -32,14 +32,16 @@ class FightMenu(BattleMenu):
         self.runtime_counter = 0  # Previnir que entre clicando nos itens
         self.entered_pressing = False
 
-        self.damage_indicator = pygame.transform.scale(
+        self.damage_indicator = pygame.transform.scale(  # Imagem de fundo do menu
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'combat', 'damage_indicator.png')),
             self.container.inner_rect.size
         )
         self.damage_indicator_rect = self.damage_indicator.get_rect()
 
-        self.damage_bar = DamageBar(self.container)
-        self.cut = Cut()
+        self.damage_bar = DamageBar(self.container)  # Barrinha que indica onde temos que atacar
+        self.cut = Cut()  # O Corte que aparece na animação
+
+        self.attacked = False  # Variável que diz se eu vou mostrar o corte na tela ou não
     
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
@@ -52,32 +54,42 @@ class FightMenu(BattleMenu):
         self.page = math.floor(self.selected_option/(self.items_per_page))
     
     def on_first_execution(self):
+        """Função que executa na primeira vez que o menu aparece
+        """
         keys = pygame.key.get_pressed()
-        self.runtime_counter += 1
-        self.damage_bar.choose_direction()
-        if keys[pygame.K_z] or keys[pygame.K_RETURN]:
+        self.runtime_counter += 1  # Aumento o contador de vezes que rodou
+        self.damage_bar.choose_direction()  # Escolho de onde o indicador de dano vai vir
+        if keys[pygame.K_z] or keys[pygame.K_RETURN]:  # Se eu estiver apertando Z ou ENTER
             self.entered_pressing = True
 
     def update(self):
-        if self.runtime_counter == 0:
+        if self.runtime_counter == 0:  # Executo a primeira vez
             self.on_first_execution()
 
         keys = pygame.key.get_pressed()  # Pegando o dicinoário das teclas
 
+        # Fico escalonando o indicador do dano
         self.damage_indicator = pygame.transform.scale(
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'combat', 'damage_indicator.png')),
             self.container.inner_rect.size
         )
         self.damage_indicator_rect = self.damage_indicator.get_rect()
 
+        # Centralizo o indicador de dano
         self.damage_indicator_rect.x = self.container.inner_rect.x
         self.damage_indicator_rect.y = self.container.inner_rect.y
 
         self.damage_bar.update()
 
-        if keys[pygame.K_RETURN] or keys[pygame.K_z]:
+        if keys[pygame.K_RETURN] or keys[pygame.K_z] and not self.entered_pressing:  # Se eu apertar z, eu dou play na animação do corte
+            self.attacked = True
             self.cut.animate()
-        self.cut.update()
+
+        if not keys[pygame.K_RETURN] and not keys[pygame.K_z]:
+            self.entered_pressing = False
+
+        if self.attacked:
+            self.cut.update()
 
         # Volto no menu anterior
         if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
@@ -87,7 +99,8 @@ class FightMenu(BattleMenu):
     def draw(self):
         self.display.blit(self.damage_indicator, self.damage_indicator_rect)
         self.display.blit(self.damage_bar.image, self.damage_bar.rect)
-        self.display.blit(self.cut.image, self.cut.rect)
+        if self.attacked:
+            self.display.blit(self.cut.image, self.cut.rect)
     
     @property
     def options(self):
