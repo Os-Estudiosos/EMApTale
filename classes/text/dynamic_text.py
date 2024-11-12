@@ -62,6 +62,7 @@ class DynamicText:
         self.finished = False
     
     def skip_text(self):
+        self.progressive_text = ''
         for letter in self.text:
             self.progressive_text += letter
 
