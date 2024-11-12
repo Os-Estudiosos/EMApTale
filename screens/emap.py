@@ -60,6 +60,24 @@ class MapLoader:
                             camera.apply(pygame.Rect(*pos, self.tmx_data.tilewidth * self.scale_factor, self.tmx_data.tileheight * self.scale_factor))
                         )
 
+    def render_objects_with_gid(self, surface, camera, vector):
+        """
+        Renderiza objetos com gid definido no mapa.
+        """
+        for layer in self.tmx_data.objectgroups:
+            for obj in layer:
+                if obj.gid > 0 and obj.visible:  # Verifica se o objeto tem gid e está visível
+                    # Obtém a imagem do objeto a partir do gid
+                    tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
+                    if tile_image:
+                        # Aplica o fator de escala e deslocamento
+                        pos = (
+                            obj.x * self.scale_factor + vector.x,
+                            obj.y * self.scale_factor + vector.y
+                        )
+                        scaled_image = pygame.transform.scale_by(tile_image, self.scale_factor)
+                        surface.blit(scaled_image, camera.apply(pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())))
+
     def load_walls(self):
         walls = []
         for layer in self.tmx_data.layers:
@@ -117,18 +135,20 @@ class EMAp(State):
         self.camera.update(self.player.rect)
 
         # Define o vetor de deslocamento para ajustar a posição dos tiles
-        vector = pygame.math.Vector2(-100, -150)  # Exemplo de vetor para mover os tiles
+        vector = pygame.math.Vector2(-100, -150)
 
         # Renderiza o mapa com o deslocamento aplicado
         self.map_loader.render_with_vector(self.__display, self.camera, vector)
-        
+
+        # Renderiza objetos específicos no mapa
+        self.map_loader.render_objects_with_gid(self.__display, self.camera, vector)
+
         # Atualiza e desenha o jogador na tela
         keys = pygame.key.get_pressed()
         self.player.move(keys)
         self.player.draw(self.__display, self.camera)
         
         pygame.display.flip()
-
 
     #Método para resetar o contador de execução ao sair do estado
     def on_last_execution(self):
@@ -160,76 +180,82 @@ class Player:
         self.cols = 2  # Número de colunas na folha de sprites
         self.rows = 4  # Número de linhas na folha de sprites
         self.scale_factor = 2.5  # Fator de escala para o jogador
-        self.frames = self.load_frames() 
+        self.frames = self.load_frames()
         self.x, self.y = 150, 350  # Posição inicial do jogador
         self.direction = 0  # Direção inicial do jogador
         self.frame_index = 0  # Índice do quadro atual de animação
         self.frame_delay = 10  # Tempo de atraso entre quadros de animação
         self.frame_counter = 0  # Contador para controlar o atraso
-        self.walls = walls  
+        self.walls = walls  # Lista de retângulos de colisão
         self.rect = pygame.Rect(self.x, self.y, self.frame_width * self.scale_factor, self.frame_height * self.scale_factor)
+        self.mask = None  # Máscara para colisão precisa
 
     def load_frames(self):
         frames = []
         for row in range(self.rows):
             direction_frames = []
             for col in range(self.cols):
-                # Calcula a posição e recorta o quadro da folha de sprites
                 x = col * self.frame_width
                 y = row * self.frame_height
                 frame = self.sprite_sheet.subsurface(pygame.Rect(x, y, self.frame_width, self.frame_height))
                 
                 # Escala o quadro para 2.5x o tamanho original
-                scaled_frame = pygame.transform.scale(frame, (int(self.frame_width * self.scale_factor), int(self.frame_height * self.scale_factor)))
+                scaled_frame = pygame.transform.scale(
+                    frame, (int(self.frame_width * self.scale_factor), int(self.frame_height * self.scale_factor))
+                )
                 
                 direction_frames.append(scaled_frame)  # Adiciona o quadro escalado à direção atual
             frames.append(direction_frames)  # Adiciona os quadros da direção à lista principal
-        return frames  # Retorna todos os quadros de animação
+        return frames
 
-    #Método para atualizar a animação do jogador
     def update_animation(self):
-        if self.direction < len(self.frames):  #Verifica se a direção tem quadros
-            self.frame_index = self.frame_index % len(self.frames[self.direction])  #Atualiza o índice do quadro
-            self.frame_counter += 1  #Incrementa o contador de atraso
-            if self.frame_counter >= self.frame_delay:  #Verifica se o atraso foi atingido
-                self.frame_counter = 0  #Reinicia o contador de atraso
-                self.frame_index = (self.frame_index + 1) % len(self.frames[self.direction])  #Passa ao próximo quadro
+        if self.direction < len(self.frames):
+            self.frame_index = self.frame_index % len(self.frames[self.direction])
+            self.frame_counter += 1
+            if self.frame_counter >= self.frame_delay:
+                self.frame_counter = 0
+                self.frame_index = (self.frame_index + 1) % len(self.frames[self.direction])
+                
+            # Atualiza a máscara para o quadro atual
+            self.update_mask()
+
+    def update_mask(self):
+        # Atualiza a máscara do jogador com o quadro de animação atual
+        current_frame = self.frames[self.direction][self.frame_index]
+        self.mask = pygame.mask.from_surface(current_frame)
 
     def update_dir(self, direction):
         if direction.x > 0:
-            self.direction = 3  #Direita
+            self.direction = 3  # Direita
         elif direction.x < 0:
-            self.direction = 1  #Esquerda
+            self.direction = 1  # Esquerda
         elif direction.y > 0:
-            self.direction = 0  #Baixo
+            self.direction = 0  # Baixo
         elif direction.y < 0:
-            self.direction = 2  #Cima
+            self.direction = 2  # Cima
 
-    #Método para mover o jogador com base nas teclas pressionadas
     def move(self, keys):
-        # Salva a posição atual do retângulo do jogador antes de tentar movê-lo
         old_rect = self.rect.copy()
+        base_speed = 10
 
-        # Move o jogador e define a direção com base nas teclas
         direction = pygame.math.Vector2(
-            sign((keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) or (keys[pygame.K_d]-keys[pygame.K_a])),
-            sign((keys[pygame.K_DOWN] - keys[pygame.K_UP]) or (keys[pygame.K_s]-keys[pygame.K_w]))
+            sign((keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) or (keys[pygame.K_d] - keys[pygame.K_a])),
+            sign((keys[pygame.K_DOWN] - keys[pygame.K_UP]) or (keys[pygame.K_s] - keys[pygame.K_w]))
         )
 
-        # Normaliza o vetor de direção se ele não for zero
         if direction.length() != 0:
             direction = direction.normalize()
 
-        # Tenta mover o retângulo do jogador
-        self.rect.x += 5 * direction.x
-        self.rect.y += 5 * direction.y
+        # Movimenta o jogador
+        self.rect.x += base_speed * direction.x
+        self.rect.y += base_speed * direction.y
 
-        # Verifica colisão com as paredes
-        if any(self.rect.colliderect(wall) for wall in self.walls):
+        # Verifica colisão de máscara com as paredes
+        if self.check_wall_collisions():
             # Se colidir, reverte para a posição anterior
             self.rect = old_rect
         else:
-            # Se não colidir, atualiza a posição armazenada de self.x e self.y
+            # Atualiza a posição armazenada de self.x e self.y
             self.x, self.y = self.rect.topleft
 
         # Atualiza a direção e a animação
@@ -237,10 +263,23 @@ class Player:
         if direction.length() != 0:
             self.update_animation()
 
-    #Método para desenhar o jogador na tela
+    def check_wall_collisions(self):
+        """
+        Verifica colisão de máscara entre o jogador e as paredes.
+        """
+        if self.mask is None:
+            return False
+
+        for wall in self.walls:
+            wall_mask = pygame.mask.Mask((wall.width, wall.height), fill=True)
+            offset = (wall.x - self.rect.x, wall.y - self.rect.y)
+
+            # Verifica colisão pixel a pixel
+            if self.mask.overlap(wall_mask, offset):
+                return True
+        return False
+
     def draw(self, surface, camera):
-        #Verifica se a direção e o quadro atual são válidos
         if self.direction < len(self.frames) and self.frame_index < len(self.frames[self.direction]):
-            frame_image = self.frames[self.direction][self.frame_index]  #Obtém o quadro atual
-            #Desenha o quadro na tela, ajustado pela posição da câmera
+            frame_image = self.frames[self.direction][self.frame_index]
             surface.blit(frame_image, camera.apply(self.rect))
