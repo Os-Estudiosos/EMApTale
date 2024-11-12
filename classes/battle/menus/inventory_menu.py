@@ -106,16 +106,16 @@ class InventoryMenu(BattleMenu):
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_DOWN:
                             self.move_cursor(1)
-                            SoundManager.play_sound('select.wav')
+                            SoundManager.play_sound('squeak.wav')
                         elif event.key == pygame.K_UP:
                             self.move_cursor(-1)
-                            SoundManager.play_sound('select.wav')
+                            SoundManager.play_sound('squeak.wav')
                         elif event.key == pygame.K_LEFT:
                             self.move_cursor(-self.items_per_column)
-                            SoundManager.play_sound('select.wav')
+                            SoundManager.play_sound('squeak.wav')
                         elif event.key == pygame.K_RIGHT:
                             self.move_cursor(self.items_per_column)
-                            SoundManager.play_sound('select.wav')   
+                            SoundManager.play_sound('squeak.wav')   
                             
                         # Selecionando um item
                         if (event.key == pygame.K_z or event.key == pygame.K_RETURN) and 0 <= self.selected_option < len(self.__options):
@@ -123,6 +123,7 @@ class InventoryMenu(BattleMenu):
                             self.used_item_text.text = self.__options[self.selected_option]['after_effect_text']
                             self.used_item = True
                             self.__options.pop(self.selected_option)
+                            SoundManager.play_sound('select.wav')
                             if self.selected_option >= len(self.__options) and self.selected_option != 0:
                                 self.selected_option = len(self.__options)-1
                             Player.inventory.remove_item(self.selected_option)

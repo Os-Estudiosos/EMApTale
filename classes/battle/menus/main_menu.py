@@ -92,12 +92,13 @@ class MainMenu(BattleMenu):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.move_cursor(-1)  # Movo uma opção
-                        SoundManager.play_sound('select.wav')  # Toco o som de trocar opção
+                        SoundManager.play_sound('squeak.wav')  # Toco o som de trocar opção
                     elif event.key == pygame.K_RIGHT:
                         self.move_cursor(1)
-                        SoundManager.play_sound('select.wav')
+                        SoundManager.play_sound('squeak.wav')
                     elif event.key == pygame.K_z or event.key == pygame.K_RETURN:
                         self.__options[self.selected_option].on_click()
+                        SoundManager.play_sound('select.wav')
     
     def draw(self):
         self.buttons_group.draw(self.__display)

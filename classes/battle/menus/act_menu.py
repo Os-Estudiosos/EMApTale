@@ -71,16 +71,16 @@ class ActMenu(BattleMenu):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN:
                         self.move_cursor(1)
-                        SoundManager.play_sound('select.wav')
+                        SoundManager.play_sound('squeak.wav')
                     elif event.key == pygame.K_UP:
                         self.move_cursor(-1)
-                        SoundManager.play_sound('select.wav')
+                        SoundManager.play_sound('squeak.wav')
                     elif event.key == pygame.K_LEFT:
                         self.move_cursor(-self.items_per_column)
-                        SoundManager.play_sound('select.wav')
+                        SoundManager.play_sound('squeak.wav')
                     elif event.key == pygame.K_RIGHT:
                         self.move_cursor(self.items_per_column)
-                        SoundManager.play_sound('select.wav')   
+                        SoundManager.play_sound('squeak.wav')
                          
                     # Selecionando um item
                     if (event.key == pygame.K_z or event.key == pygame.K_RETURN) and 0 <= self.selected_option < len(self.__options):
@@ -89,6 +89,7 @@ class ActMenu(BattleMenu):
                         self.entered_pressing = True
                         self.act_response_to_show = 0
                         self.start_showing_text = True
+                        SoundManager.play_sound('select.wav')
 
             # Volto no menu anterior
             if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
