@@ -20,6 +20,8 @@ from classes.text.text import Text
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
+from config.combatmanager import CombatManager
+from config.eventmanager import EventManager
 
 from classes.battle.heart import Heart
 
@@ -59,9 +61,6 @@ class Combat(State):
         # Variáveis do Jogador
         self.player = Heart(self.battle_container, self.player_group)
 
-        # Variável que gerencia o turno
-        self.turn = 'player'  # "player" ou "boss"
-
         # Variáveis relacionadas ao menu que do turno do player
         # self.battle_menu_manager = BattleMenuManager()
 
@@ -90,6 +89,11 @@ class Combat(State):
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
+        
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_f:
+                    print("Apertei F")
         
         # Ajustando o nome do personagem
         text_player_name = Text(self.player.name.upper(), FontManager.fonts['Gamer'], 60)
@@ -131,7 +135,7 @@ class Combat(State):
 
         # ============ CÓDIGO RELACIONADO AOS TURNOS ============
         # Se for o turno do Player
-        if self.turn == 'player':
+        if CombatManager.turn == 'player':
             # ============ HUD QUE SÓ APARECE NO TURNO DO PLAYER ============
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
@@ -154,7 +158,7 @@ class Combat(State):
 
             # ========== DESENHANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
 
-        else:  # Se não for o turno do player
+        elif CombatManager.turn == 'boss':  # Se não for o turno do player
             self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
 
             for btn in self.battle_container.options:  # Ajustando para nenhum botão ficar selecionado
