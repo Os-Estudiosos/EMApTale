@@ -73,7 +73,7 @@ class InventoryMenu(BattleMenu):
             (0,0),
             sound='text_2.wav'
         )
-    ['after_effect_text']
+    
     def move_cursor(self, increment: int):
         """Função responsável por atualizar o índice do cursor
 
