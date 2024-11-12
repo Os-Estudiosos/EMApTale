@@ -39,7 +39,7 @@ class ActMenu(BattleMenu):
         self.showing_act_response = False  # Controla quando mostra o texto das respostas
         self.act_response_to_show = 0  # Indice que indica qual resposta deve ser mostrada
         self.selected_responses = []  # Variável auxiliar com os textos que vão ser exibidos
-        self.response_text = DynamicText('', FontManager.fonts['Gamer'], 20, int((450*100)/self.display.get_height()), 0)
+        self.response_text = DynamicText('', FontManager.fonts['Gamer'], 20, int((450*100)/self.display.get_height()), 0, sound='text_2.wav')
         self.start_showing_text = False
     
     def move_cursor(self, increment: int):
