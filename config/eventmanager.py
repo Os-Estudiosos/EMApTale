@@ -4,3 +4,7 @@ class EventManager:
     """Essa classe serve para armazenar todos os eventos de um frame especifico, pois o pygame.event.get() remove todos os eventos da lista
     """
     events: list[Event] = []
+
+    @classmethod
+    def clear(cls):
+        cls.events.clear()
