@@ -21,7 +21,7 @@ class IntroCutscene(State):
             "Conseguiu, com muito esforço, conquistar um CR 5.9, mas você quer - e precisa - mais do que isso!",
             "Buscando a redenção, você pretende encarar as Avaliações Suplementares para se provar digno de um CR 7+",
             "Mas não tenha otimismo, pois 5 Entidades da EMAp tentarão impedi-lo de conseguir!",
-            "  ", 
+            "                                       ", 
 
         ]
         self.images = [
@@ -45,18 +45,21 @@ class IntroCutscene(State):
         )
         self.current_image = self.images[self.stage]
 
+        # Variáveis que controlam o tempo dos elementos da cutscene
         self.initial_time = 0 # tempo global, inicial da cutscenes
         self.current_time_local = 0 # tempo local da cutscene, como se 0 inicia-se no mesmo momento
-        self.wait_a_second = 1600 # tempo do intervalo em si, tempo do intervalo entre
+        self.wait_a_second = 2000 # tempo do intervalo em si, tempo do intervalo entre
         self.last_time_define = 0 # contador interno para verificar se o intervalo foi passado ou não
-
+       
+        # Variáveis para alterar a opacidade das imagens no decorrer do tempo
+        self.alpha = 0
+        self.sub_alpha = 0
 
     def on_first_execution(self):
         # Define uma única vez, o tempo incial da cena
         SoundManager.stop_music()
-        SoundManager.play_music("/home/brunofs/core/fgv/cdia/p2/lp/a2/EMApTale/sounds/intro_history.mp3")
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "intro_history.mp3"))
         self.initial_time = pygame.time.get_ticks()
-
 
 
     def run(self):
@@ -80,6 +83,8 @@ class IntroCutscene(State):
             else:
                 self.wait_a_second = 1600   
 
+        #print(current_time, self.current_time_local, self.initial_time, self.last_time_define, self.wait_a_second)
+
         # Verificar se o tempo de espera passou
         if self.current_text.is_finished and self.last_time_define + self.wait_a_second < self.current_time_local:
             
@@ -98,8 +103,6 @@ class IntroCutscene(State):
                     color=(255,255,255)
                 )
                 self.current_image = self.images[self.stage]
-
-
 
         # Desenho da imagem e texto
         if self.stage < len(self.texts):  
@@ -120,7 +123,7 @@ class IntroCutscene(State):
                 SoundManager.play_sound("intro_noise.ogg")
 
             else:
-                # Redimensionar a imagem proporcionalmente
+                # Redimensionar a imagem proporcionalmente 
                 new_width = screen_width * 0.5  
                 aspect_ratio = image_height / image_width  
                 new_height = new_width * aspect_ratio  
@@ -135,6 +138,29 @@ class IntroCutscene(State):
 
             resized_image = pygame.transform.scale(self.current_image, (int(new_width), int(new_height)))
             image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
+
+            teste = self.current_time_local
+
+            
+            # Define para esclarecer a imagem | Fade In
+            if current_time - self.last_time_define >= self.wait_a_second:
+                self.alpha += 2
+            
+            # Define para escurecer a imagem | Fade On 
+            if self.last_time_define != 0:
+                self.sub_alpha += 3.15
+                self.alpha = 255 - self.sub_alpha
+            else:
+                self.sub_alpha = 0
+
+            # Deixa na escala dentro do alpha permitido, apenas por redundância
+            self.alpha = min(max(self.alpha, 0), 255)
+
+            print(self.alpha)
+
+            # Valeu Spaniol pela Nice Dick!
+            resized_image.set_alpha(self.alpha)
+
             # Plota a imagem
             self.__display.blit(resized_image, image_rect)
 
@@ -156,6 +182,7 @@ class IntroCutscene(State):
         self.current_image = self.images[self.stage]
         self.current_text = self.texts[self.stage]
         SoundManager.stop_music()
+
 
     @property
     def execution_counter(self):
