@@ -64,7 +64,7 @@ class Heart(Player):
         self.next_y = self.rect.y
         w = self.container.inner_rect.width
         h = self.container.inner_rect.height
-
+        self.current_node = 'E'
         self.graph = {
             'A': {'pos': (w/1.3, h), 'neighbors': ['B', 'D']},
             'B': {'pos': (w, h), 'neighbors': ['A', 'C', 'E']},
@@ -162,13 +162,41 @@ class Heart(Player):
                 center=data["pos"],
                 radius=7
             )
-    
+
+    def move_to_neighbor(self, direction):
+
+        # Movimenta o personagem para um nó vizinho com base na direção
+        neighbors = self.graph[self.current_node]['neighbors']
+        
+        # Mapeamento de teclas para os nós vizinhos
+        if direction == 'right' and len(neighbors) > 1:
+            self.current_node = neighbors[1]
+            self.rect.center = self.graph[self.current_node]['pos']
+        elif direction == 'left' and len(neighbors) > 0:
+            self.current_node = neighbors[0]
+            self.rect.center = self.graph[self.current_node]['pos']
+        elif direction == 'down' and len(neighbors) > 2:
+            self.current_node = neighbors[2]
+            self.rect.center = self.graph[self.current_node]['pos']
+        elif direction == 'up' and len(neighbors) > 3:
+            self.current_node = neighbors[3]
+            self.rect.center = self.graph[self.current_node]['pos']
+
     def apply_effect_prisioned(self):
 
         # Lógica da movimentação do personagem apenas nos nós
-        current_node = 'E'
-        self.rect.center = self.graph[current_node]['pos']
         keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            self.move_to_neighbor('right')
+        elif keys[pygame.K_LEFT]:
+            self.move_to_neighbor('left')
+        elif keys[pygame.K_DOWN]:
+            self.move_to_neighbor('down')
+        elif keys[pygame.K_UP]:
+            self.move_to_neighbor('up')
+
+        # Defino a posição inicial do personagem
+        self.rect.center = self.graph[self.current_node]['pos']
 
         # Desenho o grafo
         self.draw_graph(graph=self.graph)
