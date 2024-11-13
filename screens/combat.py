@@ -120,8 +120,10 @@ class Combat(State):
         hp_container.update()
         self.battle_container.update()
         self.main_menu.update()
+        CombatManager.enemy.update()
 
         # ============ DESENHANDO TUDO ============
+        CombatManager.enemy.draw(self.display)
         self.battle_container.draw()
         text_player_name.draw(self.__display)
         hp_container.draw(self.__display)
@@ -146,7 +148,7 @@ class Combat(State):
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
                 self.main_menu.options[len(self.main_menu.options)-1].rect.right - self.main_menu.options[0].rect.left,
-                self.__display.get_height()*0.3
+                abs(CombatManager.enemy.rect.bottom - self.battle_container.out_rect.bottom)
             )  # Redesenho o container da batalha
 
             # Ajustando os botões do HUD
@@ -188,7 +190,7 @@ class Combat(State):
 
     @property
     def display(self):
-        return self.display
+        return self.__display
     
     @property
     def game_state_manager(self):
@@ -207,3 +209,5 @@ class Combat(State):
         if not isinstance(value, dict):
             raise TypeError("Você precisa passar um dicionário")
         self.__variables = value
+
+        CombatManager.set_boss(self.__variables['enemy'])
