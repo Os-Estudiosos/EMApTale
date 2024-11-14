@@ -1,5 +1,8 @@
 import pygame
+import os
 from screens import State
+
+from config import *
 
 from classes.map.loader import MapLoader
 from classes.map.camera import Camera
@@ -15,7 +18,7 @@ class EMAp(State):
         self.__execution_counter = 0  #Contador de execuções do estado
 
         #Inicializa o MapLoader e carrega o mapa
-        self.map_loader = MapLoader('tileset/emap.tmx')
+        self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loaded = False  #Marca que o mapa não foi carregado ainda
         self.player = Frisk(self.map_loader.walls)  #Inicializa o jogador com as áreas de colisão
 

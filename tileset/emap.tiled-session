@@ -4,6 +4,10 @@
     ],
     "file.lastUsedOpenFilter": "Todos os Ficheiros (*)",
     "fileStates": {
+        "Emaptale.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "emap.tmx": {
             "expandedGroupLayers": [
                 6
@@ -11,22 +15,26 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1134.5,
-                "y": 243.25
+                "x": -42.5,
+                "y": 242.75
             }
         },
         "emap.tmx#EMAp_Tileset": {
             "scaleInDock": 1
         }
     },
+    "last.externalTilesetPath": "/mnt/Github/EMApTale/tileset",
     "map.height": 18,
     "map.lastUsedFormat": "tmx",
     "map.width": 50,
     "openFiles": [
-        "emap.tmx"
+        "emap.tmx",
+        "Emaptale.tsx"
     ],
     "project": "emap.tiled-project",
     "recentFiles": [
+        "Emaptale.tsx",
         "emap.tmx"
-    ]
+    ],
+    "tileset.lastUsedFilter": "Ficheiros de conjunto de blocos Tiled (*.tsx *.xml)"
 }

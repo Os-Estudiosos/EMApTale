@@ -16,10 +16,10 @@ class Frisk(Player):
 
         self.scale_factor = 2.5  # Fator de escala para o jogador
 
-        self.sprite_sheet = pygame.transform.scale_by(
-            pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'frisk.png')).convert_alpha(),  # Carrega a imagem do jogador
-            self.scale_factor
-        )
+        self.sprite_sheet = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'frisk.png')).convert_alpha()  # Carrega a imagem do jogador
+        # pygame.transform.scale_by(
+        #     self.scale_factor
+        # )
         self.frame_width = 24  # Largura de cada quadro de animação
         self.frame_height = 34  # Altura de cada quadro de animação
 
@@ -28,7 +28,7 @@ class Frisk(Player):
 
         self.frames = self.load_frames()
 
-        self.x, self.y = 150, 350  # Posição inicial do jogador
+        self.rect = pygame.Rect(150, 350, self.frame_width * self.scale_factor, self.frame_height * self.scale_factor)
 
         self.direction = 0  # Direção inicial do jogador
 
