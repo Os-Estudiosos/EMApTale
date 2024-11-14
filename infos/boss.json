@@ -1,0 +1,34 @@
+{
+    "name": "Yuri Saporito",
+    "life": 100,
+    "defense": 100,
+    "damage": 3,
+    "voice": "yuri_txt.wav",
+    "act": [
+        {
+            "label": "Checar",
+            "responses": [
+                "ATK - 3  DEF - 100"
+            ]
+        },
+        {
+            "label": "Implorar Ponto",
+            "responses": [
+                "Ele não parece convencido, vai ter que fazer muito mais que isso para o convencer"
+            ]
+        },
+        {
+            "label": "Chorar",
+            "responses": [
+                "Ele olha para você com uma cara serena, seu chororô não funcionou!"
+            ]
+        },
+        {
+            "label": "Tirar Dúvida",
+            "responses": [
+                "Você demonstrou interesse na matéria, Yuri mostra empatia por você!",
+                "A defesa de Yuri diminuiu!"
+            ]
+        }
+    ]
+}
