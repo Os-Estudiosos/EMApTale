@@ -76,6 +76,8 @@ class Heart(Player):
             'H': {'pos': (w, 1.8*h), 'neighbors': ['E','G', 'I']},
             'I': {'pos': (1.25*w, 1.8*h), 'neighbors': ['F', 'H']}
         }
+        self.current_pos = self.graph[self.current_node]['pos']
+        self.is_pressed = True
     
     def apply_effect(self, effect: str):
 
@@ -146,7 +148,7 @@ class Heart(Player):
 
     def draw_graph(self, graph:dict):
 
-        # Desenhando o grafo e os nós
+        # Desenhando o grafo
         for node, data in graph.items():
             for neighbor in data["neighbors"]:
                 pygame.draw.line(
@@ -155,6 +157,8 @@ class Heart(Player):
                     start_pos=data["pos"],
                     end_pos=graph[neighbor]["pos"],
                     width=2)
+                
+        # Desenhando os nós
         for node, data in graph.items():
             pygame.draw.circle(
                 surface=pygame.display.get_surface(),
@@ -165,43 +169,62 @@ class Heart(Player):
 
     def move_to_neighbor(self, direction):
 
-        # Movimenta o personagem para um nó vizinho com base na direção
-        neighbors = self.graph[self.current_node]['neighbors']
-        
-        # Mapeamento de teclas para os nós vizinhos
-        if direction == 'right' and len(neighbors) > 1:
-            self.current_node = neighbors[1]
-            self.rect.center = self.graph[self.current_node]['pos']
-        elif direction == 'left' and len(neighbors) > 0:
-            self.current_node = neighbors[0]
-            self.rect.center = self.graph[self.current_node]['pos']
-        elif direction == 'down' and len(neighbors) > 2:
-            self.current_node = neighbors[2]
-            self.rect.center = self.graph[self.current_node]['pos']
-        elif direction == 'up' and len(neighbors) > 3:
-            self.current_node = neighbors[3]
-            self.rect.center = self.graph[self.current_node]['pos']
+        # Inicializa a matriz de nós
+        node_matrix = np.array(list("ABCDEFGHI")).reshape(3, 3)
+
+        # Encontra a posição atual do nó em que o personagem está
+        current_node = self.current_node  # 'A', 'B', ..., 'I'
+        current_index = np.argwhere(node_matrix == current_node)[0]  # Posição na matriz (i, j)
+
+        i, j = current_index
+
+        # Define o próximo índice com base na direção
+        if direction == "up" and i > 0 and self.is_pressed:
+            i -= 1
+        elif direction == "down" and i < 2 and self.is_pressed:
+            i += 1
+        elif direction == "left" and j > 0 and self.is_pressed:
+            j -= 1
+        elif direction == "right" and j < 2 and self.is_pressed:
+            j += 1
+
+        # Atualiza o nó atual apenas se houver conexão no grafo
+        next_node = node_matrix[i, j]
+        if next_node in self.graph[current_node]['neighbors']:
+            self.current_node = next_node
+            self.rect.center = self.graph[next_node]['pos']  # Move o personagem para o próximo nó
 
     def apply_effect_prisioned(self):
 
-        # Lógica da movimentação do personagem apenas nos nós
+        # Mapeando as teclas pressionadas
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]:
-            self.move_to_neighbor('right')
-        elif keys[pygame.K_LEFT]:
-            self.move_to_neighbor('left')
-        elif keys[pygame.K_DOWN]:
-            self.move_to_neighbor('down')
-        elif keys[pygame.K_UP]:
-            self.move_to_neighbor('up')
 
-        # Defino a posição inicial do personagem
+        # Limitando o movimento
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                self.is_pressed = False
+            elif event.type == pygame.KEYUP:
+                self.is_pressed = True
+
+        # Iniciando a movimentação do personagem
+        if keys[pygame.K_UP]:
+            self.move_to_neighbor("up")
+        elif keys[pygame.K_DOWN]:
+            self.move_to_neighbor("down")
+        elif keys[pygame.K_LEFT]:
+            self.move_to_neighbor("left")
+        elif keys[pygame.K_RIGHT]:
+            self.move_to_neighbor("right")
+
+        # Inicialização da posição do coração
         self.rect.center = self.graph[self.current_node]['pos']
 
         # Desenho o grafo
         self.draw_graph(graph=self.graph)
 
     def update(self, *args, **kwargs):
+
+        # Obtendo as teclas pressionadas
         keys = pygame.key.get_pressed()
 
         # Movimentação
@@ -214,8 +237,7 @@ class Heart(Player):
         if self.direction.length() != 0:  
             self.direction = self.direction.normalize()
 
-        # # Aplicando os efeitos 
-
+        # Aplicando os efeitos 
         if self.effect == 'inverse':
             self.apply_effect_inverse()
         if self.effect == 'laugh':
