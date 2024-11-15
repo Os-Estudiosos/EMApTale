@@ -17,11 +17,13 @@ class IntroCutscene(State):
 
         self.stage = 0
         self.texts = [
-            "Bem vindo a Fundação Getulio Vargas! Após um longo semestre de inúmeros desafios, você se encontra em uma situação difícil...",
-            "Conseguiu, com muito esforço, conquistar um CR 5.9, mas você quer - e precisa - mais do que isso!",
-            "Buscando a redenção, você pretende encarar as Avaliações Suplementares para se provar digno de um CR 7+",
-            "Mas não tenha otimismo, pois 5 Entidades da EMAp tentarão impedi-lo de conseguir!",
-            "                                       ", 
+            "Bem vindo a Fundação Getulio Vargas! Após um longo semestre você se encontra em uma situação difícil...",
+            "Conseguiu, com muito esforço, conquistar um CR 5.9, mas você precisa mais do que isso!",
+            "Buscando a redenção, você pretende encarar as AS para se provar digno de um CR 7+",
+            "Mas não tenha otimismo, pois 5 Entidades da EMAp tentarão impedi-lo de conseguir! Boa sorte!",
+            "                                                                                            ", 
+            "                                                                                            ", 
+            "                                                                                            ", 
 
         ]
         self.images = [
@@ -29,7 +31,9 @@ class IntroCutscene(State):
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c12.png")),
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c16.png")), 
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c15.png")),
-            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c17.png")),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c18.jpeg")),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "logo1-bgp.png")),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c18.jpeg"))
 
         ]
         self.letters_per_second = 17
@@ -111,8 +115,15 @@ class IntroCutscene(State):
             screen_width, screen_height = self.__display.get_size()
             image_width, image_height = self.current_image.get_size()
 
+
+            if  self.stage == len(self.images)-4:
+                SoundManager.stop_music()
+                if self.last_time_define + self.wait_a_second/2 < self.current_time_local:
+                    SoundManager.play_sound("cymbal.ogg")
+
+
             # Configura o tamano e a posição da imagem, para a última, deixa em tela cheia
-            if  self.stage == len(self.images)-1:
+            if  self.stage == len(self.images)-2:
                 # Para última imagem, deixa em tela cheia e toca a música
                 new_width = screen_width * 1.01
                 aspect_ratio = image_height / image_width  
@@ -141,22 +152,33 @@ class IntroCutscene(State):
 
             teste = self.current_time_local
 
-            
+        
+            its_final_true = not all([
+                self.stage == len(self.images) -1,
+                self.stage == len(self.images) -2,
+                self.stage == len(self.images) -3
+            ])
+
+
             # Define para esclarecer a imagem | Fade In
-            if current_time - self.last_time_define >= self.wait_a_second:
+            if current_time - self.last_time_define >= self.wait_a_second and its_final_true:
                 self.alpha += 2
             
             # Define para escurecer a imagem | Fade On 
-            if self.last_time_define != 0:
+            if self.last_time_define != 0 and its_final_true:
                 self.sub_alpha += 3.15
                 self.alpha = 255 - self.sub_alpha
-            else:
+            elif its_final_true:
                 self.sub_alpha = 0
 
             # Deixa na escala dentro do alpha permitido, apenas por redundância
             self.alpha = min(max(self.alpha, 0), 255)
 
             print(self.alpha)
+
+
+
+
 
             # Valeu Spaniol pela Nice Dick!
             resized_image.set_alpha(self.alpha)
@@ -170,8 +192,26 @@ class IntroCutscene(State):
             self.current_text.update()
 
             # Plota o texto
-            self.current_text.draw(self.__display)    
-        
+            self.current_text.draw(self.__display)  
+
+
+            # Pula a 
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
+                        if self.stage < len(self.texts):
+                            self.stage += 1
+                            self.current_text = CDynamicText(
+                                text=self.texts[self.stage],
+                                font=FontManager.fonts['Pixel'],
+                                letters_per_second=self.letters_per_second,
+                                text_size=40,
+                                max_length=self.__display.get_width() - 40,
+                                position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
+                                color=(255, 255, 255)
+                            )
+                            self.current_image = self.images[self.stage]
+                    
         else:
             self.__game_state_manager.set_state('emap')
             

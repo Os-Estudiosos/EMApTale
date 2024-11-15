@@ -14,18 +14,8 @@ class CDynamicText:
         position: tuple[float] = (0, 0),
         color: pygame.Color = (255, 255, 255)
     ):
-        """Inicialização da classe
-            
-        Args:
-            text (str): Qual o texto deve ser exibido
-            font (str): O nome da fonte que vai ser usada (Olhar no gerenciador de fontes)
-            letters_per_second (int): Quantas letras aparecem por segundo
-            text_size (int, optional): Tamanho da fonte. Defaults to 12.
-            max_length (float, optional): Largura máxima do texto. Defaults to 0.
-            position (tuple, optional): Posição do texto na tela. Defaults to (0, 0).
-            color (pygame.Color, optional): Cor da fonte. Defaults to (255, 255, 255).
-        """
-        self.text = text
+        """Inicialização da classe"""
+        self.words = text.split()  # Divide o texto em palavras
         self.progressive_text = ''
         self.font = pygame.font.Font(font, text_size)
         self.max_length = max_length
@@ -34,6 +24,7 @@ class CDynamicText:
 
         self.rows = [self.font.render(self.progressive_text, True, self.color)]
         self.wich_row_to_update = 0
+        self.current_word = ''
         self.letter_counter = 0
 
         self.counter = 0
@@ -45,30 +36,37 @@ class CDynamicText:
         if self.finished:
             return
 
-        self.counter += 1
-        if self.counter >= self.letter_rate and self.letter_counter < len(self.text):
-            if self.text[self.letter_counter] != ' ':
-                #SoundManager.stop_sound('text.wav')
-                #SoundManager.play_sound('text.wav')
-                ...
+        if self.letter_counter >= len(self.current_word):
+            # Começa uma nova palavra se necessário
+            if self.words:
+                self.current_word = self.words.pop(0) + ' '  # Adiciona espaço ao final da palavra
+                # Testa se a palavra inteira cabe na linha atual
+                projected_text = self.progressive_text + self.current_word
+                rendered_text = self.font.render(projected_text, True, self.color)
                 
+                if self.max_length > 0 and rendered_text.get_rect().width > self.max_length:
+                    # Começa uma nova linha se a palavra não couber
+                    self.progressive_text = ''
+                    self.rows.append(self.font.render(self.progressive_text, True, self.color))
+                    self.wich_row_to_update += 1
+
+                self.letter_counter = 0  # Reinicia o contador de letras da nova palavra
+
+            else:
+                # Se não há mais palavras, o texto terminou
+                self.finished = True
+                return
+
+        # Exibe a próxima letra da palavra atual
+        self.counter += 1
+        if self.counter >= self.letter_rate:
             self.counter = 0
-            self.progressive_text += self.text[self.letter_counter]
-            new_text = self.font.render(self.progressive_text, True, self.color)
-
-            if new_text.get_rect().width >= self.max_length and self.max_length > 0:
-                self.progressive_text = self.text[self.letter_counter]
-                self.rows.append(self.font.render(self.progressive_text, True, self.color))
-                self.wich_row_to_update += 1
-                new_text = self.font.render(self.progressive_text, True, self.color)
-
-            self.rows[self.wich_row_to_update] = new_text
+            self.progressive_text += self.current_word[self.letter_counter]
             self.letter_counter += 1
 
-            # Verificar se terminou de escrever o texto
-            if self.letter_counter >= len(self.text):
-                self.finished = True
-        
+            # Atualiza a linha atual com o texto progressivo
+            self.rows[self.wich_row_to_update] = self.font.render(self.progressive_text, True, self.color)
+    
     def draw(self, screen: pygame.Surface):
         for i, text in enumerate(self.rows):
             text_rect = text.get_rect()
