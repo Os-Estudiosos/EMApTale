@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="12" nextobjectid="567">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="12" nextobjectid="570">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -236,6 +236,11 @@
   </object>
   <object id="566" x="2154.73" y="219.818">
    <polygon points="0,0 0.0434783,-3.21739 4.73913,-8.56522 23,-8.73913 30.3478,-3.52174 30.3043,0.0869565"/>
+  </object>
+  <object id="567" gid="281" x="240.545" y="259.818" width="20" height="20"/>
+  <object id="568" gid="251" x="240.455" y="239.727" width="20" height="20"/>
+  <object id="569" x="240.375" y="228.125">
+   <polygon points="0,0 0.25,19.6875 19.75,19.875 19.625,-0.875"/>
   </object>
  </objectgroup>
 </map>
