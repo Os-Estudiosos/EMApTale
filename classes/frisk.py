@@ -122,29 +122,11 @@ class Frisk(Player):
         """
         collided_wall = None
         for wall in self.walls:
-            # wall_mask = pygame.mask.Mask((wall.width, wall.height), fill=True)
-            # offset = (wall.x - self.rect.x, wall.y - self.rect.y)
-
-            if isinstance(wall, pygame.Rect):
-                pygame.draw.rect(pygame.display.get_surface(), (0,0,255), camera.apply(wall))
-            if isinstance(wall, Polygon):
-                pygame.draw.polygon(pygame.display.get_surface(), (0,0,255), camera.apply(wall).points)
-
             if wall.colliderect(self.rect):
                 collided_wall = wall
             
         return collided_wall
 
     def draw(self, surface, camera):
-        if self.mask:
-            pygame.draw.polygon(surface, (255, 0, 0), self.mask.outline(), 0)
-        
-        pygame.draw.rect(
-            surface,
-            (255, 0, 0),
-            camera.apply(self.rect)
-        )
-
-        if self.direction < len(self.frames) and self.frame_index < len(self.frames[self.direction]):
-            frame_image = self.frames[self.direction][self.frame_index]
-            surface.blit(frame_image, camera.apply(self.rect))
+        frame_image = self.frames[self.direction][self.frame_index]
+        surface.blit(frame_image, camera.apply(self.rect))
