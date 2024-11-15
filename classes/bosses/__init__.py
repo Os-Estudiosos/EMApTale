@@ -10,7 +10,7 @@ class Boss(pygame.sprite.Sprite, ABC):
     def speak(self, text: str):...
 
     @abstractmethod
-    def load_attacks(self):...
+    def choose_attack(self):...
 
     @abstractmethod
     def draw(self, screen: pygame.Surface):...
@@ -34,3 +34,14 @@ class Boss(pygame.sprite.Sprite, ABC):
     @property
     @abstractmethod
     def damage(self):...
+
+
+class Attack(ABC):
+    @property
+    @abstractmethod
+    def player(self):...
+
+    @property
+    @abstractmethod
+    def run(self):...
+

@@ -15,7 +15,7 @@ class CombatManager:
         cls.turn = 'boss'
     
     @classmethod
-    def set_boss(cls, infos):
+    def set_boss(cls, infos: dict, variables: dict):
         """Método que inicializa o meu inimigo do combate
 
         Args:
@@ -23,4 +23,4 @@ class CombatManager:
         """
 
         if infos['name'] == 'Yuri Saporito':
-            cls.enemy = Yuri(infos)
+            cls.enemy = Yuri(infos, **variables)

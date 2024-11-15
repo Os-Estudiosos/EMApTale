@@ -91,7 +91,12 @@ class Combat(State):
         for event in EventManager.events:
             if event.type == BOSS_TURN_EVENT:
                 CombatManager.set_boss_turn()
+                CombatManager.enemy.choose_attack()
                 pygame.time.set_timer(BOSS_TURN_EVENT, 0)
+            if event.type == PLAYER_TURN_EVENT:
+                BattleMenuManager.change_active_menu('MainMenu')
+                CombatManager.set_player_turn()
+                pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
 
     def run(self):
         # Inicio do ciclo de vida da cena
@@ -210,4 +215,7 @@ class Combat(State):
             raise TypeError("Você precisa passar um dicionário")
         self.__variables = value
 
-        CombatManager.set_boss(self.__variables['enemy'])
+        CombatManager.set_boss(self.__variables['enemy'], {
+            'player': self.player,
+            'player_group': self.player_group
+        })
