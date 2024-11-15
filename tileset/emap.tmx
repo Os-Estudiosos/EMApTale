@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="10" nextobjectid="479">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="10" nextobjectid="487">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -262,7 +262,7 @@
   <object id="448" x="2181.48" y="262.509" width="2.875" height="5.875"/>
   <object id="449" x="2177.48" y="256.947" width="2.9375" height="10.375"/>
   <object id="450" x="2159.04" y="256.697" width="2.1875" height="7.3125"/>
-  <object id="451" x="2019.33" y="216.416" width="179.455" height="39.8182"/>
+  <object id="451" x="2020.41" y="217.493" width="178.378" height="38.7415"/>
   <object id="452" x="2199.67" y="180" width="60.6667" height="103.667"/>
   <object id="454" x="1580" y="320" width="22.3333" height="78.6667"/>
   <object id="455" x="1580" y="320" width="599" height="52.5"/>
@@ -284,6 +284,9 @@
   <object id="476" x="2168.02" y="115.146" width="3.25" height="22.625"/>
   <object id="477" x="2171.02" y="112.271" width="2.625" height="22.625"/>
   <object id="478" x="2171.27" y="106.396" width="6.5" height="26"/>
+  <object id="480" x="1911.43" y="213.049" width="15.9704" height="7.17772"/>
+  <object id="481" x="1913.22" y="271.548" width="14.5349" height="3.58886"/>
+  <object id="484" x="1960.41" y="225.61" width="18.8415" height="37.683"/>
+  <object id="485" x="1981.23" y="225.072" width="17.0471" height="42.1691"/>
  </objectgroup>
- <objectgroup id="9" name="merda"/>
 </map>

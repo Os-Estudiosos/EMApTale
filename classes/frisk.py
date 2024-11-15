@@ -20,12 +20,13 @@ class Frisk(Player):
         # pygame.transform.scale_by(
         #     self.scale_factor
         # )
-        self.frame_width = 24  # Largura de cada quadro de animação
-        self.frame_height = 34  # Altura de cada quadro de animação
+        self.frame_width = 19  # Largura de cada quadro de animação
+        self.frame_height = 29  # Altura de cada quadro de animação
 
         self.cols = 2  # Número de colunas na folha de sprites
         self.rows = 4  # Número de linhas na folha de sprites
 
+        self.frame_offset = (3, 4)
         self.frames = self.load_frames()
 
         self.rect = pygame.Rect(150, 350, self.frame_width * self.scale_factor, self.frame_height * self.scale_factor)
@@ -44,8 +45,8 @@ class Frisk(Player):
         for row in range(self.rows):
             direction_frames = []
             for col in range(self.cols):
-                x = col * self.frame_width
-                y = row * self.frame_height
+                x = col * self.frame_width + (col+1)*self.frame_offset[0]
+                y = row * self.frame_height + (row+1)*self.frame_offset[1]
                 frame = self.sprite_sheet.subsurface(pygame.Rect(x, y, self.frame_width, self.frame_height))
                 
                 # Escala o quadro para 2.5x o tamanho original
@@ -83,7 +84,7 @@ class Frisk(Player):
         elif direction.y < 0:
             self.direction = 2  # Cima
 
-    def move(self, keys):
+    def move(self, camera, keys):
         old_rect = self.rect.copy()
         base_speed = 10
 
@@ -95,24 +96,26 @@ class Frisk(Player):
         if direction.length() != 0:
             direction = direction.normalize()
 
-        # Movimenta o jogador
-        self.rect.x += base_speed * direction.x
-        self.rect.y += base_speed * direction.y
-
-        # Verifica colisão de máscara com as paredes
-        if self.check_wall_collisions():
-            # Se colidir, reverte para a posição anterior
-            self.rect = old_rect
-        else:
-            # Atualiza a posição armazenada de self.x e self.y
-            self.x, self.y = self.rect.topleft
-
         # Atualiza a direção e a animação
         self.update_dir(direction)
         if direction.length() != 0:
             self.update_animation()
+        
+        # Verifica colisão de máscara com as paredes
+        collision = self.check_wall_collisions(camera, direction)
+        if collision == 'Vertical':
+            direction.y = 0
+        elif collision == 'Horizontal':
+            direction.x = 0
+        elif collision == 'Both':
+            direction *= 0
+        
+        # Movimenta o jogador
+        self.rect.x += base_speed * direction.x
+        self.rect.y += base_speed * direction.y
 
-    def check_wall_collisions(self):
+
+    def check_wall_collisions(self, camera, direction):
         """
         Verifica colisão de máscara entre o jogador e as paredes.
         """
@@ -123,12 +126,23 @@ class Frisk(Player):
             wall_mask = pygame.mask.Mask((wall.width, wall.height), fill=True)
             offset = (wall.x - self.rect.x, wall.y - self.rect.y)
 
+            pygame.draw.rect(pygame.display.get_surface(), (0,0,255), camera.apply(wall))
+
             # Verifica colisão pixel a pixel
-            if self.mask.overlap(wall_mask, offset):
-                return True
+            collision_point = self.mask.overlap(wall_mask, offset)
+            return collision_point
         return False
 
     def draw(self, surface, camera):
+        if self.mask:
+            pygame.draw.polygon(surface, (255, 0, 0), self.mask.outline(), 0)
+        
+        pygame.draw.rect(
+            surface,
+            (255, 0, 0),
+            camera.apply(self.rect)
+        )
+
         if self.direction < len(self.frames) and self.frame_index < len(self.frames[self.direction]):
             frame_image = self.frames[self.direction][self.frame_index]
             surface.blit(frame_image, camera.apply(self.rect))

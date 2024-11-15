@@ -55,7 +55,7 @@ class EMAp(State):
 
         # Atualiza e desenha o jogador na tela
         keys = pygame.key.get_pressed()
-        self.player.move(keys)
+        self.player.move(self.camera, keys)
         self.player.draw(self.__display, self.camera)
         
         pygame.display.flip()
