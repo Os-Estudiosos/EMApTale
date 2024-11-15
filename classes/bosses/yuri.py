@@ -41,24 +41,28 @@ class Yuri(Boss):
         self.__attacks = [
             YuriAttack1()
         ]
-        self.attack_to_execute = None
+        self.attack_to_execute = -1
     
     def speak(self, text):
         ...
     
     def choose_attack(self):
-        self.attack_to_execute = random.choice(self.__attacks)
+        self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
+        self.__attacks[self.attack_to_execute].restart()
+        print(self.attack_to_execute)
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        # if self.attack_to_execute:
-        #     self.attack_to_execute.draw(screen)
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
-        if self.attack_to_execute:
-            self.attack_to_execute.run()
+        if 0 <= self.attack_to_execute < len(self.__attacks):
+            if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
+                self.attack_to_execute = -1
+            else:
+                self.__attacks[self.attack_to_execute].run()
+
     
     def take_damage(self, amount):
         self.__life -= amount
@@ -96,7 +100,7 @@ class YuriAttack1(Attack):
         self.vectors: list[Vector] = []
         self.vectors_creation_rate = FPS/2  # 3 Vetores a cada segundo serão criados
 
-        self.duration = FPS * 25  # O Ataque dura 10 segundos
+        self.duration = FPS * 5  # O Ataque dura 10 segundos
         self.duration_counter = 0
 
         # self.vectors.append(Vector(self.vectors_group))
@@ -123,6 +127,9 @@ class YuriAttack1(Attack):
                     if self.__player.mask.overlap(other_sprite.mask, offset):
                         self.__player.take_damage(CombatManager.enemy.damage)
                         other_sprite.kill()
+    
+    def restart(self):
+        self.duration_counter = 0
     
     @property
     def player(self):

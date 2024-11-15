@@ -97,6 +97,7 @@ class Combat(State):
                 CombatManager.enemy.choose_attack()
                 pygame.time.set_timer(BOSS_TURN_EVENT, 0)
             if event.type == PLAYER_TURN_EVENT:
+                print('Ta caindo aqui')
                 BattleMenuManager.change_active_menu('MainMenu')
                 CombatManager.set_player_turn()
                 pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
