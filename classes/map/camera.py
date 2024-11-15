@@ -1,5 +1,7 @@
 import pygame
 
+from classes.polygon.polygon import Polygon
+
 
 class Camera:
     """Controla a área visível do mapa em relação ao jogador
@@ -32,6 +34,13 @@ class Camera:
         if isinstance(entity, pygame.Rect):
             #Move a entidade com base na posição da câmera, retornando a posição ajustada
             return entity.move(-self.camera_rect.x, -self.camera_rect.y)
+        if isinstance(entity, Polygon):
+            return entity.move(-self.camera_rect.x, -self.camera_rect.y)
+        if isinstance(entity, list) or isinstance(entity, tuple):
+            return [
+                entity[0] - self.camera_rect.x,
+                entity[1] - self.camera_rect.y
+            ]
         #Se a entidade não for pygame.Rect, usa a propriedade rect para mover
         return entity.rect.move(-self.camera_rect.x, -self.camera_rect.y)
 

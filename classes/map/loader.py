@@ -2,6 +2,9 @@ from pytmx import load_pygame
 import pygame
 # import math
 
+from classes.polygon.polygon import Polygon
+
+
 #Carrega e renderiza mapas do tipo .tmx
 class MapLoader:
     def __init__(self, map_file):
@@ -55,6 +58,11 @@ class MapLoader:
                         obj.height * self.scale_factor
                     )
                     walls.append(rect)
+            if layer.name == "NotRectWallsColiders":
+                for obj in layer:
+                    pol = Polygon(obj.points)
+                    pol.scale(self.scale_factor)
+                    walls.append(pol)
         return walls
 
     def get_size(self):

@@ -5,6 +5,7 @@ from config import *
 
 from classes.player import Player
 from classes.sprites.spritesheet import SpriteSheet
+from classes.polygon.polygon import Polygon
 
 from utils import sign
 
@@ -47,6 +48,8 @@ class Frisk(Player):
             self.scale_factor
         )
 
+        self.speed = 10
+
     def update_animation(self):
         if self.direction < len(self.frames):
             self.frame_index = self.frame_index % len(self.frames[self.direction])
@@ -75,7 +78,6 @@ class Frisk(Player):
 
     def move(self, camera, keys):
         old_rect = self.rect.copy()
-        base_speed = 10
 
         direction = pygame.math.Vector2(
             sign((keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) or (keys[pygame.K_d] - keys[pygame.K_a])),
@@ -91,36 +93,51 @@ class Frisk(Player):
             self.update_animation()
         
         # Verifica colisão de máscara com as paredes
-        collision = self.check_wall_collisions(camera, direction)
-        if collision == 'Vertical':
-            direction.y = 0
-        elif collision == 'Horizontal':
-            direction.x = 0
-        elif collision == 'Both':
-            direction *= 0
-        
         # Movimenta o jogador
-        self.rect.x += base_speed * direction.x
-        self.rect.y += base_speed * direction.y
+        self.rect.x += self.speed * direction.x
 
+        wall = self.check_wall_collisions(camera, direction)
+        if isinstance(wall, pygame.Rect):
+            if direction.x > 0:
+                self.rect.right = wall.left
+            elif direction.x < 0:
+                self.rect.left = wall.right
+        if isinstance(wall, Polygon):
+            self.rect.x -= self.speed * direction.x
+            print('AAAAAAAAAAAAA')
+
+        self.rect.y += self.speed * direction.y
+
+        wall = self.check_wall_collisions(camera, direction)
+        if isinstance(wall, pygame.Rect):
+            if direction.y < 0:
+                self.rect.top = wall.bottom
+            elif direction.y > 0:
+                self.rect.bottom = wall.top
+        if isinstance(wall, Polygon):
+            self.rect.y -= self.speed * direction.y
 
     def check_wall_collisions(self, camera, direction):
         """
         Verifica colisão de máscara entre o jogador e as paredes.
         """
-        if self.mask is None:
-            return False
-
+        collided_wall = None
         for wall in self.walls:
-            wall_mask = pygame.mask.Mask((wall.width, wall.height), fill=True)
-            offset = (wall.x - self.rect.x, wall.y - self.rect.y)
+            # wall_mask = pygame.mask.Mask((wall.width, wall.height), fill=True)
+            # offset = (wall.x - self.rect.x, wall.y - self.rect.y)
 
-            pygame.draw.rect(pygame.display.get_surface(), (0,0,255), camera.apply(wall))
+            if isinstance(wall, pygame.Rect):
+                pygame.draw.rect(pygame.display.get_surface(), (0,0,255), camera.apply(wall))
+            if isinstance(wall, Polygon):
+                # pygame.draw.polygon(pygame.display.get_surface(), (0,0,255), camera.apply(wall).points)
+                for i in range(len(wall.edges)):
+                    pygame.draw.line(pygame.display.get_surface(), (0,0,255), camera.apply(wall.edges[i%len(wall.edges)][0]), camera.apply(wall.edges[i%len(wall.edges)][1]))
+                    # print(wall.edges[i%len(wall.edges)], wall.edges[(i+1)%len(wall.edges)])
 
-            # Verifica colisão pixel a pixel
-            collision_point = self.mask.overlap(wall_mask, offset)
-            return collision_point
-        return False
+            if wall.colliderect(self.rect):
+                collided_wall = wall
+            
+        return collided_wall
 
     def draw(self, surface, camera):
         if self.mask:
