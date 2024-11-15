@@ -48,7 +48,7 @@ class Frisk(Player):
             self.scale_factor
         )
 
-        self.speed = 10
+        self.speed = 5
 
     def update_animation(self):
         if self.direction < len(self.frames):
@@ -104,7 +104,6 @@ class Frisk(Player):
                 self.rect.left = wall.right
         if isinstance(wall, Polygon):
             self.rect.x -= self.speed * direction.x
-            print('AAAAAAAAAAAAA')
 
         self.rect.y += self.speed * direction.y
 
@@ -129,10 +128,7 @@ class Frisk(Player):
             if isinstance(wall, pygame.Rect):
                 pygame.draw.rect(pygame.display.get_surface(), (0,0,255), camera.apply(wall))
             if isinstance(wall, Polygon):
-                # pygame.draw.polygon(pygame.display.get_surface(), (0,0,255), camera.apply(wall).points)
-                for i in range(len(wall.edges)):
-                    pygame.draw.line(pygame.display.get_surface(), (0,0,255), camera.apply(wall.edges[i%len(wall.edges)][0]), camera.apply(wall.edges[i%len(wall.edges)][1]))
-                    # print(wall.edges[i%len(wall.edges)], wall.edges[(i+1)%len(wall.edges)])
+                pygame.draw.polygon(pygame.display.get_surface(), (0,0,255), camera.apply(wall).points)
 
             if wall.colliderect(self.rect):
                 collided_wall = wall

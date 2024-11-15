@@ -4,29 +4,60 @@ import numpy as np
 
 class Polygon:
     def __init__(self, points: list[tuple[int]]):
-        self.points = list(map(lambda point: [point.x, point.y], points))
-        self.previous_position = self.points.copy()
+        if isinstance(points[0], tuple):
+            self.points = list(map(lambda point: [point[0], point[1]], points))
+        else:
+            self.points = list(map(lambda point: [point.x, point.y], points))
         self.edges = self.finding_edges()
 
     def colliderect(self, rect: pygame.Rect):
-        # Pegando os pontos extremos para obter as arestas:
-        rect_edges = [
-            # Upper
-            (rect.topleft, rect.topright),
-            # Left
-            (rect.topleft, rect.bottomleft),
-            # Right
-            (rect.topright, rect.bottomright),
-            # Bottom
-            (rect.bottomleft, rect.bottomright)
-        ]
+        # Definir os eixos do retângulo (horizontal e vertical)
+        rect_axes = [np.array([1, 0]), np.array([0, 1])]  # Eixos horizontal e vertical
+
+        # Obter os eixos do polígono (normais às arestas)
+        def get_normal(edge):
+            p1, p2 = edge
+            dx = p2[0] - p1[0]
+            dy = p2[1] - p1[1]
+            return np.array([-dy, dx])  # Normal no plano 2D
+        poly_axes = [get_normal(edge) for edge in self.edges]
+
+        def project_points(points, axis):
+            projections = [np.dot(p, axis) for p in points]
+            return min(projections), max(projections)
+
+        # Combinar todos os eixos (eixos do retângulo + eixos do polígono)
+        axes = rect_axes + poly_axes
+
+        # Para cada eixo, projetar o retângulo e o polígono e verificar se as projeções se sobrepõem
+        for axis in axes:
+            # Normalizar o eixo para garantir que as projeções sejam comparáveis
+            axis = axis / np.linalg.norm(axis)
+
+            # Projetar os pontos do retângulo sobre o eixo
+            rect_points = [np.array(rect.topleft), 
+                        np.array(rect.topright),
+                        np.array(rect.bottomleft),
+                        np.array(rect.bottomright)]
+            
+            rect_min, rect_max = project_points(rect_points, axis)
+
+            # Projetar os pontos do polígono sobre o eixo
+            poly_min, poly_max = project_points(self.points, axis)
+
+            # Verificar se as projeções se sobrepõem
+            if rect_max < poly_min or poly_max < rect_min:
+                # Se as projeções não se sobrepõem, significa que há um eixo de separação
+                return False
+        
+        # Se não houver nenhum eixo de separação, significa que os objetos colidiram
+        return True
     
     def __iter__(self):
         return iter(self.points)
     
     def move(self, move_x, move_y):
-        self.points = [(x + move_x, y + move_y) for x, y in self.previous_position]
-        return self
+        return Polygon([(x + move_x, y + move_y) for x, y in self.points])
 
     def scale(self, factor):
         scale_matrix = np.array([[factor, 0], [0, factor]], dtype=int)
@@ -38,7 +69,7 @@ class Polygon:
 
         center_point = np.dot(points_matrix, np.ones(n)) / n
 
-        for point in self.previous_position:
+        for point in self.points:
             point_array = np.array(point, dtype=float) - center_point
             scaled_point = np.dot(scale_matrix, point_array)
             scaled_points.append((scaled_point + center_point).tolist())

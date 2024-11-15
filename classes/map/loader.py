@@ -60,6 +60,12 @@ class MapLoader:
                     walls.append(rect)
             if layer.name == "NotRectWallsColiders":
                 for obj in layer:
+                    # new_points = []
+                    # for point in obj.points:
+                    #     new_point = [point.x, point.y]
+                    #     new_point[0] += self.offset_vector.x
+                    #     new_point[1] += self.offset_vector.y
+                    #     new_points.append(point)
                     pol = Polygon(obj.points)
                     pol.scale(self.scale_factor)
                     walls.append(pol)
