@@ -95,16 +95,18 @@ class YuriAttack1(Attack):
         self.vectors: list[Vector] = []
         self.vectors_creation_rate = FPS/2  # 3 Vetores a cada segundo serão criados
 
-        self.duration = FPS * 20  # O Ataque dura 10 segundos
+        self.duration = FPS * 25  # O Ataque dura 10 segundos
         self.duration_counter = 0
 
-        self.vectors.append(Vector(self.vectors_group))
+        # self.vectors.append(Vector(self.vectors_group))
 
     def run(self):
         self.duration_counter += 1
 
-        # if self.duration_counter % self.vectors_creation_rate == 0:
-        #     self.vectors.append(Vector(self.vectors_group))
+        if self.duration_counter % self.vectors_creation_rate == 0:
+            self.vectors.append(Vector(self.vectors_group))
+            self.vectors.append(Vector(self.vectors_group))
+            self.vectors.append(Vector(self.vectors_group))
         
         if self.duration_counter >= self.duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
