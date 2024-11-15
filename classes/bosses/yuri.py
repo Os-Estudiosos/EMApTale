@@ -7,6 +7,7 @@ from config.eventmanager import EventManager
 from config.combatmanager import CombatManager
 
 from classes.bosses import Boss, Attack
+from classes.battle.heart import Heart
 
 from classes.bosses.attacks.vector import Vector
 
@@ -85,8 +86,8 @@ class Yuri(Boss):
 
 class YuriAttack1(Attack):
     def __init__(self):
-        self.__player = CombatManager.get_variable('player')
-        self.__player_group = CombatManager.get_variable('player_group')
+        self.__player: Heart = CombatManager.get_variable('player')
+        self.__player_group: pygame.sprite.Group = CombatManager.get_variable('player_group')
 
         self.vectors_group = pygame.sprite.Group()
 
@@ -114,6 +115,14 @@ class YuriAttack1(Attack):
         
         for vector in self.vectors:
             vector.update(player_center=self.player.rect.center)
+        
+        for other_sprite in self.vectors_group:
+            if self.__player != other_sprite:
+                if self.__player.rect.colliderect(other_sprite.rect):
+                    offset = (other_sprite.rect.x - self.__player.rect.x, other_sprite.rect.y - self.__player.rect.y)
+                    if self.__player.mask.overlap(other_sprite.mask, offset):
+                        self.__player.take_damage(CombatManager.enemy.damage)
+                        other_sprite.kill()
     
     @property
     def player(self):

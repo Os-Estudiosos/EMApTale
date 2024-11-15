@@ -20,6 +20,7 @@ class Vector(pygame.sprite.Sprite):
         self.image_path = os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'vector.png')
         self.image = pygame.image.load(self.image_path)
         self.image.set_alpha(self.actual_alpha)
+        self.mask = pygame.mask.from_surface(self.image)
         self.max_rotation_angle = 0
         self.rect = self.image.get_rect()
         self.randomize_position()
@@ -53,6 +54,7 @@ class Vector(pygame.sprite.Sprite):
             pygame.image.load(self.image_path),
             self.rotate_angle
         )
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center=self.rect.center)  # Centralizo o retangulo no anterior
 
         # Rotacionando o vetor que indica para onde a flecha está apontando
