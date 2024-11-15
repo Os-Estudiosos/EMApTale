@@ -7,6 +7,7 @@ import time
 
 from config import *
 from config.combatmanager import CombatManager
+from config.soundmanager import SoundManager
 
 from utils import radians_to_degrees, get_positive_angle, angle_between_vectors
 
@@ -44,6 +45,7 @@ class Vector(pygame.sprite.Sprite):
         self.counter = 0
 
         self.speed = 7
+        SoundManager.play_sound('spearappear.wav')
 
     def fade_image(self):
         if self.counter <= 255:
@@ -109,3 +111,4 @@ class Vector(pygame.sprite.Sprite):
             self.player_rect.centery - self.rect.centery
         ])
         self.vector_pointing_to_player = self.vector_pointing_to_player / np.linalg.norm(self.vector_pointing_to_player)
+        SoundManager.play_sound('arrow.wav')

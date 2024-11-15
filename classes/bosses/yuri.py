@@ -98,9 +98,9 @@ class YuriAttack1(Attack):
         CombatManager.global_groups.append(self.vectors_group)
 
         self.vectors: list[Vector] = []
-        self.vectors_creation_rate = FPS/2  # 3 Vetores a cada segundo serão criados
+        self.vectors_creation_rate = FPS/3  # 3 Vetores a cada segundo serão criados
 
-        self.duration = FPS * 5  # O Ataque dura 10 segundos
+        self.duration = FPS * 10  # O Ataque dura 10 segundos
         self.duration_counter = 0
 
         # self.vectors.append(Vector(self.vectors_group))
@@ -110,8 +110,6 @@ class YuriAttack1(Attack):
 
         if self.duration_counter % self.vectors_creation_rate == 0:
             self.vectors.append(Vector(self.vectors_group))
-            self.vectors.append(Vector(self.vectors_group))
-            self.vectors.append(Vector(self.vectors_group))
         
         if self.duration_counter >= self.duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
@@ -120,13 +118,13 @@ class YuriAttack1(Attack):
         for vector in self.vectors:
             vector.update(player_center=self.player.rect.center)
         
-        for other_sprite in self.vectors_group:
-            if self.__player != other_sprite:
-                if self.__player.rect.colliderect(other_sprite.rect):
-                    offset = (other_sprite.rect.x - self.__player.rect.x, other_sprite.rect.y - self.__player.rect.y)
-                    if self.__player.mask.overlap(other_sprite.mask, offset):
+        for vector in self.vectors_group:
+            if self.__player != vector:
+                if self.__player.rect.colliderect(vector.rect):
+                    offset = (vector.rect.x - self.__player.rect.x, vector.rect.y - self.__player.rect.y)
+                    if self.__player.mask.overlap(vector.mask, offset):
                         self.__player.take_damage(CombatManager.enemy.damage)
-                        other_sprite.kill()
+                        vector.kill()
     
     def restart(self):
         self.duration_counter = 0
