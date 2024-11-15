@@ -4,6 +4,7 @@ import os
 from config import *
 
 from classes.player import Player
+from classes.sprites.spritesheet import SpriteSheet
 
 from utils import sign
 
@@ -17,9 +18,6 @@ class Frisk(Player):
         self.scale_factor = 2.5  # Fator de escala para o jogador
 
         self.sprite_sheet = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'frisk.png')).convert_alpha()  # Carrega a imagem do jogador
-        # pygame.transform.scale_by(
-        #     self.scale_factor
-        # )
         self.frame_width = 19  # Largura de cada quadro de animação
         self.frame_height = 29  # Altura de cada quadro de animação
 
@@ -27,7 +25,6 @@ class Frisk(Player):
         self.rows = 4  # Número de linhas na folha de sprites
 
         self.frame_offset = (3, 4)
-        self.frames = self.load_frames()
 
         self.rect = pygame.Rect(150, 350, self.frame_width * self.scale_factor, self.frame_height * self.scale_factor)
 
@@ -40,23 +37,15 @@ class Frisk(Player):
         self.walls = walls  # Lista de retângulos de colisão
         self.mask = None  # Máscara para colisão precisa
 
-    def load_frames(self):
-        frames = []
-        for row in range(self.rows):
-            direction_frames = []
-            for col in range(self.cols):
-                x = col * self.frame_width + (col+1)*self.frame_offset[0]
-                y = row * self.frame_height + (row+1)*self.frame_offset[1]
-                frame = self.sprite_sheet.subsurface(pygame.Rect(x, y, self.frame_width, self.frame_height))
-                
-                # Escala o quadro para 2.5x o tamanho original
-                scaled_frame = pygame.transform.scale(
-                    frame, (int(self.frame_width * self.scale_factor), int(self.frame_height * self.scale_factor))
-                )
-                
-                direction_frames.append(scaled_frame)  # Adiciona o quadro escalado à direção atual
-            frames.append(direction_frames)  # Adiciona os quadros da direção à lista principal
-        return frames
+        self.frames = SpriteSheet(
+            self.rows,
+            self.cols,
+            self.sprite_sheet,
+            self.frame_width,
+            self.frame_height,
+            *self.frame_offset,
+            self.scale_factor
+        )
 
     def update_animation(self):
         if self.direction < len(self.frames):
