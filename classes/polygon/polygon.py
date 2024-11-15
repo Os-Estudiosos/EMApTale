@@ -3,12 +3,19 @@ import numpy as np
 
 
 class Polygon:
-    def __init__(self, points: list[tuple[int]]):
-        if isinstance(points[0], tuple):
-            self.points = list(map(lambda point: [point[0], point[1]], points))
+    def __init__(self, points: list):
+        # Verifica o formato dos pontos
+        if isinstance(points[0], (tuple, list)):
+            # Se for uma tupla ou lista, converte diretamente
+            self.points = [list(point) for point in points]
+        elif hasattr(points[0], "x") and hasattr(points[0], "y"):
+            # Se for um objeto com atributos x e y
+            self.points = [[point.x, point.y] for point in points]
         else:
-            self.points = list(map(lambda point: [point.x, point.y], points))
+            raise TypeError("Os pontos devem ser listas/tuplas de coordenadas ou objetos com atributos x e y")
+        
         self.edges = self.finding_edges()
+
 
     def colliderect(self, rect: pygame.Rect):
         # Definir os eixos do retângulo (horizontal e vertical)
@@ -109,4 +116,4 @@ class Polygon:
             edge = (hull_points[i], hull_points[(i + 1) % len(hull_points)])
             edges.append(edge)
         
-        return edges
+        return edges 

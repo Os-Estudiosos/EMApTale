@@ -50,7 +50,6 @@ class MapLoader:
         for layer in self.tmx_data.layers:
             if layer.name == "WallsColider":
                 for obj in layer:
-                    # Escala e aplica o deslocamento às áreas de colisão
                     rect = pygame.Rect(
                         obj.x * self.scale_factor + self.offset_vector.x,
                         obj.y * self.scale_factor + self.offset_vector.y,
@@ -58,17 +57,29 @@ class MapLoader:
                         obj.height * self.scale_factor
                     )
                     walls.append(rect)
-            if layer.name == "NotRectWallsColiders":
+            elif layer.name == "NotRectWallsColiders":
                 for obj in layer:
-                    # new_points = []
-                    # for point in obj.points:
-                    #     new_point = [point.x, point.y]
-                    #     new_point[0] += self.offset_vector.x
-                    #     new_point[1] += self.offset_vector.y
-                    #     new_points.append(point)
-                    pol = Polygon(obj.points)
-                    pol.scale(self.scale_factor)
-                    walls.append(pol)
+                    if hasattr(obj, "points"):
+                        # Processar polígonos
+                        adjusted_points = [
+                            [p[0] * self.scale_factor + self.offset_vector.x, p[1] * self.scale_factor + self.offset_vector.y]
+                            for p in obj.points
+                        ]
+                        pol = Polygon(adjusted_points)
+                        walls.append(pol)
+
+                    elif obj.gid > 0:  # É um tile
+                        tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
+                        if tile_image:
+                            pos = (
+                                obj.x * self.scale_factor + self.offset_vector.x,
+                                obj.y * self.scale_factor + self.offset_vector.y
+                            )
+                            # Renderizar ou armazenar o tile
+
+                    else:
+                        print(f"Objeto ignorado: {obj} (tipo: {obj.type})")
+
         return walls
 
     def get_size(self):
