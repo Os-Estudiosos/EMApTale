@@ -4,9 +4,9 @@ import random
 
 from config import *
 from config.eventmanager import EventManager
+from config.combatmanager import CombatManager
 
 from classes.bosses import Boss, Attack
-from classes.battle.heart import Heart
 
 from classes.bosses.attacks.vector import Vector
 
@@ -16,7 +16,7 @@ from constants import PLAYER_TURN_EVENT
 class Yuri(Boss):
     name = 'Yuri Saporito'
 
-    def __init__(self, infos: dict, player: Heart, player_group: pygame.sprite.Group, *groups):
+    def __init__(self, infos: dict, *groups):
         """Inicialização da classe Yuri
 
         Args:
@@ -38,7 +38,7 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            YuriAttack1(player, player_group)
+            YuriAttack1()
         ]
         self.attack_to_execute = None
     
@@ -50,8 +50,8 @@ class Yuri(Boss):
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        if self.attack_to_execute:
-            self.attack_to_execute.draw(screen)
+        # if self.attack_to_execute:
+        #     self.attack_to_execute.draw(screen)
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
@@ -84,33 +84,34 @@ class Yuri(Boss):
 
 
 class YuriAttack1(Attack):
-    def __init__(self, player: Heart, player_group: pygame.sprite.Group):
-        self.__player = player
-        self.__player_group = player_group
+    def __init__(self):
+        self.__player = CombatManager.get_variable('player')
+        self.__player_group = CombatManager.get_variable('player_group')
 
         self.vectors_group = pygame.sprite.Group()
 
-        self.vectors: list[Vector] = []
-        self.vectors_creation_rate = FPS / 3  # 3 Vetores a cada segundo serão criados
+        CombatManager.global_groups.append(self.vectors_group)
 
-        self.duration = FPS * 10  # O Ataque dura 10 segundos
+        self.vectors: list[Vector] = []
+        self.vectors_creation_rate = FPS/2  # 3 Vetores a cada segundo serão criados
+
+        self.duration = FPS * 20  # O Ataque dura 10 segundos
         self.duration_counter = 0
+
+        self.vectors.append(Vector(self.vectors_group))
 
     def run(self):
         self.duration_counter += 1
 
-        if self.duration_counter >= self.vectors_creation_rate:
-            self.vectors.append(Vector(self.vectors_group))
+        # if self.duration_counter % self.vectors_creation_rate == 0:
+        #     self.vectors.append(Vector(self.vectors_group))
         
         if self.duration_counter >= self.duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-            self.vectors_group.clear()
+            self.vectors_group.empty()
         
         for vector in self.vectors:
             vector.update(player_center=self.player.rect.center)
-    
-    def draw(self, screen):
-        self.vectors_group.draw(screen)
     
     @property
     def player(self):

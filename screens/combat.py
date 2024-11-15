@@ -46,6 +46,7 @@ class Combat(State):
         # Criando os groups de sprites
         self.text_groups = pygame.sprite.Group()  # Grupo dos textos
         self.player_group = pygame.sprite.Group()  # Grupo do player
+        CombatManager.set_variable('player_group', self.player_group)
 
         # ============ VARIÁVEIS DO HUD ============
         # Carregando o background da batalha
@@ -59,9 +60,11 @@ class Combat(State):
 
         # Iniciando o container da Batalha
         self.battle_container = BattleContainer(self.__display)
+        CombatManager.set_variable('battle_container', self.battle_container)
 
         # Variáveis do Jogador
         self.player = Heart(self.battle_container, self.player_group)
+        CombatManager.set_variable('player', self.player)
 
         # Variáveis relacionadas ao menu que do turno do player
         # self.battle_menu_manager = BattleMenuManager()
@@ -128,11 +131,12 @@ class Combat(State):
         CombatManager.enemy.update()
 
         # ============ DESENHANDO TUDO ============
-        CombatManager.enemy.draw(self.display)
+        CombatManager.enemy.draw(self.__display)
         self.battle_container.draw()
         text_player_name.draw(self.__display)
         hp_container.draw(self.__display)
         self.main_menu.draw()
+        CombatManager.draw_global_groups(self.__display)
 
         # Ajustando o container da batalha para ficar em cima da vida do jogador
         self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50
@@ -215,7 +219,4 @@ class Combat(State):
             raise TypeError("Você precisa passar um dicionário")
         self.__variables = value
 
-        CombatManager.set_boss(self.__variables['enemy'], {
-            'player': self.player,
-            'player_group': self.player_group
-        })
+        CombatManager.set_boss(self.__variables['enemy'])
