@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import math
 
 from config import *
 from config.eventmanager import EventManager
@@ -12,7 +13,7 @@ from classes.battle.heart import Heart
 
 from classes.bosses.attacks.vector import Vector
 
-from constants import PLAYER_TURN_EVENT
+from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT
 
 
 class Yuri(Boss):
@@ -30,6 +31,8 @@ class Yuri(Boss):
         # Carregando o sprite do Yuri
         self.image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'yuri.png'))
         self.rect = self.image.get_rect()
+        self.state = 'idle'
+        self.counter = 0
 
         # Definindo os atributos
         self.__life = infos['life']
@@ -63,11 +66,23 @@ class Yuri(Boss):
                 self.attack_to_execute = -1
             else:
                 self.__attacks[self.attack_to_execute].run()
+        
+        if self.state == 'shaking':
+            self.counter += 10
+            counter_in_radians = self.counter*math.pi/180
+            wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
+            self.rect.x += 40 * wave_factor
+            if self.counter >= FPS*5*10:
+                self.state = 'idle'
+                self.counter = 0
+                pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
+
 
     
     def take_damage(self, amount):
         self.__life -= amount
         SoundManager.play_sound('damage.wav')
+        self.state = 'shaking'
 
     @property
     def life(self):
