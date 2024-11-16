@@ -101,7 +101,6 @@ class Combat(State):
                 CombatManager.set_player_turn()
                 pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
             if event.type == BOSS_HITTED:
-                print("Caiu aqui")
                 CombatManager.enemy.take_damage(10)
 
     def run(self):

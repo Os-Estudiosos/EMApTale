@@ -10,6 +10,7 @@ from config.soundmanager import SoundManager
 
 from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
+from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
 
@@ -41,6 +42,9 @@ class Yuri(Boss):
         self.__defense = infos['defense']
         self.__voice = infos['voice']
 
+        # Container que vai mostrar quando o Professor tomar dano
+        self.hp_container = BossHP()
+
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
             YuriAttack1()
@@ -53,10 +57,11 @@ class Yuri(Boss):
     def choose_attack(self):
         self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
         self.__attacks[self.attack_to_execute].restart()
-        print(self.attack_to_execute)
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+        if self.state == 'shaking':
+            self.hp_container.draw(screen)
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
@@ -68,6 +73,7 @@ class Yuri(Boss):
                 self.__attacks[self.attack_to_execute].run()
         
         if self.state == 'shaking':
+            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
             self.counter += 10
             counter_in_radians = self.counter*math.pi/180
             wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
@@ -80,7 +86,7 @@ class Yuri(Boss):
 
     
     def take_damage(self, amount):
-        self.__life -= amount
+        self.__life = self.__life - amount + self.__defense
         SoundManager.play_sound('damage.wav')
         self.state = 'shaking'
 

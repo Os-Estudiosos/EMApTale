@@ -59,6 +59,7 @@ class FightMenu(BattleMenu):
         """
         self.runtime_counter += 1  # Aumento o contador de vezes que rodou
         self.damage_bar.choose_direction()  # Escolho de onde o indicador de dano vai vir
+        self.attacked = False
         EventManager.clear()
 
     def update(self):
