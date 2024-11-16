@@ -43,5 +43,15 @@ class Attack(ABC):
 
     @property
     @abstractmethod
+    def duration(self):...
+
+    @property
+    @abstractmethod
+    def duration_counter(self):...
+
+    @abstractmethod
     def run(self):...
+
+    @abstractmethod
+    def restart(self):...
 
