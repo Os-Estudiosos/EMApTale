@@ -25,7 +25,7 @@ from config.eventmanager import EventManager
 
 from classes.battle.heart import Heart
 
-from constants import BOSS_TURN_EVENT, PLAYER_TURN_EVENT
+from constants import *
 
 
 class Combat(State):
@@ -73,7 +73,7 @@ class Combat(State):
         self.main_menu = MainMenu(self.__display)
         self.inventory_menu = InventoryMenu(self.battle_container)
         self.act_menu = ActMenu(self.battle_container)
-        self.fight_menu = FightMenu(self.battle_container)
+        self.fight_menu = FightMenu()
         self.mercy_menu = MercyMenu(self.battle_container)
 
         BattleMenuManager.menus = {
@@ -97,10 +97,12 @@ class Combat(State):
                 CombatManager.enemy.choose_attack()
                 pygame.time.set_timer(BOSS_TURN_EVENT, 0)
             if event.type == PLAYER_TURN_EVENT:
-                print('Ta caindo aqui')
                 BattleMenuManager.change_active_menu('MainMenu')
                 CombatManager.set_player_turn()
                 pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
+            if event.type == BOSS_HITTED:
+                print("Caiu aqui")
+                CombatManager.enemy.take_damage(10)
 
     def run(self):
         # Inicio do ciclo de vida da cena

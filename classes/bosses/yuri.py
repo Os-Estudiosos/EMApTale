@@ -5,6 +5,7 @@ import random
 from config import *
 from config.eventmanager import EventManager
 from config.combatmanager import CombatManager
+from config.soundmanager import SoundManager
 
 from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
@@ -66,6 +67,7 @@ class Yuri(Boss):
     
     def take_damage(self, amount):
         self.__life -= amount
+        SoundManager.play_sound('damage.wav')
 
     @property
     def life(self):
