@@ -178,15 +178,17 @@ class Heart(Player):
 
         i, j = current_index
 
-        # Define o próximo índice com base na direção
-        if direction == "up" and i > 0 and self.is_pressed:
-            i -= 1
-        elif direction == "down" and i < 2 and self.is_pressed:
-            i += 1
-        elif direction == "left" and j > 0 and self.is_pressed:
-            j -= 1
-        elif direction == "right" and j < 2 and self.is_pressed:
-            j += 1
+        if self.is_pressed:
+            # Define o próximo índice com base na direção
+            if direction == "up" and i > 0:
+                i -= 1
+            elif direction == "down" and i < 2:
+                i += 1
+            elif direction == "left" and j > 0:
+                j -= 1
+            elif direction == "right" and j < 2:
+                j += 1
+            self.is_pressed = False
 
         # Atualiza o nó atual apenas se houver conexão no grafo
         next_node = node_matrix[i, j]
