@@ -89,6 +89,7 @@ class Combat(State):
         # Limpando os sons
         self.__execution_counter += 1
         SoundManager.stop_music()
+        self.act_menu.options.clear()
         self.act_menu.options = self.__variables['enemy']['act']
         Player.load_infos()
 
@@ -104,7 +105,7 @@ class Combat(State):
                 CombatManager.set_player_turn()
                 pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
             if event.type == BOSS_HITTED:
-                CombatManager.enemy.take_damage(10)
+                CombatManager.enemy.take_damage(self.player.inventory.equiped_weapon.damage)
 
     def run(self):
         # Inicio do ciclo de vida da cena

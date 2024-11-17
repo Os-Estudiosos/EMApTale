@@ -1,23 +1,27 @@
 [
     {
+        "id": "pencil",
         "name": "Lápis",
         "type": "weapon",
         "damage": "5",
         "description": "É o que eu tinha na mochila"
     },
     {
+        "id": "pen",
         "name": "Caneta",
         "type": "weapon",
         "damage": "10",
         "description": "Uma caneta bem afiada. Agora posso pedir revisão da prova"
     },
     {
+        "id": "test",
         "name": "Simulado",
         "type": "weapon",
         "damage": "15",
         "description": "Finalmente um simulado que tá no nível da prova"
     },
     {
+        "id": "book",
         "name": "Livro",
         "type": "weapon",
         "damage": "20",
@@ -25,6 +29,7 @@
     },
     
     {
+        "id": "carrot-cake",
         "name": "Bolo de Cenoura",
         "type": "miscellaneous",
         "description": "Ninguém do hotel te viu saindo com isso, ainda bem!",
@@ -33,6 +38,7 @@
         "value": 8
     },
     {
+        "id": "cheese-bread",
         "name": "Pão de Queijo",
         "type": "miscellaneous",
         "description": "O pão de queijo mais cobiçado do prédio",
@@ -41,6 +47,7 @@
         "value": 10
     },
     {
+        "id": "coffee",
         "name": "Café",
         "type": "miscellaneous",
         "description": "Um café frio ruim",
@@ -49,6 +56,7 @@
         "value": 4
     },
     {
+        "id": "lemon-tea",
         "name": "Chá de Limão",
         "type": "miscellaneous",
         "description": "Um chá de limão bem quentinho",
@@ -57,6 +65,7 @@
         "value": 4
     },
     {
+        "id": "chocolate-bar",
         "name": "Barra de Chocolate",
         "type": "miscellaneous",
         "description": "Estava na sessão dos 'Quase Vencendo' do Pão de Açúcar",

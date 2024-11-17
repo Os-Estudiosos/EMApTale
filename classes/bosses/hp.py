@@ -18,7 +18,8 @@ class BossHP:
         future_life_width = (kwargs['actual_life']*self.bg_rect.width)/kwargs['max_life']
 
         if self.life_rect.width >= future_life_width:
-            self.life_rect.width -= 1
+            self.life_rect.width -= 1 * FPS / 3
+
 
         self.bg_rect.center = enemy_rect.center
         self.bg_rect.centery += 40

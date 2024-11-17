@@ -1,11 +1,12 @@
 class Inventory:
     def __init__(self, items: list = []):
         self.items = []
+        self.equiped_weapon = []
         for item in items:
             self.add_item(item)
-        self.equpied_weapon = None
+            if item['equiped']:
+                self.equip_weapon(item['id'])
 
-    
     def add_item(self, item):
         """Método que adiciona um item no inventário
 
@@ -21,31 +22,38 @@ class Inventory:
         else:
             raise TypeError("Você precisa passar um dicionário ou uma instância de Item")
     
-    def remove_item(self, id: int):
+    def remove_item(self, id: str):
         """Método que remove um item do inventário
 
         Args:
-            id (int): ID do item que vai ser removido
+            id (str): ID do item que vai ser removido
         """
-        if not isinstance(id, int):
+        if not isinstance(id, str):
             raise TypeError("Passe um número inteiro como parâmetro")
-        if id < 0 or id >= len(self.items):
-            raise ValueError("O id passado não é válido")
-        self.items.pop(id)
+        return list(filter(lambda item: item.id != id, self.items))
+     
+    def get_item(self, id: str):
+        """Pega um item pelo ID
 
-    def equip_weapon(self, id: int):
+        Args:
+            id (str): ID do item
+        """
+        for item in self.items:
+            if item.id == id:
+                return item
+        else:
+            raise ValueError('O Id passado não está no inventário')
+
+    def equip_weapon(self, id: str):
         """Equipa a arma com o ID passado
 
         Args:
-            id (int): ID da arma que vai ser equipado
+            id (str): ID da arma que vai ser equipado
         """
-        if not isinstance(id, int):
+        if not isinstance(id, str):
             raise TypeError("Passe um número inteiro como parâmetro")
-        if id < 0 or id >= len(self.items):
-            raise ValueError("O id passado não é válido")
         
-        if self.items[id].type == 'weapon':
-            self.equpied_weapon = self.items[id] 
+        self.equiped_weapon = self.get_item(id)
 
     def __eq__(self, value: list):
         return self.items == value

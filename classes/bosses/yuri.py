@@ -73,16 +73,15 @@ class Yuri(Boss):
                 self.__attacks[self.attack_to_execute].run()
         
         if self.state == 'shaking':
-            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
             self.counter += 10
             counter_in_radians = self.counter*math.pi/180
             wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
             self.rect.x += 40 * wave_factor
+            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
             if self.counter >= FPS*1.5*10:
                 self.state = 'idle'
                 self.counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
-
 
     
     def take_damage(self, amount):
