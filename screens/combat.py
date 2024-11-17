@@ -93,6 +93,7 @@ class Combat(State):
     def handle_events(self):
         for event in EventManager.events:
             if event.type == BOSS_TURN_EVENT:
+                self.player.apply_effect('normal')
                 CombatManager.set_boss_turn()
                 CombatManager.enemy.choose_attack()
                 pygame.time.set_timer(BOSS_TURN_EVENT, 0)
