@@ -66,8 +66,6 @@ class FightMenu(BattleMenu):
         if self.runtime_counter == 0:  # Executo a primeira vez
             self.on_first_execution()
 
-        keys = pygame.key.get_pressed()  # Pegando o dicinoário das teclas
-
         # Fico escalonando o indicador do dano
         self.damage_indicator = pygame.transform.scale(
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'combat', 'damage_indicator.png')),
@@ -90,10 +88,6 @@ class FightMenu(BattleMenu):
 
         if self.attacked:
             self.cut.update()
-
-        # Volto no menu anterior
-        if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
-            BattleMenuManager.go_back()
 
     
     def draw(self):

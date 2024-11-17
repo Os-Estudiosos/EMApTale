@@ -9,18 +9,26 @@ from config import *
 from config.combatmanager import CombatManager
 from config.soundmanager import SoundManager
 
-from utils import radians_to_degrees, get_positive_angle, angle_between_vectors
+from utils import angle_between_vectors
 
 
 class Vector(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
 
+        # Vou randomizar com 10% de chance de ser um vetor verde "Aplica o efeito de inversa"
+        self.type = 'Normal'
+        if random.randint(0, 100) <= 15:
+            self.type = 'Inverted'
+
         # Inicializo a imagem do vetor
         self.actual_alpha = 255
         self.image_path = os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'vector.png')
         self.image = pygame.image.load(self.image_path)
-        self.image.set_alpha(self.actual_alpha)
+
+        self.change_image_color()
+
+        # self.image.set_alpha(self.actual_alpha)
         self.mask = pygame.mask.from_surface(self.image)
         self.max_rotation_angle = 0
         self.rect = self.image.get_rect()
@@ -56,6 +64,7 @@ class Vector(pygame.sprite.Sprite):
             pygame.image.load(self.image_path),
             self.rotate_angle
         )
+        self.change_image_color()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center=self.rect.center)  # Centralizo o retangulo no anterior
 
@@ -102,7 +111,13 @@ class Vector(pygame.sprite.Sprite):
             self.rect.y += self.vector_pointing_to_player[1]*self.speed
         
         self.rotate()
-        self.fade_image()
+        # self.fade_image()
+    
+    def change_image_color(self):
+        if self.type == 'Inverted':
+            greenSurface = pygame.Surface(self.image.get_size())
+            greenSurface.fill((58, 242, 107))
+            self.image.blit(greenSurface, (0,0), special_flags=pygame.BLEND_MULT)
 
     def stop_rotating(self):
         self.rotating = False
