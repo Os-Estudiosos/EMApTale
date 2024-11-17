@@ -8,6 +8,7 @@ class SaveManager:
     home = Path.home()
     platform = platform.system()
     loaded_save = {}
+    default_save_information = {}
 
     @classmethod
     def create_save_folder_path(cls, pth) -> None:
@@ -45,11 +46,17 @@ class SaveManager:
             with open(os.path.join(save_path, f'save_file.json'), 'r') as save_file:
                 cls.loaded_save = json.load(save_file)
         except FileNotFoundError as err:
-            raise FileNotFoundError("Este erro não deveria acontecer, pois o player conseguiu pedir um slot que não existe") from err
+            cls.get_save_folder_path()
+            cls.save()
     
     @classmethod
     def save(cls):
-        raise NotImplementedError
+        if cls.save_exists():
+            raise NotImplementedError
+        else:
+            file_path = cls.get_save_folder_path()
+            with open(f'{file_path}/save_file.json', 'w+') as file:
+                file.write('TESTE')
     
     @classmethod
     def save_exists(cls) -> bool:

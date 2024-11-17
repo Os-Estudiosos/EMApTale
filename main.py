@@ -15,6 +15,7 @@ from classes.player import Player
 from screens.menu.start import Start
 from screens.menu.options import Options
 from screens.menu.new_game import NewGameConfirmation
+from screens.menu.new_name import NewName
 
 from screens.combat import Combat
 from screens.emap import EMAp
@@ -25,8 +26,8 @@ class Game:
     """
     def __init__(self):
         # Essa parte é apenas para a elaboração das coisas, vai ser removido depois
-        SaveManager.load()
-        Player.load_infos()
+        # SaveManager.load()
+        # Player.load_infos()
         
         # Colocando o tamanho da Tela
         self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
@@ -49,7 +50,8 @@ class Game:
         # === Definindo as cenas do jogo ===
         # Cenas do Menu
         self.Menu = Start('start', self.display, self.game_state_manager)
-        self.NewGameConfirmation = NewGameConfirmation('new_game_confirmation', self.display, self.game_state_manager)
+        self.NewGameConfirmation = NewName('new_game_confirmation', self.display, self.game_state_manager)
+        self.NewName = NewName('new_name', self.display, self.game_state_manager)
         # self.Options = Options('options', self.display, self.game_state_manager)
         # Considereando em tirar o menu de opções (Não há muitas opções, só volume)
 
@@ -62,6 +64,7 @@ class Game:
             # Cenas do menu
             'start': self.Menu,
             'new_game_confirmation': self.NewGameConfirmation,
+            'new_name': self.NewName,
             # 'options': self.Options,
 
             # Cenas genéricas
@@ -86,8 +89,6 @@ class Game:
                         self.game_state_manager.set_state('combat', {
                             "enemy": yuri
                         })
-                if event.key == pygame.K_SPACE:
-                    Player.take_damage(10)
 
     def run(self):
         while self.running:

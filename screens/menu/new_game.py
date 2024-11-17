@@ -7,6 +7,7 @@ from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.savemanager import SaveManager
+from config.eventmanager import EventManager
 
 from classes.text.text import Text
 
@@ -26,11 +27,10 @@ class NewGameConfirmation(State):
 
         self.__execution_counter = 0
 
-        # Opções do Menu
         self.menu_options = [
             {
                 'label': Text('SIM', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('emap')
+                'func': lambda: self.__game_state_manager.set_state('new_name')
             },
             {
                 'label': Text('CANCELAR', FontManager.fonts['Gamer'], 50),
@@ -44,18 +44,10 @@ class NewGameConfirmation(State):
         # Informações sobre o cursor que marca qual a opção selecionada
         self.cursor_icon = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')), 1.5)
         self.cursor_rect = self.cursor_icon.get_rect()
-        self.cursor_trying_to_move = False  # Marca se eu estou tentando mexer o cursor
-
-        # Essa variável é responsável por checar se o player entrou na cena com o botão
-        # de confirmação selecionado (Enter ou Z), assim eu posso evitar que ele entre
-        # na tela ja selecionando a opção por acidente
-        self.entered_holding_confirm_button = False
     
     def on_first_execution(self):
         # Checo se ele não iniciou a cena segurando o botão de confirmar
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RETURN] or keys[pygame.K_z]:
-            self.entered_holding_confirm_button = True
+        EventManager.clear()
 
     def move_cursor(self, increment):
         if self.selected_option + increment >= len(self.menu_options):
@@ -69,42 +61,34 @@ class NewGameConfirmation(State):
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
-        
-        keys = pygame.key.get_pressed()
 
         # Fazendo o texto de confirmação
         text_confirmation = ''
         if SaveManager.save_exists():
             text_confirmation = 'Deseja sobrescrever seu progresso com um novo jogo?'
         else:
-            self.__game_state_manager.set_state('emap')
+            self.__game_state_manager.set_state('new_name')
         text_object = Text(text_confirmation, FontManager.fonts['Gamer'], 60)
         text_object.rect.center = (
             self.__display.get_width()/2,
             self.__display.get_height()/2-60
         )
 
-        if keys[pygame.K_RIGHT] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
-            self.move_cursor(1)  # Movo uma opção pra baixo
-            self.cursor_trying_to_move = True
-            SoundManager.play_sound('squeak.wav')
-        elif keys[pygame.K_LEFT] and not self.cursor_trying_to_move:  # Se eu apertar para cima
-            self.move_cursor(-1)  # Movo uma opção pra cima
-            self.cursor_trying_to_move = True
-            SoundManager.play_sound('squeak.wav')
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:  # Se eu apertar pra baixo
+                    self.move_cursor(1)  # Movo uma opção pra baixo
+                    self.cursor_trying_to_move = True
+                    SoundManager.play_sound('squeak.wav')
+                elif event.key == pygame.K_LEFT:  # Se eu apertar para cima
+                    self.move_cursor(-1)  # Movo uma opção pra cima
+                    self.cursor_trying_to_move = True
+                    SoundManager.play_sound('squeak.wav')
 
-        if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_holding_confirm_button:  # Se eu apertar enter em alguma opção
-            self.menu_options[self.selected_option]['func']()
-            SoundManager.play_sound('select.wav')
+                if event.key == pygame.K_z or event.key == pygame.K_RETURN:  # Se eu apertar enter em alguma opção
+                    self.menu_options[self.selected_option]['func']()
+                    SoundManager.play_sound('select.wav')
         
-        # Se ele estiver segurando o botão quando entrou na cena, ao soltar, podera clicar nas opções
-        if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:
-            self.entered_holding_confirm_button = False
-        
-        if not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
-            # Só deixo mover o cursor se eu soltar a tecla e apertar de novo
-            self.cursor_trying_to_move = False
-
         # Ajustando o cursor
         self.cursor_rect.topleft = self.menu_options[self.selected_option]['label'].rect.topright
 
@@ -129,11 +113,11 @@ class NewGameConfirmation(State):
 
     @property
     def execution_counter(self):
-        return self.execution_counter
+        return self.__execution_counter
 
     @property
     def display(self):
-        return self.display
+        return self.__display
     
     @property
     def game_state_manager(self):
