@@ -116,7 +116,7 @@ class Vector(pygame.sprite.Sprite):
     def change_image_color(self):
         if self.type == 'Inverted':
             greenSurface = pygame.Surface(self.image.get_size())
-            greenSurface.fill((58, 242, 107))
+            greenSurface.fill((48, 255, 97))
             self.image.blit(greenSurface, (0,0), special_flags=pygame.BLEND_MULT)
 
     def stop_rotating(self):

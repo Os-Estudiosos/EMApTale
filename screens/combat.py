@@ -24,6 +24,7 @@ from config.combatmanager import CombatManager
 from config.eventmanager import EventManager
 
 from classes.battle.heart import Heart
+from classes.player import Player
 
 from constants import *
 
@@ -89,6 +90,7 @@ class Combat(State):
         self.__execution_counter += 1
         SoundManager.stop_music()
         self.act_menu.options = self.__variables['enemy']['act']
+        Player.load_infos()
 
     def handle_events(self):
         for event in EventManager.events:

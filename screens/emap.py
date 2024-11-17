@@ -23,7 +23,7 @@ class EMAp(State):
         self.__execution_counter = 0
 
     def on_first_execution(self):
-        ...
+        SaveManager.load()
 
     def run(self):
         # Inicio do ciclo de vida da cena

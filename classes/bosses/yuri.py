@@ -78,7 +78,7 @@ class Yuri(Boss):
             counter_in_radians = self.counter*math.pi/180
             wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
             self.rect.x += 40 * wave_factor
-            if self.counter >= FPS*3*10:
+            if self.counter >= FPS*1.5*10:
                 self.state = 'idle'
                 self.counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
@@ -132,6 +132,7 @@ class YuriAttack1(Attack):
         self.__duration_counter += 1
 
         if self.__duration_counter % self.vectors_creation_rate == 0:
+            self.vectors.append(Vector(self.vectors_group))
             self.vectors.append(Vector(self.vectors_group))
             self.vectors.append(Vector(self.vectors_group))
         
