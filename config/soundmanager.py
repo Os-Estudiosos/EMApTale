@@ -90,7 +90,7 @@ class SoundManager:
     def is_playing():
         """Retorna se o canal de música está sendo utilizado
         """
-        pygame.mixer.music.get_busy()
+        return pygame.mixer.music.get_busy()
     
 
     # @property

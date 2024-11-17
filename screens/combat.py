@@ -24,6 +24,7 @@ from config.combatmanager import CombatManager
 from config.eventmanager import EventManager
 
 from classes.battle.heart import Heart
+from classes.player import Player
 
 from constants import *
 
@@ -86,6 +87,7 @@ class Combat(State):
 
     def on_first_execution(self):
         # Limpando os sons
+        Player.load_infos()
         self.__execution_counter += 1
         SoundManager.stop_music()
         self.act_menu.options = self.__variables['enemy']['act']

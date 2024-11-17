@@ -14,6 +14,8 @@ class EMAp(State):
         display: pygame.Surface,
         game_state_manager: GameStateManager,
     ):
+        SaveManager.load()
+
         # Variáveis padrão de qualquer Cenário
         self.__variables = {}
         self.__name = name
