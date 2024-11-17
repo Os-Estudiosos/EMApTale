@@ -148,6 +148,8 @@ class YuriAttack1(Attack):
                     offset = (vector.rect.x - self.__player.rect.x, vector.rect.y - self.__player.rect.y)
                     if self.__player.mask.overlap(vector.mask, offset):
                         self.__player.take_damage(CombatManager.enemy.damage)
+                        if vector.type == 'Inverted':
+                            self.__player.apply_effect('inverse')
                         vector.kill()
     
     def restart(self):
