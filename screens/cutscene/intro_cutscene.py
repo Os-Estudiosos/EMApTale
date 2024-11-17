@@ -114,7 +114,7 @@ class IntroCutscene(State):
             # Define a largura/altura da tela e da imagem (todas as imagens tem o mesmo tamanho! 1280 x 720)
             screen_width, screen_height = self.__display.get_size()
             image_width, image_height = self.current_image.get_size()
-
+    
 
             if  self.stage == len(self.images)-4:
                 SoundManager.stop_music()
