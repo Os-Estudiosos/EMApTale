@@ -50,7 +50,7 @@ class Game:
         # === Definindo as cenas do jogo ===
         # Cenas do Menu
         self.Menu = Start('start', self.display, self.game_state_manager)
-        self.NewGameConfirmation = NewName('new_game_confirmation', self.display, self.game_state_manager)
+        self.NewGameConfirmation = NewGameConfirmation('new_game_confirmation', self.display, self.game_state_manager)
         self.NewName = NewName('new_name', self.display, self.game_state_manager)
         # self.Options = Options('options', self.display, self.game_state_manager)
         # Considereando em tirar o menu de opções (Não há muitas opções, só volume)

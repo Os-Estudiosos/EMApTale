@@ -51,10 +51,15 @@ class NewName(State):
                         self.player_name += ' '
                 if event.key == pygame.K_BACKSPACE:
                     self.player_name = self.player_name[0:len(self.player_name)-1]
+                
                 self.player_name_text = Text(self.player_name, FontManager.fonts['Gamer'], self.font_size)
+
+                if event.key == pygame.K_RETURN and len(self.player_name)>0:
+                    SaveManager.create_new_save_file(self.player_name)
+                    self.__game_state_manager.set_state('emap')
         
         set_your_name_text = Text('DIGITE O SEU NOME', FontManager.fonts['Gamer'], self.font_size)
-        confirm_text = Text('APERTE Z OU ENTER PARA CONFIRMAR', FontManager.fonts['Gamer'], self.font_size - 30)
+        confirm_text = Text('APERTE ENTER PARA CONFIRMAR', FontManager.fonts['Gamer'], self.font_size - 30)
 
         self.player_name_text.rect.centerx = self.__display.get_rect().width/2
         self.player_name_text.rect.centery = self.__display.get_rect().height/2
