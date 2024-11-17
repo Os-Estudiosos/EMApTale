@@ -36,7 +36,8 @@ class MercyMenu(BattleMenu):
             FontManager.fonts['Gamer'],
             10,
             int((450*100)/self.display.get_height()),
-            self.container.inner_rect.width
+            self.container.inner_rect.width,
+            sound='text_2.wav'
         )
     
     def move_cursor(self, increment: int):

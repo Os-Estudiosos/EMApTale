@@ -2,9 +2,12 @@ import pygame
 import os
 import math
 
+from constants import BOSS_TURN_EVENT
+
 from config import *
 from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
+from config.eventmanager import EventManager
 
 from classes.battle.container import BattleContainer
 from classes.battle.menus import BattleMenu
@@ -30,14 +33,13 @@ class ActMenu(BattleMenu):
         self.cursor_rect = self.cursor.get_rect()
 
         self.runtime_counter = 0  # Previnir que entre clicando nos itens
-        self.entered_pressing = False  # Também
 
         self.items_per_column = 5  # Quantas opções pode ter por coluna
 
         self.showing_act_response = False  # Controla quando mostra o texto das respostas
         self.act_response_to_show = 0  # Indice que indica qual resposta deve ser mostrada
         self.selected_responses = []  # Variável auxiliar com os textos que vão ser exibidos
-        self.response_text = DynamicText('', FontManager.fonts['Gamer'], 20, int((450*100)/self.display.get_height()), 0)
+        self.response_text = DynamicText('', FontManager.fonts['Gamer'], 20, int((450*100)/self.display.get_height()), 0, sound='text_2.wav')
         self.start_showing_text = False
     
     def move_cursor(self, increment: int):
@@ -49,10 +51,8 @@ class ActMenu(BattleMenu):
         self.selected_option = (self.selected_option+increment)%len(self.__options)
     
     def on_first_execution(self):
-        keys = pygame.key.get_pressed()
         self.runtime_counter += 1
-        if keys[pygame.K_z] or keys[pygame.K_RETURN]:
-            self.entered_pressing = True
+        EventManager.clear()
 
     def update(self):
         if self.runtime_counter == 0:
@@ -67,34 +67,29 @@ class ActMenu(BattleMenu):
             self.cursor_rect.right = self.__options[self.selected_option%len(self.__options)]['text'].rect.left
 
             # Movendo o cursor pelos itens do inventário
-            if not self.trying_to_move_cursor:
-                if keys[pygame.K_DOWN]:
-                    self.move_cursor(1)
-                    self.trying_to_move_cursor = True
-                    SoundManager.play_sound('select.wav')
-                if keys[pygame.K_UP]:
-                    self.move_cursor(-1)
-                    self.trying_to_move_cursor = True
-                    SoundManager.play_sound('select.wav')
-                if keys[pygame.K_LEFT]:
-                    self.move_cursor(-self.items_per_column)
-                    self.trying_to_move_cursor = True
-                if keys[pygame.K_RIGHT]:
-                    self.move_cursor(self.items_per_column)
-                    self.trying_to_move_cursor = True
-                    SoundManager.play_sound('select.wav')
-            
-            # Se eu selecionar alguma opção
-            if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing:
-                self.selected_responses = self.__options[self.selected_option]['responses']
-                self.showing_act_response = True
-                self.entered_pressing = True
-                self.act_response_to_show = 0
-                self.start_showing_text = True
-            
-            # Evitando que eu mova vários itens ao mesmo tempo
-            if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
-                self.trying_to_move_cursor = False
+            for event in EventManager.events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN:
+                        self.move_cursor(1)
+                        SoundManager.play_sound('squeak.wav')
+                    elif event.key == pygame.K_UP:
+                        self.move_cursor(-1)
+                        SoundManager.play_sound('squeak.wav')
+                    elif event.key == pygame.K_LEFT:
+                        self.move_cursor(-self.items_per_column)
+                        SoundManager.play_sound('squeak.wav')
+                    elif event.key == pygame.K_RIGHT:
+                        self.move_cursor(self.items_per_column)
+                        SoundManager.play_sound('squeak.wav')
+                         
+                    # Selecionando um item
+                    if (event.key == pygame.K_z or event.key == pygame.K_RETURN) and 0 <= self.selected_option < len(self.__options):
+                        self.selected_responses = self.__options[self.selected_option]['responses']
+                        self.showing_act_response = True
+                        self.entered_pressing = True
+                        self.act_response_to_show = 0
+                        self.start_showing_text = True
+                        SoundManager.play_sound('select.wav')
 
             # Volto no menu anterior
             if keys[pygame.K_x] or keys[pygame.K_BACKSPACE]:  # Para eu voltar no menu anterior
@@ -106,17 +101,19 @@ class ActMenu(BattleMenu):
                 self.response_text.restart(self.selected_responses[self.act_response_to_show])
                 self.start_showing_text = False
 
-            if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_pressing:
-                if not self.response_text.finished:
-                    self.response_text.skip_text()
-                else:
-                    self.act_response_to_show += 1
-                    self.start_showing_text = True
+            for event in EventManager.events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                        if not self.response_text.finished:
+                            self.response_text.skip_text()
+                        else:
+                            self.act_response_to_show += 1
+                            self.start_showing_text = True
 
-                    if self.act_response_to_show+1 > len(self.selected_responses):
-                        self.showing_act_response = False
-                
-                self.entered_pressing = True
+                            if self.act_response_to_show+1 > len(self.selected_responses):
+                                print("Ta caindo aqui")
+                                pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
+                                self.showing_act_response = False
 
             self.response_text.update()
             self.response_text.position = (

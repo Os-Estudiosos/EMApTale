@@ -5,8 +5,9 @@ import math
 from config import *
 from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
+from config.combatmanager import CombatManager
+from config.eventmanager import EventManager
 
-from classes.battle.container import BattleContainer
 from classes.battle.menus import BattleMenu
 from classes.battle.menus.battle_menu_manager import BattleMenuManager
 
@@ -14,9 +15,9 @@ from classes.battle.menus.hud.damage_bar import DamageBar
 from classes.battle.menus.hud.cut import Cut
 
 class FightMenu(BattleMenu):
-    def __init__(self, battle_container: BattleContainer):
+    def __init__(self):
         self.__options: list[dict] = []  # Lista de opções
-        self.container = battle_container  # Container dos menus
+        self.container = CombatManager.get_variable('battle_container')  # Container dos menus
         self.display = pygame.display.get_surface()  # A tela do jogo
 
         self.selected_option = 0
@@ -38,7 +39,7 @@ class FightMenu(BattleMenu):
         )
         self.damage_indicator_rect = self.damage_indicator.get_rect()
 
-        self.damage_bar = DamageBar(self.container)  # Barrinha que indica onde temos que atacar
+        self.damage_bar = DamageBar()  # Barrinha que indica onde temos que atacar
         self.cut = Cut()  # O Corte que aparece na animação
 
         self.attacked = False  # Variável que diz se eu vou mostrar o corte na tela ou não
@@ -56,11 +57,10 @@ class FightMenu(BattleMenu):
     def on_first_execution(self):
         """Função que executa na primeira vez que o menu aparece
         """
-        keys = pygame.key.get_pressed()
         self.runtime_counter += 1  # Aumento o contador de vezes que rodou
         self.damage_bar.choose_direction()  # Escolho de onde o indicador de dano vai vir
-        if keys[pygame.K_z] or keys[pygame.K_RETURN]:  # Se eu estiver apertando Z ou ENTER
-            self.entered_pressing = True
+        self.attacked = False
+        EventManager.clear()
 
     def update(self):
         if self.runtime_counter == 0:  # Executo a primeira vez
@@ -81,12 +81,12 @@ class FightMenu(BattleMenu):
 
         self.damage_bar.update()
 
-        if keys[pygame.K_RETURN] or keys[pygame.K_z] and not self.entered_pressing:  # Se eu apertar z, eu dou play na animação do corte
-            self.attacked = True
-            self.cut.animate()
-
-        if not keys[pygame.K_RETURN] and not keys[pygame.K_z]:
-            self.entered_pressing = False
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if (event.key == pygame.K_z or event.key == pygame.K_RETURN) and not self.attacked:
+                    self.cut.animate()
+                    self.attacked = True
+                    SoundManager.play_sound('attack_sound.wav')
 
         if self.attacked:
             self.cut.update()
@@ -99,7 +99,7 @@ class FightMenu(BattleMenu):
     def draw(self):
         self.display.blit(self.damage_indicator, self.damage_indicator_rect)
         self.display.blit(self.damage_bar.image, self.damage_bar.rect)
-        if self.attacked:
+        if self.attacked and self.cut.animating:
             self.display.blit(self.cut.image, self.cut.rect)
     
     @property

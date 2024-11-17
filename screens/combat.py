@@ -20,8 +20,12 @@ from classes.text.text import Text
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
+from config.combatmanager import CombatManager
+from config.eventmanager import EventManager
 
 from classes.battle.heart import Heart
+
+from constants import *
 
 
 class Combat(State):
@@ -42,6 +46,7 @@ class Combat(State):
         # Criando os groups de sprites
         self.text_groups = pygame.sprite.Group()  # Grupo dos textos
         self.player_group = pygame.sprite.Group()  # Grupo do player
+        CombatManager.set_variable('player_group', self.player_group)
 
         # ============ VARIÁVEIS DO HUD ============
         # Carregando o background da batalha
@@ -55,12 +60,11 @@ class Combat(State):
 
         # Iniciando o container da Batalha
         self.battle_container = BattleContainer(self.__display)
+        CombatManager.set_variable('battle_container', self.battle_container)
 
         # Variáveis do Jogador
         self.player = Heart(self.battle_container, self.player_group)
-
-        # Variável que gerencia o turno
-        self.turn = 'player'  # "player" ou "boss"
+        CombatManager.set_variable('player', self.player)
 
         # Variáveis relacionadas ao menu que do turno do player
         # self.battle_menu_manager = BattleMenuManager()
@@ -69,7 +73,7 @@ class Combat(State):
         self.main_menu = MainMenu(self.__display)
         self.inventory_menu = InventoryMenu(self.battle_container)
         self.act_menu = ActMenu(self.battle_container)
-        self.fight_menu = FightMenu(self.battle_container)
+        self.fight_menu = FightMenu()
         self.mercy_menu = MercyMenu(self.battle_container)
 
         BattleMenuManager.menus = {
@@ -82,14 +86,29 @@ class Combat(State):
 
     def on_first_execution(self):
         # Limpando os sons
+        self.__execution_counter += 1
         SoundManager.stop_music()
         self.act_menu.options = self.__variables['enemy']['act']
+
+    def handle_events(self):
+        for event in EventManager.events:
+            if event.type == BOSS_TURN_EVENT:
+                CombatManager.set_boss_turn()
+                CombatManager.enemy.choose_attack()
+                pygame.time.set_timer(BOSS_TURN_EVENT, 0)
+            if event.type == PLAYER_TURN_EVENT:
+                BattleMenuManager.change_active_menu('MainMenu')
+                CombatManager.set_player_turn()
+                pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
+            if event.type == BOSS_HITTED:
+                CombatManager.enemy.take_damage(10)
 
     def run(self):
         # Inicio do ciclo de vida da cena
         if not self.__execution_counter > 0:
             self.on_first_execution()
-            self.__execution_counter += 1
+        
+        self.handle_events()
         
         # Ajustando o nome do personagem
         text_player_name = Text(self.player.name.upper(), FontManager.fonts['Gamer'], 60)
@@ -111,17 +130,15 @@ class Combat(State):
         hp_container.update()
         self.battle_container.update()
         self.main_menu.update()
+        CombatManager.enemy.update()
 
         # ============ DESENHANDO TUDO ============
+        CombatManager.enemy.draw(self.__display)
         self.battle_container.draw()
         text_player_name.draw(self.__display)
         hp_container.draw(self.__display)
         self.main_menu.draw()
-
-        # ============ FAZENDO ISSO TUDO COM O MENU ============
-        if BattleMenuManager.active_menu != 'MainMenu':
-            BattleMenuManager.update()
-            BattleMenuManager.draw()
+        CombatManager.draw_global_groups(self.__display)
 
         # Ajustando o container da batalha para ficar em cima da vida do jogador
         self.battle_container.out_rect.bottom = hp_container.inner_rect.bottom - 50
@@ -131,12 +148,18 @@ class Combat(State):
 
         # ============ CÓDIGO RELACIONADO AOS TURNOS ============
         # Se for o turno do Player
-        if self.turn == 'player':
+        if CombatManager.turn == 'player':
             # ============ HUD QUE SÓ APARECE NO TURNO DO PLAYER ============
+
+            # ============ FAZENDO ISSO TUDO COM O MENU ============
+            if BattleMenuManager.active_menu != 'MainMenu':
+                BattleMenuManager.update()
+                BattleMenuManager.draw()
+
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
                 self.main_menu.options[len(self.main_menu.options)-1].rect.right - self.main_menu.options[0].rect.left,
-                self.__display.get_height()*0.3
+                abs(CombatManager.enemy.rect.bottom - self.battle_container.out_rect.bottom)
             )  # Redesenho o container da batalha
 
             # Ajustando os botões do HUD
@@ -154,10 +177,10 @@ class Combat(State):
 
             # ========== DESENHANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
 
-        else:  # Se não for o turno do player
+        elif CombatManager.turn == 'boss':  # Se não for o turno do player
             self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
 
-            for btn in self.battle_container.options:  # Ajustando para nenhum botão ficar selecionado
+            for btn in self.main_menu.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False
             
             if keys[pygame.K_u]:
@@ -178,7 +201,7 @@ class Combat(State):
 
     @property
     def display(self):
-        return self.display
+        return self.__display
     
     @property
     def game_state_manager(self):
@@ -197,3 +220,5 @@ class Combat(State):
         if not isinstance(value, dict):
             raise TypeError("Você precisa passar um dicionário")
         self.__variables = value
+
+        CombatManager.set_boss(self.__variables['enemy'])
