@@ -14,7 +14,7 @@ from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
 
-from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT
+from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
 
 class Yuri(Boss):
@@ -62,6 +62,10 @@ class Yuri(Boss):
         screen.blit(self.image, self.rect)
         if self.state == 'shaking':
             self.hp_container.draw(screen)
+
+    def apply_effect(self, effect):
+        if effect == '-defense':
+            self.__defense = 0
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
@@ -71,6 +75,10 @@ class Yuri(Boss):
                 self.attack_to_execute = -1
             else:
                 self.__attacks[self.attack_to_execute].run()
+        
+        for event in EventManager.events:
+            if event.type == BOSS_ACT_EFFECT:
+                self.apply_effect(event.effect)
         
         if self.state == 'shaking':
             self.counter += 10

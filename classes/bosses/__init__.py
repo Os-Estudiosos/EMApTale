@@ -15,6 +15,9 @@ class Boss(pygame.sprite.Sprite, ABC):
     @abstractmethod
     def draw(self, screen: pygame.Surface):...
 
+    @abstractmethod
+    def apply_effect(self, effect):...
+
     @property
     @abstractmethod
     def voice(self):...
