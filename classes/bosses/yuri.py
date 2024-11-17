@@ -134,6 +134,7 @@ class YuriAttack1(Attack):
         if self.__duration_counter % self.vectors_creation_rate == 0:
             self.vectors.append(Vector(self.vectors_group))
             self.vectors.append(Vector(self.vectors_group))
+            self.vectors.append(Vector(self.vectors_group))
         
         if self.__duration_counter >= self.__duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))

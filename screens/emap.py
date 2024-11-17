@@ -14,8 +14,6 @@ class EMAp(State):
         display: pygame.Surface,
         game_state_manager: GameStateManager,
     ):
-        SaveManager.load()
-
         # Variáveis padrão de qualquer Cenário
         self.__variables = {}
         self.__name = name
@@ -25,7 +23,7 @@ class EMAp(State):
         self.__execution_counter = 0
 
     def on_first_execution(self):
-        ...
+        SaveManager.load()
 
     def run(self):
         # Inicio do ciclo de vida da cena

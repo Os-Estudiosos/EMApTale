@@ -87,10 +87,10 @@ class Combat(State):
 
     def on_first_execution(self):
         # Limpando os sons
-        Player.load_infos()
         self.__execution_counter += 1
         SoundManager.stop_music()
         self.act_menu.options = self.__variables['enemy']['act']
+        Player.load_infos()
 
     def handle_events(self):
         for event in EventManager.events:
