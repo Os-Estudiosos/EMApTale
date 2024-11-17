@@ -17,9 +17,6 @@ class BossHP:
 
         future_life_width = (kwargs['actual_life']*self.bg_rect.width)/kwargs['max_life']
 
-        print(future_life_width)
-        print(self.life_rect.width)
-
         if self.life_rect.width >= future_life_width:
             self.life_rect.width -= 1
 

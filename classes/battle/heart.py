@@ -1,9 +1,11 @@
 import pygame
 import os
 import numpy as np
-from config import GET_PROJECT_PATH
 from utils import sign
 import random
+
+from config import GET_PROJECT_PATH
+from config.eventmanager import EventManager
 
 from classes.battle.container import BattleContainer
 from classes.player import Player
@@ -77,21 +79,17 @@ class Heart(Player):
             'I': {'pos': (1.25*w, 1.8*h), 'neighbors': ['F', 'H']}
         }
         self.current_pos = self.graph[self.current_node]['pos']
-        self.is_pressed = True
     
     def apply_effect(self, effect: str):
-
         # Aplicando o efeito no coração
         self.image = self.sprites[effect]
         self.effect = effect
     
     def apply_effect_inverse(self):
-
         # Inverto a direção
         self.direction *= -1
     
     def apply_effect_laugh(self):
-
         # Crio um vetor aleatório
         random_vector = np.random.uniform(-1, 1, 2)
         module = np.linalg.norm(random_vector)
@@ -102,7 +100,6 @@ class Heart(Player):
         self.direction.y += random_vector[1]*random.random()/2*self.speed
     
     def apply_effect_vanished(self):
-
         # Apenas efeito visual
         pass
 
@@ -147,7 +144,6 @@ class Heart(Player):
             self.circle_drawn = False
 
     def draw_graph(self, graph:dict):
-
         # Desenhando o grafo
         for node, data in graph.items():
             for neighbor in data["neighbors"]:
@@ -168,7 +164,6 @@ class Heart(Player):
             )
 
     def move_to_neighbor(self, direction):
-
         # Inicializa a matriz de nós
         node_matrix = np.array(list("ABCDEFGHI")).reshape(3, 3)
 
@@ -178,17 +173,16 @@ class Heart(Player):
 
         i, j = current_index
 
-        if self.is_pressed:
-            # Define o próximo índice com base na direção
-            if direction == "up" and i > 0:
-                i -= 1
-            elif direction == "down" and i < 2:
-                i += 1
-            elif direction == "left" and j > 0:
-                j -= 1
-            elif direction == "right" and j < 2:
-                j += 1
-            self.is_pressed = False
+        
+        # Define o próximo índice com base na direção
+        if direction == "up" and i > 0:
+            i -= 1
+        elif direction == "down" and i < 2:
+            i += 1
+        elif direction == "left" and j > 0:
+            j -= 1
+        elif direction == "right" and j < 2:
+            j += 1
 
         # Atualiza o nó atual apenas se houver conexão no grafo
         next_node = node_matrix[i, j]
@@ -197,26 +191,17 @@ class Heart(Player):
             self.rect.center = self.graph[next_node]['pos']  # Move o personagem para o próximo nó
 
     def apply_effect_prisioned(self):
-
-        # Mapeando as teclas pressionadas
-        keys = pygame.key.get_pressed()
-
         # Limitando o movimento
-        for event in pygame.event.get():
+        for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
-                self.is_pressed = False
-            elif event.type == pygame.KEYUP:
-                self.is_pressed = True
-
-        # Iniciando a movimentação do personagem
-        if keys[pygame.K_UP]:
-            self.move_to_neighbor("up")
-        elif keys[pygame.K_DOWN]:
-            self.move_to_neighbor("down")
-        elif keys[pygame.K_LEFT]:
-            self.move_to_neighbor("left")
-        elif keys[pygame.K_RIGHT]:
-            self.move_to_neighbor("right")
+                if event.key == pygame.K_UP:
+                    self.move_to_neighbor("up")
+                elif event.key == pygame.K_DOWN:
+                    self.move_to_neighbor("down")
+                elif event.key == pygame.K_LEFT:
+                    self.move_to_neighbor("left")
+                elif event.key == pygame.K_RIGHT:
+                    self.move_to_neighbor("right")
 
         # Inicialização da posição do coração
         self.rect.center = self.graph[self.current_node]['pos']
@@ -259,5 +244,6 @@ class Heart(Player):
             self.direction.y = 0
 
         # Mexo na posição
-        self.rect.x += self.speed * self.direction.x
-        self.rect.y += self.speed * self.direction.y
+        if self.effect != 'prisioned':
+            self.rect.x += self.speed * self.direction.x
+            self.rect.y += self.speed * self.direction.y
