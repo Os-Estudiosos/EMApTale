@@ -28,7 +28,6 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-/infos
 /tileset/emap.tiled-session
 
 # PyInstaller
