@@ -1,11 +1,13 @@
 import pygame
 import os
+import json
 
 from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.savemanager import SaveManager
+from config.eventmanager import EventManager
 
 from classes.player import Player
 
@@ -28,7 +30,6 @@ class Game:
         
         # Colocando o tamanho da Tela
         self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-        self.is_fullsize = False
 
         # Variável que indica se o jogo da rodando
         self.running = True
@@ -70,18 +71,28 @@ class Game:
 
         pygame.mouse.set_visible(False)
 
+    def handle_events(self):
+        # Checando os eventos
+        EventManager.events = pygame.event.get()
+        for event in EventManager.events:
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    self.game_state_manager.set_state('start')
+                if event.key == pygame.K_2:
+                    with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json')) as file:
+                        yuri = json.load(file)
+                        self.game_state_manager.set_state('combat', {
+                            "enemy": yuri
+                        })
+                if event.key == pygame.K_SPACE:
+                    Player.take_damage(10)
+
     def run(self):
         while self.running:
-            # Checando os eventos
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_1:
-                        self.game_state_manager.set_state('start')
-                    if event.key == pygame.K_2:
-                        self.game_state_manager.set_state('combat')
-            
+            self.handle_events()
+
             game.display.fill((0, 0, 0))
 
             # Trocando de Cena

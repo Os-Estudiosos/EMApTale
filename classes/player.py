@@ -4,6 +4,8 @@ from time import time
 from config.savemanager import SaveManager
 from config.soundmanager import SoundManager
 
+from classes.inventory import Inventory
+
 
 class Player(pygame.sprite.Sprite):
     # Definindo as variáveis do Player
@@ -18,10 +20,10 @@ class Player(pygame.sprite.Sprite):
     def load_infos(cls):
         """Classe responsável por carregar as informações do personagem
         """
-        cls.name = SaveManager.loaded_save['name']
-        cls.life = SaveManager.loaded_save['player']['life']
-        cls.max_life = SaveManager.loaded_save['player']['max_life']
-        cls.inventory = SaveManager.loaded_save['inventory']
+        Player.name = SaveManager.loaded_save['name']
+        Player.life = SaveManager.loaded_save['player']['life']
+        Player.max_life = SaveManager.loaded_save['player']['max_life']
+        Player.inventory = Inventory(SaveManager.loaded_save['inventory'])
 
     @classmethod
     def take_damage(cls, value: int):
@@ -31,12 +33,12 @@ class Player(pygame.sprite.Sprite):
             value (int): Valor do dano
         """
         actual_hit = time()
-        if actual_hit - cls.last_hit >= 2:  # Aqui eu dou um delay de 1 segundo para dar dano
-            if cls.life - value >= 0:
-                cls.life -= value
+        if actual_hit - Player.last_hit >= 0.5:  # Aqui eu dou um delay de 1 segundo para dar dano
+            if Player.life - value >= 0:
+                Player.life -= value
             else:
-                cls.life = 0
-            cls.last_hit = actual_hit
+                Player.life = 0
+            Player.last_hit = actual_hit
             SoundManager.play_sound('hurt.wav')
     
     @classmethod
@@ -46,4 +48,12 @@ class Player(pygame.sprite.Sprite):
         Args:
             value (int): Valor da cura
         """
-        cls.life += value
+        if Player.life == Player.max_life:
+            return False
+        elif Player.life + value >= Player.max_life:
+            Player.life = Player.max_life
+            SoundManager.play_sound('heal.wav')
+        else:
+            Player.life += value
+            SoundManager.play_sound('heal.wav')
+        return True
