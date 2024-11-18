@@ -196,20 +196,21 @@ class Combat(State):
                 self.starter_text.draw(self.__display)
 
         elif CombatManager.turn == 'boss':  # Se não for o turno do player
-            self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
-
             for btn in self.main_menu.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False
             
             if keys[pygame.K_u]:
                 self.player.apply_effect('prisioned')
-            
-            # Draws que são apenas no turno do boss
-            self.player_group.draw(self.__display)
-            
-            # Updates que são apenas do turno do boss
-            self.player_group.update(display=self.__display)
-    
+        
+            if not CombatManager.enemy.dead:
+                self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
+                
+                # Draws que são apenas no turno do boss
+                self.player_group.draw(self.__display)
+                
+                # Updates que são apenas do turno do boss
+                self.player_group.update(display=self.__display)
+        
     def on_last_execution(self):
         self.__execution_counter = 0
 

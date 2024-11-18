@@ -64,10 +64,15 @@ class Yuri(Boss):
             'yuri_txt.wav'
         )
         self.speaking = False
+        self.dead = False
     
     def speak(self):
-        self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
-        self.speaking = True
+        if not self.dead:
+            self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
+            self.speaking = True
+    
+    def death_animation(self):
+        print("MORRENDO")
     
     def choose_attack(self):
         self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
@@ -87,23 +92,26 @@ class Yuri(Boss):
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
-        if self.speaking:
-            self.dialogue.update()
-            self.dialogue.rect.left = self.rect.right
+        if not self.dead:
+            if self.speaking:
+                self.dialogue.update()
+                self.dialogue.rect.left = self.rect.right
 
-            for event in EventManager.events:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_z or event.key == pygame.K_RETURN:
-                        if not self.dialogue.finished:
-                            self.dialogue.skip()
-                        else:
-                            self.speaking = False
+                for event in EventManager.events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                            if not self.dialogue.finished:
+                                self.dialogue.skip()
+                            else:
+                                self.speaking = False
 
-        if 0 <= self.attack_to_execute < len(self.__attacks) and not self.speaking:
-            if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
-                self.attack_to_execute = -1
-            else:
-                self.__attacks[self.attack_to_execute].run()
+            if 0 <= self.attack_to_execute < len(self.__attacks) and not self.speaking:
+                if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
+                    self.attack_to_execute = -1
+                else:
+                    self.__attacks[self.attack_to_execute].run()
+        else:
+            self.death_animation()
         
         for event in EventManager.events:
             if event.type == BOSS_ACT_EFFECT:
@@ -124,6 +132,9 @@ class Yuri(Boss):
     def take_damage(self, amount):
         self.__life = self.__life - amount + self.__defense
         SoundManager.play_sound('damage.wav')
+        if self.__life <= 0:
+            self.__life = 0
+            self.dead = True
         self.state = 'shaking'
         self.counter = 0
 
