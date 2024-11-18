@@ -67,8 +67,14 @@ class Combat(State):
         self.player = Heart(self.battle_container, self.player_group)
         CombatManager.set_variable('player', self.player)
 
-        # Variáveis relacionadas ao menu que do turno do player
-        # self.battle_menu_manager = BattleMenuManager()
+        # Texto que aparece no inicio da batalha
+        self.starter_text = DynamicText(
+            '',
+            FontManager.fonts['Gamer'],
+            22,
+            int((450*100)/self.__display.get_height()),
+            sound='text_2.wav'
+        )
 
         # Definindo todos os menus
         self.main_menu = MainMenu(self.__display)
@@ -91,6 +97,9 @@ class Combat(State):
         SoundManager.stop_music()
         self.act_menu.options.clear()
         self.act_menu.options = self.__variables['enemy']['act']
+
+        self.starter_text.restart(self.__variables['enemy']['starter_text'])
+
         Player.load_infos()
 
     def handle_events(self):
@@ -156,12 +165,6 @@ class Combat(State):
         # Se for o turno do Player
         if CombatManager.turn == 'player':
             # ============ HUD QUE SÓ APARECE NO TURNO DO PLAYER ============
-
-            # ============ FAZENDO ISSO TUDO COM O MENU ============
-            if BattleMenuManager.active_menu != 'MainMenu':
-                BattleMenuManager.update()
-                BattleMenuManager.draw()
-
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
                 self.main_menu.options[len(self.main_menu.options)-1].rect.right - self.main_menu.options[0].rect.left,
@@ -179,9 +182,18 @@ class Combat(State):
                 # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
                 self.trying_to_move_cursor = False
 
-            # ========== ATUALIZANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
-
-            # ========== DESENHANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
+            # ========== ATUALIZANDO E DESENHANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
+            if BattleMenuManager.active_menu != 'MainMenu':
+                BattleMenuManager.update()
+                BattleMenuManager.draw()
+            else:
+                self.starter_text.max_length = self.battle_container.inner_rect.width-20
+                self.starter_text.position = (
+                    self.battle_container.inner_rect.x + 10,
+                    self.battle_container.inner_rect.y + 10,
+                )
+                self.starter_text.update()
+                self.starter_text.draw(self.__display)
 
         elif CombatManager.turn == 'boss':  # Se não for o turno do player
             self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
