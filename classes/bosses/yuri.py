@@ -17,6 +17,8 @@ from classes.bosses.attacks.vector import Vector
 
 from classes.text.dialogue_box import DialogueBox
 
+from classes.effects.explosion import Explosion
+
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
 
@@ -64,7 +66,10 @@ class Yuri(Boss):
             'yuri_txt.wav'
         )
         self.speaking = False
+
         self.dead = False
+        self.__death_animation_counter = 0
+        self.__death_explosions: list[Explosion] = []
     
     def speak(self):
         if not self.dead:
@@ -72,7 +77,18 @@ class Yuri(Boss):
             self.speaking = True
     
     def death_animation(self):
-        print("MORRENDO")
+        self.__death_animation_counter += 1
+        if self.__death_animation_counter >= FPS*0.3:
+            self.__death_animation_counter = 0
+            self.__death_explosions.append(Explosion('yellow', position=(
+                random.randint(self.rect.x, self.rect.x+self.rect.width),
+                random.randint(self.rect.y, self.rect.y+self.rect.height)
+            )))
+        
+        for i, explosion in enumerate(self.__death_explosions):
+            explosion.update()
+            if explosion.finished:
+                del self.__death_explosions[i]
     
     def choose_attack(self):
         self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
@@ -84,6 +100,9 @@ class Yuri(Boss):
             self.hp_container.draw(screen)
         if self.speaking:
             self.dialogue.draw(screen)
+
+        for explosion in self.__death_explosions:
+            screen.blit(explosion.img, explosion.rect)
 
     def apply_effect(self, effect):
         if effect == '-defense':
