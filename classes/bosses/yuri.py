@@ -7,12 +7,15 @@ from config import *
 from config.eventmanager import EventManager
 from config.combatmanager import CombatManager
 from config.soundmanager import SoundManager
+from config.fontmanager import FontManager
 
 from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
+
+from classes.text.dialogue_box import DialogueBox
 
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
@@ -47,12 +50,23 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            YuriAttack1()
+            VectorAttack()
         ]
         self.attack_to_execute = -1
+
+        self.dialogue = DialogueBox(
+            'ESTOU APENAS FAZENDO UM TESTE, LALALALA ISSO É APEANS UM TESTE',
+            FontManager.fonts['Gamer'],
+            15,
+            30,
+            'yuri_txt.wav'
+        )
+        self.speaking = False
     
     def speak(self, text):
-        ...
+        self.dialogue.update()
+        self.speaking = True
+        self.dialogue.rect.left = self.rect.right
     
     def choose_attack(self):
         self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
@@ -62,6 +76,8 @@ class Yuri(Boss):
         screen.blit(self.image, self.rect)
         if self.state == 'shaking':
             self.hp_container.draw(screen)
+        if self.speaking:
+            self.dialogue.draw(screen)
 
     def apply_effect(self, effect):
         if effect == '-defense':
@@ -69,6 +85,8 @@ class Yuri(Boss):
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
+
+        self.speak('aaaaa')
 
         if 0 <= self.attack_to_execute < len(self.__attacks):
             if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
@@ -96,6 +114,7 @@ class Yuri(Boss):
         self.__life = self.__life - amount + self.__defense
         SoundManager.play_sound('damage.wav')
         self.state = 'shaking'
+        self.counter = 0
 
     @property
     def life(self):
@@ -118,7 +137,7 @@ class Yuri(Boss):
         return self.__voice
 
 
-class YuriAttack1(Attack):
+class VectorAttack(Attack):
     def __init__(self):
         self.__player: Heart = CombatManager.get_variable('player')
 
