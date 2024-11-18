@@ -51,6 +51,15 @@ class SoundManager:
             del cls.audios[key]
     
     @classmethod
+    def load_and_play(cls, sound):
+        """Carrega um som e da play instantaneamente
+
+        Args:
+            sound (str): Nome do arquivo
+        """
+        pygame.mixer.Sound(os.path.join(GET_PROJECT_PATH(), 'sounds', sound)).play()
+    
+    @classmethod
     def play_sound(cls, sound_name: str, loops: int = 0):
         """Tocar um son pelo nome passado
 

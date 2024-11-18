@@ -11,7 +11,17 @@ class SaveManager:
     default_save_information = {
         "name": "",
         "day": 1,
-        "inventory": [],
+        "equiped_item": 0,
+        "inventory": [
+            {
+                'id': 'pencil',
+                "name": "Lápis",
+                "type": "weapon",
+                "damage": 5,
+                "description": "É o que eu tinha na mochila",
+                "equiped": True
+            }
+        ],
         "player": {
             "life": 20,
             "max_life": 20,

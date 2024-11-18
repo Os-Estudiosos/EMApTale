@@ -55,6 +55,7 @@ class MercyMenu(BattleMenu):
         self.runtime_counter += 1
         if keys[pygame.K_z] or keys[pygame.K_RETURN]:
             self.entered_pressing = True
+        self.text_to_show.restart()
 
     def update(self):
         if self.runtime_counter == 0:

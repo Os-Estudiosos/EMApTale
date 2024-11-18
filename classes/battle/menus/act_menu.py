@@ -16,6 +16,9 @@ from classes.battle.menus.battle_menu_manager import BattleMenuManager
 from classes.text.text import Text
 from classes.text.dynamic_text import DynamicText
 
+from constants import BOSS_ACT_EFFECT
+
+
 class ActMenu(BattleMenu):
     def __init__(self, battle_container: BattleContainer):
         self.__options: list[dict] = []  # Lista de opções
@@ -89,6 +92,9 @@ class ActMenu(BattleMenu):
                         self.entered_pressing = True
                         self.act_response_to_show = 0
                         self.start_showing_text = True
+                        pygame.event.post(pygame.event.Event(BOSS_ACT_EFFECT, {
+                            'effect': self.__options[self.selected_option]['effect']
+                        }))
                         SoundManager.play_sound('select.wav')
 
             # Volto no menu anterior
@@ -111,7 +117,6 @@ class ActMenu(BattleMenu):
                             self.start_showing_text = True
 
                             if self.act_response_to_show+1 > len(self.selected_responses):
-                                print("Ta caindo aqui")
                                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
                                 self.showing_act_response = False
 

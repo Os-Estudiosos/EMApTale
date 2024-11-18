@@ -1,34 +1,39 @@
 {
     "name": "Yuri Saporito",
-    "life": 100,
+    "life": 30,
     "defense": 3,
     "damage": 3,
     "voice": "yuri_txt.wav",
+    "starter_text": "O Coordenador do curso se aproxima, você sente o ambiente pesar",
     "act": [
         {
             "label": "Checar",
             "responses": [
                 "ATK - 3  DEF - 100"
-            ]
+            ],
+            "effect": null
         },
         {
             "label": "Implorar Ponto",
             "responses": [
                 "Ele não parece convencido, vai ter que fazer muito mais que isso para o convencer"
-            ]
+            ],
+            "effect": null
         },
         {
             "label": "Chorar",
             "responses": [
                 "Ele olha para você com uma cara serena, seu chororô não funcionou!"
-            ]
+            ],
+            "effect": null
         },
         {
             "label": "Tirar Dúvida",
             "responses": [
                 "Você demonstrou interesse na matéria, Yuri mostra empatia por você!",
                 "A defesa de Yuri diminuiu!"
-            ]
+            ],
+            "effect": "-defense"
         }
     ]
 }

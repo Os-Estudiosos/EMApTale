@@ -14,7 +14,7 @@ from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
 
-from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT
+from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
 
 class Yuri(Boss):
@@ -62,6 +62,10 @@ class Yuri(Boss):
         screen.blit(self.image, self.rect)
         if self.state == 'shaking':
             self.hp_container.draw(screen)
+
+    def apply_effect(self, effect):
+        if effect == '-defense':
+            self.__defense = 0
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
@@ -72,17 +76,20 @@ class Yuri(Boss):
             else:
                 self.__attacks[self.attack_to_execute].run()
         
+        for event in EventManager.events:
+            if event.type == BOSS_ACT_EFFECT:
+                self.apply_effect(event.effect)
+        
         if self.state == 'shaking':
-            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
             self.counter += 10
             counter_in_radians = self.counter*math.pi/180
             wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
             self.rect.x += 40 * wave_factor
+            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
             if self.counter >= FPS*1.5*10:
                 self.state = 'idle'
                 self.counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
-
 
     
     def take_damage(self, amount):
@@ -114,7 +121,6 @@ class Yuri(Boss):
 class YuriAttack1(Attack):
     def __init__(self):
         self.__player: Heart = CombatManager.get_variable('player')
-        self.__player_group: pygame.sprite.Group = CombatManager.get_variable('player_group')
 
         self.vectors_group = pygame.sprite.Group()
 
