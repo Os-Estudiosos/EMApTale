@@ -1,7 +1,7 @@
 {
     "name": "Yuri Saporito",
     "life": 30,
-    "defense": 30,
+    "defense": 3,
     "damage": 3,
     "voice": "yuri_txt.wav",
     "starter_text": "O Coordenador do curso se aproxima, você sente o ambiente pesar",

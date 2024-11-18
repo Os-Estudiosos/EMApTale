@@ -121,7 +121,6 @@ class Yuri(Boss):
 class YuriAttack1(Attack):
     def __init__(self):
         self.__player: Heart = CombatManager.get_variable('player')
-        self.__player_group: pygame.sprite.Group = CombatManager.get_variable('player_group')
 
         self.vectors_group = pygame.sprite.Group()
 
