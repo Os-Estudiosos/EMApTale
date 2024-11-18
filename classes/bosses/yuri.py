@@ -70,6 +70,7 @@ class Yuri(Boss):
         self.dead = False
         self.__death_animation_counter = 0
         self.__death_explosions: list[Explosion] = []
+        self.death_loops_counter = 255
     
     def speak(self):
         if not self.dead:
@@ -79,6 +80,7 @@ class Yuri(Boss):
     def death_animation(self):
         self.__death_animation_counter += 1
         if self.__death_animation_counter >= FPS*0.3:
+            self.death_loops_counter += 1
             self.__death_animation_counter = 0
             self.__death_explosions.append(Explosion('yellow', position=(
                 random.randint(self.rect.x, self.rect.x+self.rect.width),
@@ -149,7 +151,7 @@ class Yuri(Boss):
 
     
     def take_damage(self, amount):
-        self.__life = self.__life - amount + self.__defense
+        self.__life = self.__life - amount*amount/(amount+self.__defense)
         SoundManager.play_sound('damage.wav')
         if self.__life <= 0:
             self.__life = 0
