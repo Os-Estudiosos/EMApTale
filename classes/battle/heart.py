@@ -6,6 +6,7 @@ import random
 
 from config import GET_PROJECT_PATH
 from config.eventmanager import EventManager
+from config.combatmanager import CombatManager
 
 from classes.battle.container import BattleContainer
 from classes.player import Player
@@ -244,6 +245,6 @@ class Heart(Player):
             self.direction.y = 0
 
         # Mexo na posição
-        if self.effect != 'prisioned':
+        if self.effect != 'prisioned' and not CombatManager.enemy.speaking:
             self.rect.x += self.speed * self.direction.x
             self.rect.y += self.speed * self.direction.y

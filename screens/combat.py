@@ -99,6 +99,8 @@ class Combat(State):
                 self.player.apply_effect('normal')
                 CombatManager.set_boss_turn()
                 CombatManager.enemy.choose_attack()
+                CombatManager.enemy.dialogue.restart()
+                CombatManager.enemy.speak()
                 pygame.time.set_timer(BOSS_TURN_EVENT, 0)
             if event.type == PLAYER_TURN_EVENT:
                 BattleMenuManager.change_active_menu('MainMenu')

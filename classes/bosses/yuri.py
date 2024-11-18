@@ -45,6 +45,8 @@ class Yuri(Boss):
         self.__defense = infos['defense']
         self.__voice = infos['voice']
 
+        self.__attacks_dialogues = infos['attacks_dialogues']
+
         # Container que vai mostrar quando o Professor tomar dano
         self.hp_container = BossHP()
 
@@ -55,7 +57,7 @@ class Yuri(Boss):
         self.attack_to_execute = -1
 
         self.dialogue = DialogueBox(
-            'ESTOU APENAS FAZENDO UM TESTE, LALALALA ISSO É APEANS UM TESTE',
+            '',
             FontManager.fonts['Gamer'],
             15,
             30,
@@ -63,10 +65,9 @@ class Yuri(Boss):
         )
         self.speaking = False
     
-    def speak(self, text):
-        self.dialogue.update()
+    def speak(self):
+        self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
         self.speaking = True
-        self.dialogue.rect.left = self.rect.right
     
     def choose_attack(self):
         self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
@@ -86,9 +87,19 @@ class Yuri(Boss):
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
-        self.speak('aaaaa')
+        if self.speaking:
+            self.dialogue.update()
+            self.dialogue.rect.left = self.rect.right
 
-        if 0 <= self.attack_to_execute < len(self.__attacks):
+            for event in EventManager.events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                        if not self.dialogue.finished:
+                            self.dialogue.skip()
+                        else:
+                            self.speaking = False
+
+        if 0 <= self.attack_to_execute < len(self.__attacks) and not self.speaking:
             if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
                 self.attack_to_execute = -1
             else:
