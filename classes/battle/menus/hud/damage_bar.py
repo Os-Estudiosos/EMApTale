@@ -5,6 +5,8 @@ from random import choice
 from config import *
 from config.combatmanager import CombatManager
 
+from constants import BOSS_TURN_EVENT
+
 
 class DamageBar(pygame.sprite.Sprite):
     """Classe da barrinha que indica o dano
@@ -24,6 +26,8 @@ class DamageBar(pygame.sprite.Sprite):
         self.speed = 10  # Velocidade da barra
 
         self.execution_counter = 0  # Contador de updates
+
+        self.max_x = 0
 
         self.animation_counter = 0  # Contador da animação
         self.frame_changes_per_second = FPS/10  # Taxa de frames da animação por segundo
@@ -60,6 +64,7 @@ class DamageBar(pygame.sprite.Sprite):
         self.random_dir = choice([1, -1])  # Escolho uma 
         # Coloco a barra na posição correta
         self.rect.centerx = actual_container.inner_rect.centerx + (actual_container.inner_rect.width/2)*self.random_dir
+        self.max_x = actual_container.inner_rect.centerx - (actual_container.inner_rect.width/2)*self.random_dir
         keys = pygame.key.get_pressed()
 
         # Como é o primeiro método que eu executo ao criar a barra, eu checo para garantir que o
@@ -79,6 +84,9 @@ class DamageBar(pygame.sprite.Sprite):
 
         if not keys[pygame.K_RETURN] and not keys[pygame.K_z]:
             self.entered_pressing = False
+
+        if 0 <= abs(self.rect.centerx - self.max_x) <= 10:
+            pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
         
         self.animation_counter += 1  # Aumento o contador da animação
         # Se a barrinha estiver parada e o contador for maior que a taxa de frames por segundo
