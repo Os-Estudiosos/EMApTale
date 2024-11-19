@@ -9,7 +9,7 @@ from constants import BOSS_HITTED
 
 
 class Cut(pygame.sprite.Sprite):
-    def __init__(self, *groups):
+    def __init__(self, damage_bar, *groups):
         super().__init__(*groups)
 
         # Lista com meus sprites
@@ -27,6 +27,9 @@ class Cut(pygame.sprite.Sprite):
 
         self.image = self.sprites[0]
         self.rect = self.image.get_rect()
+
+        self.damage_bar = damage_bar
+        self.container = CombatManager.get_variable('battle_container')
 
         self.position = (
             0,
@@ -54,7 +57,10 @@ class Cut(pygame.sprite.Sprite):
                 self.animation_counter = 1  # Coloco o contador para 1
                 self.frames_passed = 0  # Reinicio a minha animação
                 self.can_animate_again = False
-                pygame.event.post(pygame.event.Event(BOSS_HITTED))
+
+                pygame.event.post(pygame.event.Event(BOSS_HITTED, {
+                    'absolute_difference': abs(self.damage_bar.rect.centerx - self.container.inner_rect.centerx)
+                }))
             self.image = self.sprites[self.frames_passed]  # Mudo o sprite atual
             self.rect = self.image.get_rect(center=self.position)  # Pego o retangulo
     

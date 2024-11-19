@@ -116,7 +116,11 @@ class Combat(State):
                 CombatManager.set_player_turn()
                 pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
             if event.type == BOSS_HITTED:
-                CombatManager.enemy.take_damage(self.player.inventory.equiped_weapon.damage)
+                damage_taken = self.player.inventory.equiped_weapon.damage*(1-(event.absolute_difference)/(self.battle_container.inner_rect.width/2))
+                print(damage_taken)
+                CombatManager.enemy.take_damage(
+                    damage_taken
+                )
 
     def run(self):
         # Inicio do ciclo de vida da cena
