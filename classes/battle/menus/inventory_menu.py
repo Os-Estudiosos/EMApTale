@@ -6,6 +6,7 @@ from config import *
 from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
 from config.eventmanager import EventManager
+from config.combatmanager import CombatManager
 
 from classes.battle.container import BattleContainer
 from classes.battle.menus import BattleMenu
@@ -32,15 +33,6 @@ class InventoryMenu(BattleMenu):
             1.5
         )
         self.cursor_rect = self.cursor.get_rect()
-
-        # Adicionando os itens como minhas opções
-        for i, item in enumerate(Player.inventory):
-            if item.type == 'miscellaneous':
-                self.__options.append({
-                    'text': Text(f'* {item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
-                    'func': item.func,
-                    'after_effect_text': item.after_effect_text
-                })
         
         self.page = 0
         self.items_per_column = 100
@@ -90,6 +82,18 @@ class InventoryMenu(BattleMenu):
         self.used_item_text.restart()
         self.used_item = False
 
+        self.__options = []
+
+        # Adicionando os itens como minhas opções
+        for i, item in enumerate(CombatManager.get_variable('player').inventory):
+            if item.type == 'miscellaneous':
+                self.__options.append({
+                    'text': Text(f'* {item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                    'func': item.func,
+                    'id': item.id,
+                    'after_effect_text': item.after_effect_text
+                })
+
     def update(self):
         if self.runtime_counter == 0:
             self.on_first_execution()
@@ -122,11 +126,11 @@ class InventoryMenu(BattleMenu):
                             self.__options[self.selected_option]['func']()
                             self.used_item_text.text = self.__options[self.selected_option]['after_effect_text']
                             self.used_item = True
+                            Player.inventory.remove_item(self.__options[self.selected_option]['id'])
                             self.__options.pop(self.selected_option)
                             SoundManager.play_sound('select.wav')
                             if self.selected_option >= len(self.__options) and self.selected_option != 0:
                                 self.selected_option = len(self.__options)-1
-                            Player.inventory.remove_item(self.selected_option)
                             self.entered_pressing = True
             else: # Se não tiver itens
                 # Mostro na tela o texto de inventário vazio
