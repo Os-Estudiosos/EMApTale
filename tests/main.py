@@ -1,6 +1,6 @@
 import unittest
 
-from SaveManagerTests import SaveManagerTests
+from InventoryTests import InventoryTests
 from UtilsTests import RadiansToDegreesTest, QuadrantReductionTest
 
 
