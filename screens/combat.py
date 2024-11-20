@@ -117,7 +117,6 @@ class Combat(State):
                 pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
             if event.type == BOSS_HITTED:
                 damage_taken = self.player.inventory.equiped_weapon.damage*(1-(event.absolute_difference)/(self.battle_container.inner_rect.width/2))
-                print(damage_taken)
                 CombatManager.enemy.take_damage(
                     damage_taken
                 )

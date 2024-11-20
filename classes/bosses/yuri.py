@@ -189,7 +189,7 @@ class VectorAttack(Attack):
         CombatManager.global_groups.append(self.vectors_group)
 
         self.vectors: list[Vector] = []
-        self.vectors_creation_rate = FPS/3  # 3 Vetores a cada segundo serão criados
+        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
@@ -200,8 +200,6 @@ class VectorAttack(Attack):
         self.__duration_counter += 1
 
         if self.__duration_counter % self.vectors_creation_rate == 0:
-            self.vectors.append(Vector(self.vectors_group))
-            self.vectors.append(Vector(self.vectors_group))
             self.vectors.append(Vector(self.vectors_group))
         
         if self.__duration_counter >= self.__duration:
