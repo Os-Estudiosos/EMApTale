@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="12" nextobjectid="683">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="12" nextobjectid="781">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -110,16 +110,16 @@
 </data>
  </layer>
  <objectgroup id="4" name="WallsColider" offsetx="0" offsety="3">
-  <object id="22" x="77.9318" y="144.5" width="363.432" height="28"/>
-  <object id="23" x="440.045" y="146.125" width="19.9545" height="105.875"/>
-  <object id="24" x="459.017" y="239.039" width="160.841" height="13"/>
-  <object id="25" x="619.5" y="119.5" width="19.5" height="132.5"/>
-  <object id="28" x="639" y="123" width="764.727" height="29"/>
+  <object id="22" x="59.0522" y="144.5" width="401.191" height="30.9091"/>
+  <object id="23" x="440.055" y="146.125" width="19.9341" height="108.491"/>
+  <object id="24" x="459.017" y="239.039" width="160.841" height="15.5611"/>
+  <object id="25" x="619.309" y="119.5" width="19.8817" height="135.094"/>
+  <object id="28" x="639" y="123" width="764.727" height="31.5"/>
   <object id="29" x="1400" y="120" width="20" height="78.3632"/>
   <object id="32" x="1759.5" y="114.25" width="19" height="83.9375"/>
   <object id="33" x="1778.63" y="113.5" width="41.4375" height="18.5"/>
-  <object id="34" x="1820" y="111" width="338.5" height="41.5"/>
-  <object id="35" x="2181.25" y="105" width="117.25" height="27.9091"/>
+  <object id="34" x="1820" y="114" width="338.5" height="41.5"/>
+  <object id="35" x="2181.25" y="108" width="117.25" height="27.9091"/>
   <object id="37" x="2262" y="129.159" width="21.75" height="52.0909"/>
   <object id="39" x="2260" y="268" width="20" height="69.5"/>
   <object id="40" x="2201" y="319" width="59.8182" height="41.75"/>
@@ -149,7 +149,13 @@
   <object id="485" x="1981.23" y="225.617" width="17.0471" height="37.8964"/>
   <object id="527" x="638.682" y="152.64" width="115.682" height="11.36"/>
   <object id="547" x="847.273" y="152.636" width="89.6364" height="11.3636"/>
-  <object id="555" x="1400.05" y="198" width="378.442" height="34.25"/>
+  <object id="555" x="1400.05" y="198" width="378.442" height="36.75"/>
+  <object id="695" gid="470" x="768.98" y="227.316" width="20" height="20"/>
+  <object id="696" gid="471" x="788.98" y="227.321" width="20" height="20"/>
+  <object id="698" gid="501" x="788.98" y="247.32" width="20" height="20"/>
+  <object id="733" gid="473" x="794.111" y="244.6" width="20" height="20"/>
+  <object id="749" gid="473" x="874.156" y="244.644" width="20" height="20"/>
+  <object id="750" gid="475" x="844.125" y="244.625" width="20" height="20"/>
  </objectgroup>
  <objectgroup id="10" name="NotRectWallsColiders">
   <object id="488" x="60.1958" y="190.909">
@@ -183,7 +189,7 @@
   <object id="551" x="2094.73" y="255.182">
    <polygon points="0,0 0.0434783,3.21739 4.73913,8.56522 23,8.73913 30.3478,3.52174 30.3043,-0.0869565"/>
   </object>
-  <object id="557" x="2158.55" y="151.273">
+  <object id="557" x="2158.55" y="154.273">
    <polygon points="0,0 22.7601,-19.0813 22.5156,-36.0298 -0.0298295,-17.848"/>
   </object>
   <object id="558" x="2154.56" y="255.625">
@@ -261,38 +267,73 @@
    <polygon points="-0.272727,-17.9091 8.25852,-17.8153 11.9233,-17.9943 11.2188,-28.3438 10.2502,-36.7205 8.05163,-43.1943 0.248024,-43.1847 -2.23666,-37.7662"/>
   </object>
   <object id="646" gid="371" x="2020" y="260" width="20" height="20"/>
-  <object id="647" gid="475" x="771.364" y="247.636" width="20" height="20"/>
-  <object id="648" gid="381" x="786.75" y="230.31" width="20" height="20"/>
-  <object id="649" gid="380" x="766.75" y="230.313" width="20" height="20"/>
-  <object id="650" gid="382" x="806.75" y="230.31" width="20" height="20"/>
-  <object id="651" gid="410" x="766.75" y="250.31" width="20" height="20"/>
-  <object id="652" gid="411" x="786.75" y="250.313" width="20" height="20"/>
-  <object id="653" gid="412" x="806.75" y="250.31" width="20" height="20"/>
-  <object id="654" gid="473" x="801.909" y="247" width="20" height="20"/>
+  <object id="647" gid="475" x="1063.36" y="247.636" width="20" height="20"/>
+  <object id="648" gid="381" x="1078.75" y="230.31" width="20" height="20"/>
+  <object id="649" gid="380" x="1058.75" y="230.313" width="20" height="20"/>
+  <object id="650" gid="382" x="1098.75" y="230.31" width="20" height="20"/>
+  <object id="651" gid="410" x="1058.75" y="250.31" width="20" height="20"/>
+  <object id="652" gid="411" x="1078.75" y="250.313" width="20" height="20"/>
+  <object id="653" gid="412" x="1098.75" y="250.31" width="20" height="20"/>
+  <object id="654" gid="473" x="1093.91" y="247" width="20" height="20"/>
   <object id="657" gid="249" x="1380" y="220" width="20" height="20"/>
   <object id="658" gid="279" x="1380" y="240" width="20" height="20"/>
   <object id="659" gid="309" x="1380" y="260" width="20" height="20"/>
-  <object id="660" gid="194" x="1329.63" y="259.75" width="20" height="20"/>
-  <object id="661" gid="194" x="1289.5" y="259.75" width="20" height="20"/>
-  <object id="662" gid="195" x="1349.63" y="259.75" width="20" height="20"/>
-  <object id="663" gid="195" x="1309.5" y="259.75" width="20" height="20"/>
-  <object id="664" gid="224" x="1289.5" y="279.75" width="20" height="20"/>
-  <object id="666" gid="224" x="1329.63" y="279.75" width="20" height="20"/>
-  <object id="667" gid="225" x="1349.63" y="279.75" width="20" height="20"/>
-  <object id="668" gid="225" x="1309.5" y="279.75" width="20" height="20"/>
-  <object id="669" gid="192" x="1290.5" y="199.75" width="20" height="20"/>
-  <object id="670" gid="192" x="1330.63" y="199.75" width="20" height="20"/>
-  <object id="671" gid="193" x="1350.63" y="199.75" width="20" height="20"/>
-  <object id="672" gid="193" x="1310.5" y="199.75" width="20" height="20"/>
-  <object id="673" gid="222" x="1290.5" y="219.75" width="20" height="20"/>
-  <object id="674" gid="222" x="1330.63" y="219.75" width="20" height="20"/>
-  <object id="675" gid="223" x="1310.5" y="219.75" width="20" height="20"/>
-  <object id="676" gid="223" x="1350.63" y="219.75" width="20" height="20"/>
+  <object id="660" gid="194" x="1339" y="260" width="20" height="20"/>
+  <object id="661" gid="194" x="1279" y="260" width="20" height="20"/>
+  <object id="662" gid="195" x="1359" y="260" width="20" height="20"/>
+  <object id="663" gid="195" x="1299" y="260" width="20" height="20"/>
+  <object id="664" gid="224" x="1279" y="280" width="20" height="20"/>
+  <object id="666" gid="224" x="1339" y="280" width="20" height="20"/>
+  <object id="667" gid="225" x="1359" y="280" width="20" height="20"/>
+  <object id="668" gid="225" x="1299" y="280" width="20" height="20"/>
+  <object id="669" gid="192" x="1279" y="200" width="20" height="20"/>
+  <object id="670" gid="192" x="1339" y="200" width="20" height="20"/>
+  <object id="671" gid="193" x="1359" y="200" width="20" height="20"/>
+  <object id="672" gid="193" x="1299" y="200" width="20" height="20"/>
+  <object id="673" gid="222" x="1279" y="220" width="20" height="20"/>
+  <object id="674" gid="222" x="1339" y="220" width="20" height="20"/>
+  <object id="675" gid="223" x="1299" y="220" width="20" height="20"/>
+  <object id="676" gid="223" x="1359" y="220" width="20" height="20"/>
   <object id="679" gid="461" x="1920" y="260" width="20" height="20"/>
   <object id="680" gid="460" x="1900" y="260" width="20" height="20"/>
-  <object id="681" gid="428" x="1320" y="240" width="20" height="20"/>
-  <object id="682" x="1320.09" y="225.125">
+  <object id="681" gid="428" x="1319" y="240" width="20" height="20"/>
+  <object id="682" x="1318.96" y="224.313">
    <polygon points="0,0 2.25,-2.75 17.875,-2.6875 19.625,-0.5 19.8125,-0.3125"/>
   </object>
+  <object id="687" gid="475" x="1004.59" y="247.616" width="20" height="20"/>
+  <object id="688" gid="381" x="1019.98" y="230.29" width="20" height="20"/>
+  <object id="689" gid="380" x="999.978" y="230.293" width="20" height="20"/>
+  <object id="690" gid="382" x="1039.98" y="230.29" width="20" height="20"/>
+  <object id="691" gid="410" x="999.978" y="250.29" width="20" height="20"/>
+  <object id="692" gid="411" x="1019.98" y="250.293" width="20" height="20"/>
+  <object id="693" gid="412" x="1039.98" y="250.29" width="20" height="20"/>
+  <object id="694" gid="473" x="1035.14" y="246.98" width="20" height="20"/>
+  <object id="734" gid="475" x="764.043" y="247.565" width="20" height="20"/>
+  <object id="735" gid="500" x="768.984" y="250.322" width="20" height="20"/>
+  <object id="751" gid="470" x="848.5" y="230.341" width="20" height="20"/>
+  <object id="752" gid="471" x="868.5" y="230.346" width="20" height="20"/>
+  <object id="753" gid="501" x="868.5" y="250.345" width="20" height="20"/>
+  <object id="754" gid="500" x="848.504" y="250.347" width="20" height="20"/>
+  <object id="757" gid="194" x="900" y="260" width="20" height="20"/>
+  <object id="758" gid="195" x="920" y="260" width="20" height="20"/>
+  <object id="759" gid="195" x="980" y="260" width="20" height="20"/>
+  <object id="760" gid="194" x="960" y="260" width="20" height="20"/>
+  <object id="761" gid="362" x="940" y="240" width="20" height="20"/>
+  <object id="762" gid="463" x="1140" y="260" width="20" height="20"/>
+  <object id="763" gid="462" x="1120" y="260" width="20" height="20"/>
+  <object id="764" gid="243" x="1260" y="220" width="20" height="20"/>
+  <object id="765" gid="273" x="1260" y="240" width="20" height="20"/>
+  <object id="766" gid="303" x="1260" y="260" width="20" height="20"/>
+  <object id="767" gid="467" x="1240" y="220" width="20" height="20"/>
+  <object id="768" gid="497" x="1240" y="240" width="20" height="20"/>
+  <object id="772" gid="108" x="500" y="240" width="20" height="20"/>
+  <object id="773" gid="109" x="520" y="240" width="20" height="20"/>
+  <object id="774" gid="110" x="540" y="240" width="20" height="20"/>
+  <object id="775" gid="138" x="500" y="260" width="20" height="20"/>
+  <object id="776" gid="139" x="520" y="260" width="20" height="20"/>
+  <object id="777" gid="140" x="540" y="260" width="20" height="20"/>
+  <object id="778" gid="168" x="500" y="280" width="20" height="20"/>
+  <object id="779" gid="169" x="520" y="280" width="20" height="20"/>
+  <object id="780" gid="170" x="540" y="280" width="20" height="20"/>
  </objectgroup>
 </map>
