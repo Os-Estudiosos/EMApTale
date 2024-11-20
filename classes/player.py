@@ -9,7 +9,7 @@ from classes.inventory import Inventory
 
 class Player(pygame.sprite.Sprite):
     # Definindo as variáveis do Player
-    inventory = []
+    inventory = Inventory()
     life = 0
     max_life = 0
     name = ''
