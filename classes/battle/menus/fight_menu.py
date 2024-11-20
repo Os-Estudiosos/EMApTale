@@ -40,7 +40,7 @@ class FightMenu(BattleMenu):
         self.damage_indicator_rect = self.damage_indicator.get_rect()
 
         self.damage_bar = DamageBar()  # Barrinha que indica onde temos que atacar
-        self.cut = Cut()  # O Corte que aparece na animação
+        self.cut = Cut(self.damage_bar)  # O Corte que aparece na animação
 
         self.attacked = False  # Variável que diz se eu vou mostrar o corte na tela ou não
     

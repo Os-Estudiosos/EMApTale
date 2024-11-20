@@ -67,8 +67,14 @@ class Combat(State):
         self.player = Heart(self.battle_container, self.player_group)
         CombatManager.set_variable('player', self.player)
 
-        # Variáveis relacionadas ao menu que do turno do player
-        # self.battle_menu_manager = BattleMenuManager()
+        # Texto que aparece no inicio da batalha
+        self.starter_text = DynamicText(
+            '',
+            FontManager.fonts['Gamer'],
+            22,
+            int((450*100)/self.__display.get_height()),
+            sound='text_2.wav'
+        )
 
         # Definindo todos os menus
         self.main_menu = MainMenu(self.__display)
@@ -91,6 +97,9 @@ class Combat(State):
         SoundManager.stop_music()
         self.act_menu.options.clear()
         self.act_menu.options = self.__variables['enemy']['act']
+
+        self.starter_text.restart(self.__variables['enemy']['starter_text'])
+
         Player.load_infos()
 
     def handle_events(self):
@@ -99,13 +108,18 @@ class Combat(State):
                 self.player.apply_effect('normal')
                 CombatManager.set_boss_turn()
                 CombatManager.enemy.choose_attack()
+                CombatManager.enemy.dialogue.restart()
+                CombatManager.enemy.speak()
                 pygame.time.set_timer(BOSS_TURN_EVENT, 0)
             if event.type == PLAYER_TURN_EVENT:
                 BattleMenuManager.change_active_menu('MainMenu')
                 CombatManager.set_player_turn()
                 pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
             if event.type == BOSS_HITTED:
-                CombatManager.enemy.take_damage(self.player.inventory.equiped_weapon.damage)
+                damage_taken = self.player.inventory.equiped_weapon.damage*(1-(event.absolute_difference)/(self.battle_container.inner_rect.width/2))
+                CombatManager.enemy.take_damage(
+                    damage_taken
+                )
 
     def run(self):
         # Inicio do ciclo de vida da cena
@@ -154,12 +168,6 @@ class Combat(State):
         # Se for o turno do Player
         if CombatManager.turn == 'player':
             # ============ HUD QUE SÓ APARECE NO TURNO DO PLAYER ============
-
-            # ============ FAZENDO ISSO TUDO COM O MENU ============
-            if BattleMenuManager.active_menu != 'MainMenu':
-                BattleMenuManager.update()
-                BattleMenuManager.draw()
-
             # Esse monte de self.option é para deixar numa largura onde o lado esquerdo fica alinhado com o primeiro botão e o direito com o útlimo botão
             self.battle_container.resize(
                 self.main_menu.options[len(self.main_menu.options)-1].rect.right - self.main_menu.options[0].rect.left,
@@ -177,25 +185,35 @@ class Combat(State):
                 # Só permito mexer de novo o cursor se eu soltar a tecla e apertar de novo
                 self.trying_to_move_cursor = False
 
-            # ========== ATUALIZANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
-
-            # ========== DESENHANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
+            # ========== ATUALIZANDO E DESENHANDO AS COISAS QUE SÓ APARECEM NO TURNO DO PLAYER ==========
+            if BattleMenuManager.active_menu != 'MainMenu':
+                BattleMenuManager.update()
+                BattleMenuManager.draw()
+            else:
+                self.starter_text.max_length = self.battle_container.inner_rect.width-20
+                self.starter_text.position = (
+                    self.battle_container.inner_rect.x + 10,
+                    self.battle_container.inner_rect.y + 10,
+                )
+                self.starter_text.update()
+                self.starter_text.draw(self.__display)
 
         elif CombatManager.turn == 'boss':  # Se não for o turno do player
-            self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
-
             for btn in self.main_menu.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False
             
             if keys[pygame.K_u]:
                 self.player.apply_effect('prisioned')
-            
-            # Draws que são apenas no turno do boss
-            self.player_group.draw(self.__display)
-            
-            # Updates que são apenas do turno do boss
-            self.player_group.update(display=self.__display)
-    
+        
+            if not CombatManager.enemy.dead:
+                self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
+                
+                # Draws que são apenas no turno do boss
+                self.player_group.draw(self.__display)
+                
+                # Updates que são apenas do turno do boss
+                self.player_group.update(display=self.__display)
+        
     def on_last_execution(self):
         self.__execution_counter = 0
 

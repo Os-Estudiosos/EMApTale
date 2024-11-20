@@ -7,12 +7,17 @@ from config import *
 from config.eventmanager import EventManager
 from config.combatmanager import CombatManager
 from config.soundmanager import SoundManager
+from config.fontmanager import FontManager
 
 from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
+
+from classes.text.dialogue_box import DialogueBox
+
+from classes.effects.explosion import Explosion
 
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
@@ -42,17 +47,50 @@ class Yuri(Boss):
         self.__defense = infos['defense']
         self.__voice = infos['voice']
 
+        self.__attacks_dialogues = infos['attacks_dialogues']
+
         # Container que vai mostrar quando o Professor tomar dano
         self.hp_container = BossHP()
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            YuriAttack1()
+            VectorAttack()
         ]
         self.attack_to_execute = -1
+
+        self.dialogue = DialogueBox(
+            '',
+            FontManager.fonts['Gamer'],
+            15,
+            30,
+            'yuri_txt.wav'
+        )
+        self.speaking = False
+
+        self.dead = False
+        self.__death_animation_counter = 0
+        self.__death_explosions: list[Explosion] = []
+        self.death_loops_counter = 255
     
-    def speak(self, text):
-        ...
+    def speak(self):
+        if not self.dead:
+            self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
+            self.speaking = True
+    
+    def death_animation(self):
+        self.__death_animation_counter += 1
+        if self.__death_animation_counter >= FPS*0.3:
+            self.death_loops_counter += 1
+            self.__death_animation_counter = 0
+            self.__death_explosions.append(Explosion('yellow', position=(
+                random.randint(self.rect.x, self.rect.x+self.rect.width),
+                random.randint(self.rect.y, self.rect.y+self.rect.height)
+            )))
+        
+        for i, explosion in enumerate(self.__death_explosions):
+            explosion.update()
+            if explosion.finished:
+                del self.__death_explosions[i]
     
     def choose_attack(self):
         self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
@@ -62,6 +100,11 @@ class Yuri(Boss):
         screen.blit(self.image, self.rect)
         if self.state == 'shaking':
             self.hp_container.draw(screen)
+        if self.speaking:
+            self.dialogue.draw(screen)
+
+        for explosion in self.__death_explosions:
+            screen.blit(explosion.img, explosion.rect)
 
     def apply_effect(self, effect):
         if effect == '-defense':
@@ -70,11 +113,26 @@ class Yuri(Boss):
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
-        if 0 <= self.attack_to_execute < len(self.__attacks):
-            if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
-                self.attack_to_execute = -1
-            else:
-                self.__attacks[self.attack_to_execute].run()
+        if not self.dead:
+            if self.speaking:
+                self.dialogue.update()
+                self.dialogue.rect.left = self.rect.right
+
+                for event in EventManager.events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                            if not self.dialogue.finished:
+                                self.dialogue.skip()
+                            else:
+                                self.speaking = False
+
+            if 0 <= self.attack_to_execute < len(self.__attacks) and not self.speaking:
+                if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
+                    self.attack_to_execute = -1
+                else:
+                    self.__attacks[self.attack_to_execute].run()
+        else:
+            self.death_animation()
         
         for event in EventManager.events:
             if event.type == BOSS_ACT_EFFECT:
@@ -93,9 +151,13 @@ class Yuri(Boss):
 
     
     def take_damage(self, amount):
-        self.__life = self.__life - amount + self.__defense
+        self.__life = self.__life - amount*amount/(amount+self.__defense)
         SoundManager.play_sound('damage.wav')
+        if self.__life <= 0:
+            self.__life = 0
+            self.dead = True
         self.state = 'shaking'
+        self.counter = 0
 
     @property
     def life(self):
@@ -118,7 +180,7 @@ class Yuri(Boss):
         return self.__voice
 
 
-class YuriAttack1(Attack):
+class VectorAttack(Attack):
     def __init__(self):
         self.__player: Heart = CombatManager.get_variable('player')
 
@@ -127,7 +189,7 @@ class YuriAttack1(Attack):
         CombatManager.global_groups.append(self.vectors_group)
 
         self.vectors: list[Vector] = []
-        self.vectors_creation_rate = FPS/3  # 3 Vetores a cada segundo serão criados
+        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
@@ -138,8 +200,6 @@ class YuriAttack1(Attack):
         self.__duration_counter += 1
 
         if self.__duration_counter % self.vectors_creation_rate == 0:
-            self.vectors.append(Vector(self.vectors_group))
-            self.vectors.append(Vector(self.vectors_group))
             self.vectors.append(Vector(self.vectors_group))
         
         if self.__duration_counter >= self.__duration:
