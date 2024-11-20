@@ -51,13 +51,31 @@ class SoundManager:
             del cls.audios[key]
     
     @classmethod
-    def play_sound(cls, sound_name: str):
+    def load_and_play(cls, sound):
+        """Carrega um som e da play instantaneamente
+
+        Args:
+            sound (str): Nome do arquivo
+        """
+        pygame.mixer.Sound(os.path.join(GET_PROJECT_PATH(), 'sounds', sound)).play()
+    
+    @classmethod
+    def play_sound(cls, sound_name: str, loops: int = 0):
         """Tocar um son pelo nome passado
 
         Args:
             sound_name (str): Nome do arquivo que deve ser tocasdo
         """
-        cls.audios[sound_name].play()
+        cls.audios[sound_name].play(loops=loops)
+
+    @classmethod
+    def stop_sound(cls, sound_name: str):
+        """Para o som especificado
+
+        Args:
+            sound_name (str): Nome do som
+        """
+        cls.audios[sound_name].stop()
     
     @staticmethod
     def stop_music():
@@ -81,7 +99,7 @@ class SoundManager:
     def is_playing():
         """Retorna se o canal de música está sendo utilizado
         """
-        pygame.mixer.music.get_busy()
+        return pygame.mixer.music.get_busy()
     
 
     # @property

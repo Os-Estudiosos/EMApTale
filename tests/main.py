@@ -1,6 +1,7 @@
 import unittest
 
 from SaveManagerTests import SaveManagerTests
+from UtilsTests import RadiansToDegreesTest, QuadrantReductionTest
 
 
 if __name__ == '__main__':

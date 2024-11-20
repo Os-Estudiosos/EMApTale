@@ -1,11 +1,13 @@
 import pygame
 import os
+import json
 
 from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.savemanager import SaveManager
+from config.eventmanager import EventManager
 
 from classes.player import Player
 
@@ -13,6 +15,7 @@ from classes.player import Player
 from screens.menu.start import Start
 from screens.menu.options import Options
 from screens.menu.new_game import NewGameConfirmation
+from screens.menu.new_name import NewName
 
 from screens.combat import Combat
 from screens.emap import EMAp
@@ -23,12 +26,11 @@ class Game:
     """
     def __init__(self):
         # Essa parte é apenas para a elaboração das coisas, vai ser removido depois
-        SaveManager.load()
-        Player.load_infos()
+        # SaveManager.load()
+        # Player.load_infos()
         
         # Colocando o tamanho da Tela
         self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-        self.is_fullsize = False
 
         # Variável que indica se o jogo da rodando
         self.running = True
@@ -49,6 +51,7 @@ class Game:
         # Cenas do Menu
         self.Menu = Start('start', self.display, self.game_state_manager)
         self.NewGameConfirmation = NewGameConfirmation('new_game_confirmation', self.display, self.game_state_manager)
+        self.NewName = NewName('new_name', self.display, self.game_state_manager)
         # self.Options = Options('options', self.display, self.game_state_manager)
         # Considereando em tirar o menu de opções (Não há muitas opções, só volume)
 
@@ -61,6 +64,7 @@ class Game:
             # Cenas do menu
             'start': self.Menu,
             'new_game_confirmation': self.NewGameConfirmation,
+            'new_name': self.NewName,
             # 'options': self.Options,
 
             # Cenas genéricas
@@ -70,18 +74,26 @@ class Game:
 
         pygame.mouse.set_visible(False)
 
+    def handle_events(self):
+        # Checando os eventos
+        EventManager.events = pygame.event.get()
+        for event in EventManager.events:
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    self.game_state_manager.set_state('start')
+                if event.key == pygame.K_2:
+                    with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json')) as file:
+                        yuri = json.load(file)
+                        self.game_state_manager.set_state('combat', {
+                            "enemy": yuri
+                        })
+
     def run(self):
         while self.running:
-            # Checando os eventos
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_1:
-                        self.game_state_manager.set_state('start')
-                    if event.key == pygame.K_2:
-                        self.game_state_manager.set_state('combat')
-            
+            self.handle_events()
+
             game.display.fill((0, 0, 0))
 
             # Trocando de Cena

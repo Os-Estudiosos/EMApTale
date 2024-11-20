@@ -15,6 +15,7 @@ class EMAp(State):
         game_state_manager: GameStateManager,
     ):
         # Variáveis padrão de qualquer Cenário
+        self.__variables = {}
         self.__name = name
         self.__display: pygame.Surface = display
         self.__game_state_manager: GameStateManager = game_state_manager
@@ -22,7 +23,7 @@ class EMAp(State):
         self.__execution_counter = 0
 
     def on_first_execution(self):
-        ...
+        SaveManager.load()
 
     def run(self):
         # Inicio do ciclo de vida da cena
@@ -51,3 +52,13 @@ class EMAp(State):
     @property
     def name(self):
         return self.__name
+
+    @property
+    def variables(self):
+        return self.__variables
+    
+    @variables.setter
+    def variables(self, value: dict):
+        if not isinstance(value, dict):
+            raise TypeError("Você precisa passar um dicionário")
+        self.__variables = value

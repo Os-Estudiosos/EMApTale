@@ -6,6 +6,7 @@ from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
+from config.eventmanager import EventManager
 
 from classes.text.text import Text
 
@@ -18,6 +19,7 @@ class Start(State):
         game_state_manager: GameStateManager,
     ):
         # Variáveis padrão de qualquer Cenário
+        self.__variables = {}
         self.__name = name
         self.__display: pygame.Surface = display
         self.__game_state_manager: GameStateManager = game_state_manager
@@ -50,12 +52,6 @@ class Start(State):
         # Informações sobre o cursor que marca qual a opção selecionada
         self.cursor_icon = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')), 1.5)
         self.cursor_rect = self.cursor_icon.get_rect()
-        self.cursor_trying_to_move = False  # Marca se eu estou tentando mexer o cursor
-
-        # Essa variável é responsável por checar se o player entrou na cena com o botão
-        # de confirmação selecionado (Enter ou Z), assim eu posso evitar que ele entre
-        # na tela ja selecionando a opção por acidente
-        self.entered_holding_confirm_button = False
     
     def on_first_execution(self):
         # Inicializando a Música
@@ -63,9 +59,7 @@ class Start(State):
             SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'))
 
         # Checo se ele não iniciou a cena segurando o botão de confirmar
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RETURN] or keys[pygame.K_z]:
-            self.entered_holding_confirm_button = True
+        EventManager.clear()
 
     def move_cursor(self, increment):
         if self.selected_option + increment >= len(self.menu_options):
@@ -76,27 +70,24 @@ class Start(State):
             self.selected_option += increment
 
     def run(self):
-        keys = pygame.key.get_pressed()
+        if not self.__execution_counter > 0:
+            self.on_first_execution()
+            self.__execution_counter += 1
 
-        if keys[pygame.K_DOWN] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
-            self.move_cursor(1)  # Movo uma opção pra baixo
-            self.cursor_trying_to_move = True
-            SoundManager.play_sound('select.wav')
-        elif keys[pygame.K_UP] and not self.cursor_trying_to_move:  # Se eu apertar para cima
-            self.move_cursor(-1)  # Movo uma opção pra cima
-            self.cursor_trying_to_move = True
-            SoundManager.play_sound('select.wav')
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:  # Se eu apertar pra baixo
+                    self.move_cursor(1)  # Movo uma opção pra baixo
+                    self.cursor_trying_to_move = True
+                    SoundManager.play_sound('squeak.wav')
+                elif event.key == pygame.K_UP:  # Se eu apertar para cima
+                    self.move_cursor(-1)  # Movo uma opção pra cima
+                    self.cursor_trying_to_move = True
+                    SoundManager.play_sound('squeak.wav')
 
-        if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_holding_confirm_button:  # Se eu apertar enter em alguma opção
-            self.menu_options[self.selected_option]['func']()
-        
-        # Se ele estiver segurando o botão quando entrou na cena, ao soltar, podera clicar nas opções
-        if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:
-            self.entered_holding_confirm_button = False
-        
-        if not keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
-            # Só deixo mover o cursor se eu soltar a tecla e apertar de novo
-            self.cursor_trying_to_move = False
+                if event.key == pygame.K_z or event.key == pygame.K_RETURN:  # Se eu apertar enter em alguma opção
+                    self.menu_options[self.selected_option]['func']()
+                    SoundManager.play_sound('select.wav')
 
         self.cursor_rect.center = (  # Mexo o centro do cursor
             self.menu_options[self.selected_option]['label'].rect.center[0] + 300,  # Matemática para mexer o cursor
@@ -116,10 +107,6 @@ class Start(State):
         
         self.__display.blit(self.cursor_icon, self.cursor_rect)
 
-        if not self.__execution_counter > 0:
-            self.on_first_execution()
-            self.__execution_counter += 1
-
     def on_last_execution(self):
         self.__execution_counter = 0
 
@@ -138,3 +125,13 @@ class Start(State):
     @property
     def name(self):
         return self.__name
+    
+    @property
+    def variables(self):
+        return self.__variables
+    
+    @variables.setter
+    def variables(self, value: dict):
+        if not isinstance(value, dict):
+            raise TypeError("Você precisa passar um dicionário")
+        self.__variables = value
