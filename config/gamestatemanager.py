@@ -1,6 +1,5 @@
 from screens import State
 
-
 class GameStateManager:
     """Classe que gerencia qual a Cena do game está aparecendo
     """

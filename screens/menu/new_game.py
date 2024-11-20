@@ -10,8 +10,7 @@ from config.savemanager import SaveManager
 from config.eventmanager import EventManager
 
 from classes.text.text import Text
-
-
+        
 class NewGameConfirmation(State):
     def __init__(
         self,
@@ -30,7 +29,7 @@ class NewGameConfirmation(State):
         self.menu_options = [
             {
                 'label': Text('SIM', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('new_name')
+                'func': lambda: self.__game_state_manager.set_state('intro_cutscene')
             },
             {
                 'label': Text('CANCELAR', FontManager.fonts['Gamer'], 50),

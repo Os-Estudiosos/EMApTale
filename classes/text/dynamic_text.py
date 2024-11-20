@@ -14,7 +14,7 @@ class DynamicText:
         letters_per_second: int,
         text_size: int = 12,
         max_length: float = 0,
-        positon: tuple[float] = (0,0),
+        position: tuple[float] = (0,0),
         color: pygame.Color = (255,255,255),
         sound: str = None
     ):
@@ -33,7 +33,7 @@ class DynamicText:
         self.font = pygame.font.Font(font, text_size)  # Fonte que vai ser usada
 
         self.max_length = max_length  # Largura máxima
-        self.position = positon  # Posição do texto
+        self.position = position  # Posição do texto
         self.color = color  # Cor do texto
 
         self.rows = [  # Lista que vai contar as linhas
@@ -85,6 +85,7 @@ class DynamicText:
         
     def update(self, *args, **kwargs):
         self.counter += 1  # Aumenta a contagem
+
         
         # Se a montagem for maior que a frequência das letras e o contador de letras não for maior que a quantidade de letras
         if self.counter >= self.letter_rate and not self.letter_counter >= len(self.text):
@@ -120,5 +121,8 @@ class DynamicText:
             text_rect = text.get_rect()
             text_rect.x = self.position[0]
             text_rect.y = self.position[1]+i*text_rect.height
-            screen.blit(text, text_rect)
+            screen.blit(text, text_rect)    
 
+    @property
+    def is_finished(self):
+        return self.finished
