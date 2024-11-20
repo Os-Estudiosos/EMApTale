@@ -63,7 +63,7 @@ class Yuri(Boss):
             FontManager.fonts['Gamer'],
             15,
             30,
-            'yuri_txt.wav'
+            self.voice
         )
         self.speaking = False
 
