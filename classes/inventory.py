@@ -49,20 +49,23 @@ class Inventory:
         if not isinstance(id, UUID):
             raise TypeError("Passe um UUID como ")
 
+        if len(self.items) == 0:
+            raise ValueError('O Inventário está vazio')
+
         for item in self.items:
             if item.id == id:
                 return item
         else:
             raise ValueError('O Id passado não está no inventário')
 
-    def equip_weapon(self, id: str):
+    def equip_weapon(self, id: UUID):
         """Equipa a arma com o ID passado
 
         Args:
             id (str): ID da arma que vai ser equipado
         """
-        if not isinstance(id, str):
-            raise TypeError("Passe um número inteiro como parâmetro")
+        if not isinstance(id, UUID):
+            raise TypeError("Passe um UUID parâmetro")
         
         self.equiped_weapon = self.get_item(id)
 
