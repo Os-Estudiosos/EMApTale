@@ -121,8 +121,4 @@ class DynamicText:
             text_rect = text.get_rect()
             text_rect.x = self.position[0]
             text_rect.y = self.position[1]+i*text_rect.height
-            screen.blit(text, text_rect)    
-
-    @property
-    def is_finished(self):
-        return self.finished
+            screen.blit(text, text_rect)

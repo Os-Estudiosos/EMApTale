@@ -80,8 +80,6 @@ class Game:
 
         }
 
-
-
         pygame.mouse.set_visible(False)
 
     def handle_events(self):

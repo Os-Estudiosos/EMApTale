@@ -6,6 +6,8 @@ from config import *
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
+from config.eventmanager import EventManager
+
 from classes.text.cuts_dynamic_text import CDynamicText
 
 class IntroCutscene(State):
@@ -14,6 +16,8 @@ class IntroCutscene(State):
         self.__display = display
         self.__game_state_manager = game_state_manager
         self.__execution_counter = 0
+
+        self.__variables = {}
 
         self.stage = 0
         self.texts = [
@@ -174,12 +178,6 @@ class IntroCutscene(State):
             # Deixa na escala dentro do alpha permitido, apenas por redundância
             self.alpha = min(max(self.alpha, 0), 255)
 
-            print(self.alpha)
-
-
-
-
-
             # Valeu Spaniol pela Nice Dick!
             resized_image.set_alpha(self.alpha)
 
@@ -196,7 +194,7 @@ class IntroCutscene(State):
 
 
             # Pula a 
-            for event in pygame.event.get():
+            for event in EventManager.events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
                         if self.stage < len(self.texts):
@@ -241,3 +239,13 @@ class IntroCutscene(State):
     @property
     def game_state_manager(self):
         return self.__game_state_manager
+    
+    @property
+    def variables(self):
+        return self.__variables
+    
+    @variables.setter
+    def variables(self, value: dict):
+        if not isinstance(value, dict):
+            raise TypeError("Você precisa passar um dicionário")
+        self.__variables = value

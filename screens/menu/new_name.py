@@ -56,7 +56,7 @@ class NewName(State):
 
                 if event.key == pygame.K_RETURN and len(self.player_name)>0:
                     SaveManager.create_new_save_file(self.player_name)
-                    self.__game_state_manager.set_state('emap')
+                    self.__game_state_manager.set_state('intro_cutscene')
         
         set_your_name_text = Text('DIGITE O SEU NOME', FontManager.fonts['Gamer'], self.font_size)
         confirm_text = Text('APERTE ENTER PARA CONFIRMAR', FontManager.fonts['Gamer'], self.font_size - 30)

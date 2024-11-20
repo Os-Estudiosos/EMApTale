@@ -29,7 +29,7 @@ class NewGameConfirmation(State):
         self.menu_options = [
             {
                 'label': Text('SIM', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('intro_cutscene')
+                'func': lambda: self.__game_state_manager.set_state('new_name')
             },
             {
                 'label': Text('CANCELAR', FontManager.fonts['Gamer'], 50),
