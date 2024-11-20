@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="12" nextobjectid="657">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="12" nextobjectid="683">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -189,8 +189,8 @@
   <object id="558" x="2154.56" y="255.625">
    <polygon points="0,0 0.0434783,3.21739 4.73913,8.56522 23,8.73913 30.3478,3.52174 30.3043,-0.0869565"/>
   </object>
-  <object id="559" x="1920.06" y="241.875">
-   <polygon points="0,0 2.25,-2.75 17.875,-2.6875 19.625,-0.5 19.8125,-0.3125"/>
+  <object id="559" x="1900.25" y="245">
+   <polygon points="0,0 3.55599,-2.75 28.2504,-2.6875 31.0162,-0.5 31.3125,-0.3125"/>
   </object>
   <object id="564" x="2033.75" y="217.027">
    <polygon points="0,0 0.0434783,-3.21739 4.73913,-8.56522 23,-8.73913 30.3478,-3.52174 30.3043,0.0869565"/>
@@ -236,7 +236,6 @@
   <object id="618" gid="311" x="2140" y="220" width="20" height="20"/>
   <object id="619" gid="312" x="2160" y="220" width="20" height="20"/>
   <object id="620" gid="313" x="2180" y="220" width="20" height="20"/>
-  <object id="621" gid="428" x="1920" y="260" width="20" height="20"/>
   <object id="622" gid="194" x="1900" y="280" width="20" height="20"/>
   <object id="623" gid="195" x="1920" y="280" width="20" height="20"/>
   <object id="624" gid="224" x="1900" y="300" width="20" height="20"/>
@@ -270,5 +269,30 @@
   <object id="652" gid="411" x="786.75" y="250.313" width="20" height="20"/>
   <object id="653" gid="412" x="806.75" y="250.31" width="20" height="20"/>
   <object id="654" gid="473" x="801.909" y="247" width="20" height="20"/>
+  <object id="657" gid="249" x="1380" y="220" width="20" height="20"/>
+  <object id="658" gid="279" x="1380" y="240" width="20" height="20"/>
+  <object id="659" gid="309" x="1380" y="260" width="20" height="20"/>
+  <object id="660" gid="194" x="1329.63" y="259.75" width="20" height="20"/>
+  <object id="661" gid="194" x="1289.5" y="259.75" width="20" height="20"/>
+  <object id="662" gid="195" x="1349.63" y="259.75" width="20" height="20"/>
+  <object id="663" gid="195" x="1309.5" y="259.75" width="20" height="20"/>
+  <object id="664" gid="224" x="1289.5" y="279.75" width="20" height="20"/>
+  <object id="666" gid="224" x="1329.63" y="279.75" width="20" height="20"/>
+  <object id="667" gid="225" x="1349.63" y="279.75" width="20" height="20"/>
+  <object id="668" gid="225" x="1309.5" y="279.75" width="20" height="20"/>
+  <object id="669" gid="192" x="1290.5" y="199.75" width="20" height="20"/>
+  <object id="670" gid="192" x="1330.63" y="199.75" width="20" height="20"/>
+  <object id="671" gid="193" x="1350.63" y="199.75" width="20" height="20"/>
+  <object id="672" gid="193" x="1310.5" y="199.75" width="20" height="20"/>
+  <object id="673" gid="222" x="1290.5" y="219.75" width="20" height="20"/>
+  <object id="674" gid="222" x="1330.63" y="219.75" width="20" height="20"/>
+  <object id="675" gid="223" x="1310.5" y="219.75" width="20" height="20"/>
+  <object id="676" gid="223" x="1350.63" y="219.75" width="20" height="20"/>
+  <object id="679" gid="461" x="1920" y="260" width="20" height="20"/>
+  <object id="680" gid="460" x="1900" y="260" width="20" height="20"/>
+  <object id="681" gid="428" x="1320" y="240" width="20" height="20"/>
+  <object id="682" x="1320.09" y="225.125">
+   <polygon points="0,0 2.25,-2.75 17.875,-2.6875 19.625,-0.5 19.8125,-0.3125"/>
+  </object>
  </objectgroup>
 </map>
