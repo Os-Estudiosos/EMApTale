@@ -3,19 +3,16 @@ from screens import State
 
 from config import *
 
-from classes.battle.button import CombatButton
-from classes.battle.container import BattleContainer
-from classes.battle.hp_container import HPContainer
-
 from classes.text.dynamic_text import DynamicText
 from classes.text.text import Text
+from classes.battle.heart import Heart
+from classes.player import Player
 
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
-
-from classes.battle.heart import Heart
-from classes.player import Player
+from config.combatmanager import CombatManager
+from config.eventmanager import EventManager
 
 class GameOver(State):
     def __init__(
@@ -55,10 +52,13 @@ class GameOver(State):
     
     def on_first_execution(self):
         # Limpando os sons
-        pass
+        SoundManager.audios.clear()
     
     def run(self):
-        pass
+        self.__display.fill(0,0,0)
+        heart = Heart().rect.center
+
+
 
     def on_last_execution(self):
         self.__execution_counter = 0

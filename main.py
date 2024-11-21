@@ -16,6 +16,7 @@ from screens.menu.start import Start
 from screens.menu.options import Options
 from screens.menu.new_game import NewGameConfirmation
 from screens.menu.new_name import NewName
+from screens.gameover import GameOver
 
 from screens.combat import Combat
 from screens.emap import EMAp
@@ -71,6 +72,9 @@ class Game:
             'combat': self.Combat,
             'emap': self.EMAp
         }
+
+        # Cena do Game Over
+        self.GameOver = GameOver("game over", self.display, self.game_state_manager)
 
         pygame.mouse.set_visible(False)
 
