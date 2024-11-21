@@ -14,6 +14,7 @@ from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
+from classes.bosses.attacks.square_brackets import SquareBracket
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -54,7 +55,8 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            VectorAttack()
+            # VectorAttack(),
+            EliminationAttack()
         ]
         self.attack_to_execute = -1
 
@@ -148,8 +150,7 @@ class Yuri(Boss):
                 self.state = 'idle'
                 self.counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
-
-    
+ 
     def take_damage(self, amount):
         self.__life = self.__life - amount*amount/(amount+self.__defense)
         SoundManager.play_sound('damage.wav')
@@ -218,6 +219,45 @@ class VectorAttack(Attack):
                         if vector.type == 'Inverted':
                             self.__player.apply_effect('inverse')
                         vector.kill()
+    
+    def restart(self):
+        self.__duration_counter = 0
+    
+    @property
+    def player(self):
+        return self.__player
+
+    @property
+    def duration(self):
+        return self.__duration
+    
+    @property
+    def duration_counter(self):
+        return self.__duration_counter
+
+
+class EliminationAttack(Attack):
+    def __init__(self):
+        self.__player: Heart = CombatManager.get_variable('player')
+
+        self.brackets_group = pygame.sprite.Group()
+
+        CombatManager.global_groups.append(self.brackets_group)
+
+        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
+        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
+
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
+
+    def run(self):
+        self.__duration_counter += 1
+
+        self.squared_bracked_to_right.update()
+        self.squared_bracked_to_left.update()
+        
+        if self.__duration_counter >= self.__duration:
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
     
     def restart(self):
         self.__duration_counter = 0
