@@ -15,6 +15,7 @@ from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
 from classes.bosses.attacks.square_brackets import SquareBracket
+from classes.bosses.attacks.horizontal_beam import HorizontalBeam
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -247,17 +248,40 @@ class EliminationAttack(Attack):
         self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
         self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
 
+        self.horizontal_beans_group = pygame.sprite.Group()
+
+        CombatManager.global_groups.append(self.horizontal_beans_group)
+
+        self.rows = [0, 1 , 2]  # Escolhendo qual linha o raio vai aparecer
+        self.horizontal_beams = []
+        self.horizontal_beam_creation_rate = FPS/1
+        self.horizontal_beam_counter = 0
+
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
 
     def run(self):
         self.__duration_counter += 1
+        self.horizontal_beam_counter += 1
 
         self.squared_bracked_to_right.update()
         self.squared_bracked_to_left.update()
+
+        if (
+        (not self.squared_bracked_to_left.animating)
+            and
+        (not self.squared_bracked_to_right.animating)
+            and
+        (self.horizontal_beam_counter >= self.horizontal_beam_creation_rate)
+        ):
+            self.horizontal_beams.append(HorizontalBeam(self.horizontal_beans_group))
+            self.horizontal_beam_counter = 0
         
         if self.__duration_counter >= self.__duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+        
+        for beam in self.horizontal_beams:
+            beam.update()
     
     def restart(self):
         self.__duration_counter = 0
