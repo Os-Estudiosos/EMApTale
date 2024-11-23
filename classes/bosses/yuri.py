@@ -57,8 +57,8 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            # VectorAttack(),
-            EliminationAttack()
+            VectorAttack(self.__damage),
+            EliminationAttack(self.__damage)
         ]
         self.attack_to_execute = -1
 
@@ -184,8 +184,9 @@ class Yuri(Boss):
 
 
 class VectorAttack(Attack):
-    def __init__(self):
+    def __init__(self, damage):
         self.__player: Heart = CombatManager.get_variable('player')
+        self.damage = damage
 
         self.vectors_group = pygame.sprite.Group()
 
@@ -217,7 +218,7 @@ class VectorAttack(Attack):
                 if self.__player.rect.colliderect(vector.rect):
                     offset = (vector.rect.x - self.__player.rect.x, vector.rect.y - self.__player.rect.y)
                     if self.__player.mask.overlap(vector.mask, offset):
-                        self.__player.take_damage(CombatManager.enemy.damage)
+                        self.__player.take_damage(self.damage)
                         if vector.type == 'Inverted':
                             self.__player.apply_effect('inverse')
                         vector.kill()
@@ -239,8 +240,10 @@ class VectorAttack(Attack):
 
 
 class EliminationAttack(Attack):
-    def __init__(self):
+    def __init__(self, damage):
         self.__player: Heart = CombatManager.get_variable('player')
+
+        self.damage = damage
 
         self.brackets_group = pygame.sprite.Group()
 
@@ -291,8 +294,12 @@ class EliminationAttack(Attack):
             self.horizontal_beam_counter = 0
 
         # Atualizando todos os raios
-        for beam in self.horizontal_beams:
+        for i, beam in enumerate(self.horizontal_beams):
             beam.update()
+
+            if self.player.rect.colliderect(beam.rect) and beam.animating:
+                self.player.take_damage(self.damage)
+
             if beam.animating and beam.alpha <= 0:
                 beam.kill()
 
