@@ -255,7 +255,7 @@ class EliminationAttack(Attack):
 
         self.rows = [0, 1 , 2]  # Escolhendo qual linha o raio vai aparecer
         self.horizontal_beams: list[HorizontalBeam] = []
-        self.horizontal_beam_creation_rate = FPS
+        self.horizontal_beam_creation_rate = FPS/2.4
         self.horizontal_beam_counter = 0
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
@@ -287,22 +287,12 @@ class EliminationAttack(Attack):
                 beam1,
                 200
             ))
-
-            beam2 = HorizontalBeam(self.horizontal_beans_group)
-            self.horizontal_beams.append(beam2)
-            self.elimiation_matrices.append(ElimiationMatrix(
-                'E',
-                FontManager.fonts['Gamer'],
-                beam2,
-                200
-            ))
             
             self.horizontal_beam_counter = 0
 
         # Atualizando todos os raios
         for beam in self.horizontal_beams:
             beam.update()
-
             if beam.animating and beam.alpha <= 0:
                 beam.kill()
 
@@ -318,6 +308,7 @@ class EliminationAttack(Attack):
             self.brackets_group.empty()
             self.horizontal_beans_group.empty()
             self.elimiation_matrices.clear()
+            self.horizontal_beams.clear()
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
     
     def restart(self):
