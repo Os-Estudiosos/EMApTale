@@ -93,9 +93,9 @@ class Game:
                     self.game_state_manager.set_state('start')
                 if event.key == pygame.K_2:
                     with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json')) as file:
-                        yuri = json.load(file)
+                        bosses = json.load(file)
                         self.game_state_manager.set_state('combat', {
-                            "enemy": yuri
+                            "enemy": bosses['Branco']
                         })
 
     def run(self):
