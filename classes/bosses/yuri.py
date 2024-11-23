@@ -254,7 +254,7 @@ class EliminationAttack(Attack):
 
         self.rows = [0, 1 , 2]  # Escolhendo qual linha o raio vai aparecer
         self.horizontal_beams = []
-        self.horizontal_beam_creation_rate = FPS/1
+        self.horizontal_beam_creation_rate = FPS
         self.horizontal_beam_counter = 0
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
