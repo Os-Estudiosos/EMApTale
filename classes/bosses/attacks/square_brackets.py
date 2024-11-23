@@ -17,7 +17,7 @@ class SquareBracket(pygame.sprite.Sprite):
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'square_brackets.png')),
             (
                 100,
-                self.container.out_rect.height
+                self.container.out_rect.height+60
             )
         )
         if dir == -1:
@@ -38,7 +38,7 @@ class SquareBracket(pygame.sprite.Sprite):
 
         if self.animating:
             direction = pygame.math.Vector2(
-                (self.container.inner_rect.centerx + (self.container.inner_rect.width)*self.dir*-1) - self.rect.centerx,
+                (self.container.inner_rect.centerx + (self.container.inner_rect.width-60)*self.dir*-1) - self.rect.centerx,
                 self.container.inner_rect.centery - self.rect.centery
             )
 

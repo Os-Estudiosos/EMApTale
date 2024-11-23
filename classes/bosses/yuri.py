@@ -16,6 +16,7 @@ from classes.bosses.hp import BossHP
 from classes.bosses.attacks.vector import Vector
 from classes.bosses.attacks.square_brackets import SquareBracket
 from classes.bosses.attacks.horizontal_beam import HorizontalBeam
+from classes.bosses.attacks.elimination_matrix import ElimiationMatrix
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -253,20 +254,24 @@ class EliminationAttack(Attack):
         CombatManager.global_groups.append(self.horizontal_beans_group)
 
         self.rows = [0, 1 , 2]  # Escolhendo qual linha o raio vai aparecer
-        self.horizontal_beams = []
+        self.horizontal_beams: list[HorizontalBeam] = []
         self.horizontal_beam_creation_rate = FPS
         self.horizontal_beam_counter = 0
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
 
+        self.elimiation_matrices: list[ElimiationMatrix] = []
+
     def run(self):
         self.__duration_counter += 1
         self.horizontal_beam_counter += 1
 
+        # Atualizando os colchetes
         self.squared_bracked_to_right.update()
         self.squared_bracked_to_left.update()
 
+        # Condições para criar um novo raio
         if (
         (not self.squared_bracked_to_left.animating)
             and
@@ -274,17 +279,51 @@ class EliminationAttack(Attack):
             and
         (self.horizontal_beam_counter >= self.horizontal_beam_creation_rate)
         ):
-            self.horizontal_beams.append(HorizontalBeam(self.horizontal_beans_group))
+            beam1 = HorizontalBeam(self.horizontal_beans_group)
+            self.horizontal_beams.append(beam1)
+            self.elimiation_matrices.append(ElimiationMatrix(
+                'E',
+                FontManager.fonts['Gamer'],
+                beam1,
+                200
+            ))
+
+            beam2 = HorizontalBeam(self.horizontal_beans_group)
+            self.horizontal_beams.append(beam2)
+            self.elimiation_matrices.append(ElimiationMatrix(
+                'E',
+                FontManager.fonts['Gamer'],
+                beam2,
+                200
+            ))
+            
             self.horizontal_beam_counter = 0
-        
-        if self.__duration_counter >= self.__duration:
-            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-        
+
+        # Atualizando todos os raios
         for beam in self.horizontal_beams:
             beam.update()
+
+            if beam.animating and beam.alpha <= 0:
+                beam.kill()
+
+        # Desenhando o E da matriz de eliminação
+        for i, matrix_text in enumerate(self.elimiation_matrices):
+            matrix_text.update(self.squared_bracked_to_right)
+            matrix_text.draw(pygame.display.get_surface())
+            if matrix_text.finished:
+                self.elimiation_matrices.pop(i)
+
+        # Condição para quando o ataque acabar
+        if self.__duration_counter >= self.__duration:
+            self.brackets_group.empty()
+            self.horizontal_beans_group.empty()
+            self.elimiation_matrices.clear()
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
     
     def restart(self):
         self.__duration_counter = 0
+        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
+        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
     
     @property
     def player(self):
