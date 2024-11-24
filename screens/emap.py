@@ -1,11 +1,14 @@
 import pygame
+from pygame.font import Font
 import os
 
 from config.savemanager import SaveManager
 
+from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
 from classes.map.camera import Camera
 from classes.frisk import Frisk
+from classes.text.dynamic_text import DynamicText
 
 class EMAp:
     def __init__(self, name, display, game_state_manager):
@@ -14,15 +17,35 @@ class EMAp:
         self.__game_state_manager = game_state_manager
         self.__execution_counter = 0
 
-        # Inicializa o loader do mapa e o jogador
+        # Inicializa o loader do mapa
         self.map_loader = MapLoader(os.path.join('tileset', 'emap.tmx'))
         self.map_loaded = False
+
+        # Inicializa o jogador
         self.player = Frisk(self.map_loader.walls)
+
+        # Inicializa o InteractionManager
+        self.interaction_manager = InteractionManager(self.map_loader.interactions, self.player)
 
         # Configura a câmera com as dimensões do mapa e da tela
         map_width, map_height = self.map_loader.get_size()
         screen_width, screen_height = display.get_size()
         self.camera = Camera(map_width, map_height, screen_width, screen_height)
+
+        # Inicializa um objeto DynamicText (será reutilizado)
+        self.dynamic_text = None
+
+        # Carrega a imagem da caixa de texto sem redimensionar
+        self.chatbox = pygame.image.load(os.path.join('sprites', 'hud', 'chatbox.png'))
+
+        # Obtém as dimensões da caixa de texto
+        chatbox_width, chatbox_height = self.chatbox.get_size()
+
+        # Calcula a posição para centralizar horizontalmente na parte inferior
+        self.chatbox_position = (
+            (self.__display.get_width() - chatbox_width) // 2,  # Centraliza horizontalmente
+            self.__display.get_height() - chatbox_height       # Posiciona no rodapé
+        )
 
     def on_first_execution(self):
         SaveManager.load()
@@ -38,6 +61,13 @@ class EMAp:
 
         # Atualiza a posição da câmera para seguir o jogador
         self.camera.update(self.player.rect)
+
+        # Renderiza as áreas de interação
+        self.interaction_manager.draw(self.__display, self.camera)
+
+        # Desenha a caixa de texto
+        self.__display.blit(self.chatbox, self.chatbox_position)
+
 
         # Define o vetor de deslocamento
         vector = pygame.math.Vector2(-100, -150)
@@ -91,8 +121,34 @@ class EMAp:
             elif isinstance(image, Frisk):
                 image.draw(self.__display, self.camera)
 
-        # Atualiza a movimentação do jogador
+        # Verifica interações
         keys = pygame.key.get_pressed()
+        interaction = self.interaction_manager.check_interaction(keys)
+
+        if interaction and not self.dynamic_text:
+            # Define o texto dinâmico
+            self.dynamic_text = DynamicText(
+                text=f"Texto para {interaction['interaction_name']}: {interaction['value']}",
+                font="fonts/Gamer.ttf",  # Ajuste para sua fonte real
+                letters_per_second=20,  # Velocidade do texto
+                text_size=24,
+                position=(self.chatbox_position[0] + 20, self.chatbox_position[1] + 20),  # Dentro da caixa
+                color=(255, 255, 255),
+                max_length= 250
+            )
+        elif not interaction:
+            self.dynamic_text = None  # Remove texto se não houver interação
+
+        # Desenha a caixa de texto e o texto dinâmico
+        if self.dynamic_text:
+            # Desenha a caixa de texto
+            self.__display.blit(self.chatbox, self.chatbox_position)
+
+            # Atualiza e desenha o texto
+            self.dynamic_text.update()
+            self.dynamic_text.draw(self.__display)
+
+        # Atualiza a movimentação do jogador
         self.player.move(self.camera, keys)
 
         # Atualiza a tela
@@ -100,29 +156,3 @@ class EMAp:
 
     def on_last_execution(self):
         self.__execution_counter = 0
-
-    @property
-    def execution_counter(self):
-        return self.__execution_counter
-
-    @property
-    def display(self):
-        return self.__display
-
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
-
-    @property
-    def name(self):
-        return self.__name
-
-    @property
-    def variables(self):
-        return self.__variables
-    
-    @variables.setter
-    def variables(self, value: dict):
-        if not isinstance(value, dict):
-            raise TypeError("Você precisa passar um dicionário")
-        self.__variables = value

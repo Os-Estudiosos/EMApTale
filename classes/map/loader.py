@@ -12,6 +12,26 @@ class MapLoader:
         self.scale_factor = 2.5  # Fator de escala para o mapa e colisões
         self.offset_vector = pygame.math.Vector2(-100, -150)  # Deslocamento dos blocos de colisão
         self.walls = self.load_walls()  # Carrega as áreas de colisão do mapa
+        self.interactions = self.load_interactions()
+
+    def load_interactions(self):
+        """
+        Carrega os objetos da camada de interações.
+        """
+        interactions = []
+        for layer in self.tmx_data.layers:
+            if layer.name == "Interactions":  # Verifica a camada de interações
+                for obj in layer:
+                    interactions.append({
+                        'interaction_name': obj.properties.get('interaction_name', 'Unknown'),
+                        'value': obj.properties.get('value', 'Sem mensagem'),
+                        'x': obj.x * self.scale_factor + self.offset_vector.x,
+                        'y': obj.y * self.scale_factor + self.offset_vector.y,
+                        'width': obj.width * self.scale_factor,
+                        'height': obj.height * self.scale_factor,
+                    })
+        return interactions
+
 
     def render_with_vector(self, surface, camera, vector):
         for layer in self.tmx_data.layers:
