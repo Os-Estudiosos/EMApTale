@@ -117,35 +117,45 @@ class EMAp:
             elif isinstance(image, Frisk):
                 image.draw(self.__display, self.camera)
 
-        # Verifica interações
-        keys = pygame.key.get_pressed()
-        interaction = self.interaction_manager.check_interaction(keys)
+        # Captura eventos do Pygame
+        events = pygame.event.get()
+        interaction = self.interaction_manager.check_interaction(events)
 
-        if interaction and not self.dynamic_text:
-            # Cria o texto dinâmico
-            self.dynamic_text = DynamicText(
-                text=f"{interaction['value']}",
-                font="fonts/Gamer.ttf",
-                letters_per_second=20,
-                text_size=50,
-                position=(
-                    self.chatbox_position[0] + 20,  # Margem lateral
-                    self.chatbox_position[1] + 20  # Margem superior
-                ),
-                color=(255, 255, 255),
-                max_length=self.chatbox.get_width() - 40
-            )
-        elif not interaction:
-            # Remove o texto dinâmico quando não há interação
-            self.dynamic_text = None
+        # Detecta o pressionamento da tecla Enter para pular o texto
+        for event in events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                if self.dynamic_text and not self.dynamic_text.finished:
+                    self.dynamic_text.skip_text()
 
-        # Renderiza a caixa de texto e o texto dinâmico apenas se houver interação ativa
+        # Gerencia o texto dinâmico e o estado da interação
+        if interaction:
+            if not self.dynamic_text:
+                # Inicializa o texto dinâmico ao detectar uma nova interação
+                self.dynamic_text = DynamicText(
+                    text=f"{interaction['value']}",
+                    font="fonts/Gamer.ttf",
+                    letters_per_second=20,
+                    text_size=50,
+                    position=(
+                        self.chatbox_position[0] + 20,  # Margem lateral
+                        self.chatbox_position[1] + 20  # Margem superior
+                    ),
+                    color=(255, 255, 255),
+                    max_length=self.chatbox.get_width() - 40
+                )
+        else:
+            # Remove o texto dinâmico somente se o jogador saiu da área de interação
+            if not self.interaction_manager.active_interaction:
+                self.dynamic_text = None
+
+        # Renderiza a caixa de texto e o texto dinâmico enquanto houver interação
         if self.dynamic_text:
             self.__display.blit(self.chatbox, self.chatbox_position)  # Renderiza o chatbox
             self.dynamic_text.update()  # Atualiza o texto dinâmico
             self.dynamic_text.draw(self.__display)  # Desenha o texto dinâmico
 
         # Atualiza a movimentação do jogador
+        keys = pygame.key.get_pressed()
         self.player.move(self.camera, keys)
 
         # Captura de tela (pressione F12 para salvar)
@@ -153,9 +163,9 @@ class EMAp:
             pygame.image.save(self.__display, "screenshot.png")
             print("Screenshot salva como 'screenshot.png'")
 
-
         # Atualiza a tela
         pygame.display.flip()
+
 
 
     def on_last_execution(self):
