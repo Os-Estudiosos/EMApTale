@@ -17,6 +17,7 @@ from classes.bosses.attacks.vector import Vector
 from classes.bosses.attacks.square_brackets import SquareBracket
 from classes.bosses.attacks.horizontal_beam import HorizontalBeam
 from classes.bosses.attacks.elimination_matrix import ElimiationMatrix
+from classes.bosses.attacks.empty_attack import EmptyAttack
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -57,8 +58,7 @@ class Branco(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            VectorAttack(self.__damage),
-            EliminationAttack(self.__damage)
+            EmptyAttack(0)
         ]
         self.attack_to_execute = -1
 
@@ -181,156 +181,3 @@ class Branco(Boss):
     @property
     def voice(self):
         return self.__voice
-
-
-class VectorAttack(Attack):
-    def __init__(self, damage):
-        self.__player: Heart = CombatManager.get_variable('player')
-        self.damage = damage
-
-        self.vectors_group = pygame.sprite.Group()
-
-        CombatManager.global_groups.append(self.vectors_group)
-
-        self.vectors: list[Vector] = []
-        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
-
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
-        self.__duration_counter = 0
-
-        # self.vectors.append(Vector(self.vectors_group))
-
-    def run(self):
-        self.__duration_counter += 1
-
-        if self.__duration_counter % self.vectors_creation_rate == 0:
-            self.vectors.append(Vector(self.vectors_group))
-        
-        if self.__duration_counter >= self.__duration:
-            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-            self.vectors_group.empty()
-        
-        for vector in self.vectors:
-            vector.update(player_center=self.player.rect.center)
-        
-        for vector in self.vectors_group:
-            if self.__player != vector:
-                if self.__player.rect.colliderect(vector.rect):
-                    offset = (vector.rect.x - self.__player.rect.x, vector.rect.y - self.__player.rect.y)
-                    if self.__player.mask.overlap(vector.mask, offset):
-                        self.__player.take_damage(self.damage)
-                        if vector.type == 'Inverted':
-                            self.__player.apply_effect('inverse')
-                        vector.kill()
-    
-    def restart(self):
-        self.__duration_counter = 0
-    
-    @property
-    def player(self):
-        return self.__player
-
-    @property
-    def duration(self):
-        return self.__duration
-    
-    @property
-    def duration_counter(self):
-        return self.__duration_counter
-
-
-class EliminationAttack(Attack):
-    def __init__(self, damage):
-        self.__player: Heart = CombatManager.get_variable('player')
-
-        self.damage = damage
-
-        self.brackets_group = pygame.sprite.Group()
-
-        CombatManager.global_groups.append(self.brackets_group)
-
-        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
-        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
-
-        self.horizontal_beans_group = pygame.sprite.Group()
-
-        CombatManager.global_groups.append(self.horizontal_beans_group)
-
-        self.rows = [0, 1 , 2]  # Escolhendo qual linha o raio vai aparecer
-        self.horizontal_beams: list[HorizontalBeam] = []
-        self.horizontal_beam_creation_rate = FPS/2.4
-        self.horizontal_beam_counter = 0
-
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
-        self.__duration_counter = 0
-
-        self.elimiation_matrices: list[ElimiationMatrix] = []
-
-    def run(self):
-        self.__duration_counter += 1
-        self.horizontal_beam_counter += 1
-
-        # Atualizando os colchetes
-        self.squared_bracked_to_right.update()
-        self.squared_bracked_to_left.update()
-
-        # Condições para criar um novo raio
-        if (
-        (not self.squared_bracked_to_left.animating)
-            and
-        (not self.squared_bracked_to_right.animating)
-            and
-        (self.horizontal_beam_counter >= self.horizontal_beam_creation_rate)
-        ):
-            beam1 = HorizontalBeam(self.horizontal_beans_group)
-            self.horizontal_beams.append(beam1)
-            self.elimiation_matrices.append(ElimiationMatrix(
-                'E',
-                FontManager.fonts['Gamer'],
-                beam1,
-                200
-            ))
-            
-            self.horizontal_beam_counter = 0
-
-        # Atualizando todos os raios
-        for i, beam in enumerate(self.horizontal_beams):
-            beam.update()
-
-            if self.player.rect.colliderect(beam.rect) and beam.animating:
-                self.player.take_damage(self.damage)
-
-            if beam.animating and beam.alpha <= 0:
-                beam.kill()
-
-        # Desenhando o E da matriz de eliminação
-        for i, matrix_text in enumerate(self.elimiation_matrices):
-            matrix_text.update(self.squared_bracked_to_right)
-            matrix_text.draw(pygame.display.get_surface())
-            if matrix_text.finished:
-                self.elimiation_matrices.pop(i)
-
-        # Condição para quando o ataque acabar
-        if self.__duration_counter >= self.__duration:
-            self.brackets_group.empty()
-            self.horizontal_beans_group.empty()
-            self.elimiation_matrices.clear()
-            self.horizontal_beams.clear()
-            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-    
-    def restart(self):
-        self.__duration_counter = 0
-        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
-        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
-    
-    @property
-    def player(self):
-        return self.__player
-
-    @property
-    def duration(self):
-        return self.__duration
-    
-    @property
-    def duration_counter(self):
-        return self.__duration_counter
