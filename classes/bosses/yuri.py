@@ -317,7 +317,7 @@ class EliminationAttack(Attack):
             self.elimiation_matrices.clear()
             self.horizontal_beams.clear()
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-    
+
     def restart(self):
         self.__duration_counter = 0
         self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)

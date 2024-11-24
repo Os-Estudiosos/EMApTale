@@ -13,10 +13,7 @@ from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
-from classes.bosses.attacks.vector import Vector
-from classes.bosses.attacks.square_brackets import SquareBracket
-from classes.bosses.attacks.horizontal_beam import HorizontalBeam
-from classes.bosses.attacks.elimination_matrix import ElimiationMatrix
+from classes.bosses.attacks.laugh import Laugh
 from classes.bosses.attacks.empty_attack import EmptyAttack
 
 from classes.text.dialogue_box import DialogueBox
@@ -43,6 +40,17 @@ class Branco(Boss):
         self.rect = self.image.get_rect()
         self.state = 'idle'
         self.counter = 0
+
+        self.laughing = False
+        self.laugh_counter = 0
+        self.laugh_random_counter = 0
+        self.laugh_rate = FPS
+        self.laugh_group = pygame.sprite.Group()
+        self.laughs_list: list[Laugh] = []
+
+        CombatManager.global_groups.append(self.laugh_group)
+
+        self.player: Heart = CombatManager.get_variable('player')
 
         # Definindo os atributos
         self.__life = infos['life']
@@ -86,7 +94,7 @@ class Branco(Boss):
         if self.__death_animation_counter >= FPS*0.3:
             self.death_loops_counter += 1
             self.__death_animation_counter = 0
-            self.__death_explosions.append(Explosion('yellow', position=(
+            self.__death_explosions.append(Explosion('red', position=(
                 random.randint(self.rect.x, self.rect.x+self.rect.width),
                 random.randint(self.rect.y, self.rect.y+self.rect.height)
             )))
@@ -133,8 +141,13 @@ class Branco(Boss):
             if 0 <= self.attack_to_execute < len(self.__attacks) and not self.speaking:
                 if self.__attacks[self.attack_to_execute].duration_counter >= self.__attacks[self.attack_to_execute].duration:
                     self.attack_to_execute = -1
+                    self.laughs_list.clear()
+                    self.laugh_group.empty()
                 else:
                     self.__attacks[self.attack_to_execute].run()
+                    self.randomize_laugh()
+                    if self.laughing:
+                        self.laugh()
         else:
             self.death_animation()
         
@@ -161,6 +174,30 @@ class Branco(Boss):
             self.dead = True
         self.state = 'shaking'
         self.counter = 0
+    
+    def randomize_laugh(self):
+        self.laugh_random_counter += 1  # Atualizando o contador da risada
+
+        if not self.laughing and self.laugh_random_counter >= self.laugh_rate:
+            self.laugh_random_counter = 0
+            random_change_of_laugh = random.randint(0, 100)
+
+            if random_change_of_laugh <= 100:
+                self.laughing = True
+
+    def laugh(self):
+        self.laugh_counter += 1
+
+        for laugh in self.laughs_list:
+            laugh.update()
+            offset = (laugh.rect.x - self.player.rect.x, laugh.rect.y - self.player.rect.y)
+
+            if self.player.mask.overlap(laugh.mask, offset):
+                self.player.apply_effect('laugh')
+
+        if self.laugh_counter >= self.laugh_rate:
+            self.laughs_list.append(Laugh(self, self.laugh_group))
+            self.laugh_counter = 0
 
     @property
     def life(self):
