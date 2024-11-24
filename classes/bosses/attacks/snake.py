@@ -12,11 +12,11 @@ from config.soundmanager import SoundManager
 from utils import angle_between_vectors
 
 
-class Sanke(pygame.sprite.Sprite):
+class Snake(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
 
-        # Vou randomizar com 10% de chance de ser um vetor verde "Aplica o efeito de inversa"
+        # Vou randomizar com 10% de chance de ser uma cobra cinza "Aplica o efeito de sumiço"
         self.type = 'Normal'
         if random.randint(0, 100) <= 15:
             self.type = 'Vanished'
@@ -54,6 +54,9 @@ class Sanke(pygame.sprite.Sprite):
 
         self.speed = 7
         SoundManager.play_sound('spearappear.wav')
+    
+    def point_to_center(self):
+        pass
 
     def fade_image(self):
         if self.counter <= 255:
@@ -114,10 +117,10 @@ class Sanke(pygame.sprite.Sprite):
         # self.fade_image()
     
     def change_image_color(self):
-        if self.type == 'Inverted':
-            greenSurface = pygame.Surface(self.image.get_size())
-            greenSurface.fill((48, 255, 97))
-            self.image.blit(greenSurface, (0,0), special_flags=pygame.BLEND_MULT)
+        if self.type == 'Vanished':
+            graySurface = pygame.Surface(self.image.get_size())
+            graySurface.fill((211, 211, 211))
+            self.image.blit(graySurface, (0,0), special_flags=pygame.BLEND_MULT)
 
     def stop_rotating(self):
         self.rotating = False

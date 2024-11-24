@@ -18,7 +18,7 @@
         "name": "Simulado",
         "type": "weapon",
         "damage": "15",
-        "description": "Finalmente um simulado que tá no nível da prova"
+        "description": "Finalmente um simulado que está no nível da prova"
     },
     {
         "id": "book",

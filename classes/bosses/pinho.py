@@ -13,7 +13,7 @@ from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
-from classes.bosses.attacks.vector import Vector
+from classes.bosses.attacks.snake import Snake
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -184,7 +184,7 @@ class CoffeeAtatack(Attack):
 
         CombatManager.global_groups.append(self.vectors_group)
 
-        self.vectors: list[Vector] = []
+        self.vectors: list[Snake] = []
         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
@@ -201,7 +201,7 @@ class PythonAtatack(Attack):
 
         CombatManager.global_groups.append(self.vectors_group)
 
-        self.vectors: list[Vector] = []
+        self.vectors: list[Snake] = []
         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
@@ -233,7 +233,7 @@ class WarriorsAtatack(Attack):
 
         CombatManager.global_groups.append(self.vectors_group)
 
-        self.vectors: list[Vector] = []
+        self.vectors: list[Snake] = []
         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
