@@ -36,4 +36,3 @@ class EmptyAttack(Attack):
     @property
     def duration_counter(self):
         return self.__duration_counter
-

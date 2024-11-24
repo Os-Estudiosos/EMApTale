@@ -14,6 +14,8 @@ from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.laugh import Laugh
+from classes.bosses.attacks.integral import Integral
+
 from classes.bosses.attacks.empty_attack import EmptyAttack
 
 from classes.text.dialogue_box import DialogueBox
@@ -67,7 +69,7 @@ class Branco(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            EmptyAttack(0)
+            IntegralsAttack(self.__damage)
         ]
         self.attack_to_execute = -1
 
@@ -226,3 +228,56 @@ class Branco(Boss):
     @property
     def voice(self):
         return self.__voice
+
+
+class IntegralsAttack(Attack):
+    def __init__(self, damage):
+        self.__player: Heart = CombatManager.get_variable('player')
+        self.damage = damage
+
+        self.integral_group = pygame.sprite.Group()
+        self.integral_creation_counter = 0
+        self.integral_creation_rate = FPS*0.8
+        self.integral_list: list[Integral] = []
+
+        CombatManager.global_groups.append(self.integral_group)
+
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
+
+    def run(self):
+        self.__duration_counter += 1
+        self.integral_creation_counter += 1
+
+        for integral in self.integral_list:
+            integral.update()
+
+            offset = (integral.rect.x - self.__player.rect.x, integral.rect.y - self.__player.rect.y)
+
+            if self.__player.mask.overlap(integral.mask, offset):
+                self.__player.take_damage(self.damage)
+
+        if self.integral_creation_counter >= self.integral_creation_rate:
+            self.integral_creation_counter = 0
+            self.integral_list.append(Integral(1, 90, self.integral_group))
+            self.integral_list.append(Integral(-1, 90, self.integral_group))
+        
+        if self.__duration_counter >= self.__duration:
+            self.integral_list.clear()
+            self.integral_group.empty()
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+    
+    def restart(self):
+        self.__duration_counter = 0
+    
+    @property
+    def player(self):
+        return self.__player
+
+    @property
+    def duration(self):
+        return self.__duration
+    
+    @property
+    def duration_counter(self):
+        return self.__duration_counter
