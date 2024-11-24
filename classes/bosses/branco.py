@@ -44,6 +44,7 @@ class Branco(Boss):
         self.laughing = False
         self.laugh_counter = 0
         self.laugh_random_counter = 0
+        self.laugh_animation_counter = 0
         self.laugh_rate = FPS
         self.laugh_group = pygame.sprite.Group()
         self.laughs_list: list[Laugh] = []
@@ -143,6 +144,8 @@ class Branco(Boss):
                     self.attack_to_execute = -1
                     self.laughs_list.clear()
                     self.laugh_group.empty()
+                    self.laugh_animation_counter = 0
+                    self.laughing = False
                 else:
                     self.__attacks[self.attack_to_execute].run()
                     self.randomize_laugh()
@@ -182,11 +185,16 @@ class Branco(Boss):
             self.laugh_random_counter = 0
             random_change_of_laugh = random.randint(0, 100)
 
-            if random_change_of_laugh <= 100:
+            if random_change_of_laugh <= 10:
                 self.laughing = True
 
     def laugh(self):
         self.laugh_counter += 1
+        self.laugh_animation_counter += 1
+
+        counter_in_radians = self.laugh_animation_counter*math.pi/180
+        wave_factor = math.sin(10*counter_in_radians)
+        self.rect.y += 1 * wave_factor
 
         for laugh in self.laughs_list:
             laugh.update()

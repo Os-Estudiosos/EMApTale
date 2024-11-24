@@ -3,6 +3,7 @@ import os
 
 from config import *
 from config.combatmanager import CombatManager
+from config.soundmanager import SoundManager
 
 
 class Laugh(pygame.sprite.Sprite):
@@ -29,6 +30,8 @@ class Laugh(pygame.sprite.Sprite):
         if self.direction.length() > 0:
             self.direction = self.direction.normalize()
         self.speed = 5
+
+        SoundManager.play_sound('branco_laugh.wav')
 
     def update(self, *args, **kwargs):
         self.rect.x += self.direction.x*self.speed
