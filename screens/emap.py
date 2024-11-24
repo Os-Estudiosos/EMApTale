@@ -13,7 +13,8 @@ from classes.text.dynamic_text import DynamicText
 class EMAp:
     def __init__(self, name, display, game_state_manager):
         self.__name = name
-        self.__display = display
+        self.__display = display  # Exemplo: 800x600 em modo janela
+
         self.__game_state_manager = game_state_manager
         self.__execution_counter = 0
 
@@ -29,22 +30,25 @@ class EMAp:
 
         # Configura a câmera com as dimensões do mapa e da tela
         map_width, map_height = self.map_loader.get_size()
-        screen_width, screen_height = display.get_size()
+        screen_width, screen_height = self.__display.get_size()
         self.camera = Camera(map_width, map_height, screen_width, screen_height)
 
         # Inicializa um objeto DynamicText (será reutilizado)
         self.dynamic_text = None
 
-        # Carrega a imagem da caixa de texto sem redimensionar
+        # Carrega a imagem da caixa de texto
         self.chatbox = pygame.image.load(os.path.join('sprites', 'hud', 'chatbox.png'))
 
-        # Obtém as dimensões da caixa de texto
-        chatbox_width, chatbox_height = self.chatbox.get_size()
+        new_width = self.chatbox.get_width() + 1100 # Aumenta a largura em 100 pixels
+        new_height = self.chatbox.get_height() + 250  # Aumenta a altura em 50 pixels
 
-        # Calcula a posição para centralizar horizontalmente na parte inferior
+        # Redimensiona a caixa
+        self.chatbox = pygame.transform.scale(self.chatbox, (new_width, new_height))
+
+        # Atualiza a posição da caixa para centralizar
         self.chatbox_position = (
-            (self.__display.get_width() - chatbox_width) // 2,  # Centraliza horizontalmente
-            self.__display.get_height() - chatbox_height       # Posiciona no rodapé
+            (self.__display.get_width() - new_width) // 2,  # Centraliza horizontalmente
+            self.__display.get_height() - new_height       # Posiciona no rodapé
         )
 
     def on_first_execution(self):
@@ -65,14 +69,8 @@ class EMAp:
         # Renderiza as áreas de interação
         self.interaction_manager.draw(self.__display, self.camera)
 
-        # Desenha a caixa de texto
-        self.__display.blit(self.chatbox, self.chatbox_position)
-
-
-        # Define o vetor de deslocamento
+        # Renderiza os tiles do mapa
         vector = pygame.math.Vector2(-100, -150)
-
-        # Renderiza todos os tiles como camada de fundo (fundo estático)
         for layer in self.map_loader.tmx_data.layers:
             if hasattr(layer, 'tiles'):
                 for x, y, tile in layer.tiles():
@@ -81,17 +79,16 @@ class EMAp:
                             x * self.map_loader.tmx_data.tilewidth * self.map_loader.scale_factor + vector.x,
                             y * self.map_loader.tmx_data.tileheight * self.map_loader.scale_factor + vector.y
                         )
-                        scaled_tile = pygame.transform.scale(tile, (
-                            int(tile.get_width() * self.map_loader.scale_factor),
-                            int(tile.get_height() * self.map_loader.scale_factor)
-                        ))
+                        scaled_tile = pygame.transform.scale(
+                            tile,
+                            (int(tile.get_width() * self.map_loader.scale_factor),
+                            int(tile.get_height() * self.map_loader.scale_factor))
+                        )
                         rect = pygame.Rect(*pos, scaled_tile.get_width(), scaled_tile.get_height())
                         self.__display.blit(scaled_tile, self.camera.apply(rect))
 
-        # Lista unificada de renderizáveis para ordenação
+        # Renderiza os objetos e o jogador
         renderables = []
-
-        # Adiciona objetos com GID à lista de renderizáveis
         for layer in self.map_loader.tmx_data.objectgroups:
             for obj in layer:
                 if obj.gid > 0 and obj.visible:
@@ -101,20 +98,19 @@ class EMAp:
                             obj.x * self.map_loader.scale_factor + vector.x,
                             obj.y * self.map_loader.scale_factor + vector.y
                         )
-                        scaled_image = pygame.transform.scale(tile_image, (
-                            int(tile_image.get_width() * self.map_loader.scale_factor),
-                            int(tile_image.get_height() * self.map_loader.scale_factor)
-                        ))
+                        scaled_image = pygame.transform.scale(
+                            tile_image,
+                            (int(tile_image.get_width() * self.map_loader.scale_factor),
+                            int(tile_image.get_height() * self.map_loader.scale_factor))
+                        )
                         rect = pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())
                         renderables.append((rect.bottom, scaled_image, rect))
 
         # Adiciona o jogador à lista de renderizáveis
         renderables.append((self.player.rect.bottom, self.player, self.player.rect))
 
-        # Ordena os objetos localmente pela coordenada Y (base inferior)
+        # Ordena e renderiza os objetos corretamente
         renderables.sort(key=lambda item: item[0])
-
-        # Renderiza todos os objetos e o jogador na ordem correta
         for _, image, rect in renderables:
             if isinstance(image, pygame.Surface):
                 self.__display.blit(image, self.camera.apply(rect))
@@ -126,33 +122,41 @@ class EMAp:
         interaction = self.interaction_manager.check_interaction(keys)
 
         if interaction and not self.dynamic_text:
-            # Define o texto dinâmico
+            # Cria o texto dinâmico
             self.dynamic_text = DynamicText(
-                text=f"Texto para {interaction['interaction_name']}: {interaction['value']}",
-                font="fonts/Gamer.ttf",  # Ajuste para sua fonte real
-                letters_per_second=20,  # Velocidade do texto
-                text_size=24,
-                position=(self.chatbox_position[0] + 20, self.chatbox_position[1] + 20),  # Dentro da caixa
+                text=f"{interaction['value']}",
+                font="fonts/Gamer.ttf",
+                letters_per_second=20,
+                text_size=50,
+                position=(
+                    self.chatbox_position[0] + 20,  # Margem lateral
+                    self.chatbox_position[1] + 20  # Margem superior
+                ),
                 color=(255, 255, 255),
-                max_length= 250
+                max_length=self.chatbox.get_width() - 40
             )
         elif not interaction:
-            self.dynamic_text = None  # Remove texto se não houver interação
+            # Remove o texto dinâmico quando não há interação
+            self.dynamic_text = None
 
-        # Desenha a caixa de texto e o texto dinâmico
+        # Renderiza a caixa de texto e o texto dinâmico apenas se houver interação ativa
         if self.dynamic_text:
-            # Desenha a caixa de texto
-            self.__display.blit(self.chatbox, self.chatbox_position)
-
-            # Atualiza e desenha o texto
-            self.dynamic_text.update()
-            self.dynamic_text.draw(self.__display)
+            self.__display.blit(self.chatbox, self.chatbox_position)  # Renderiza o chatbox
+            self.dynamic_text.update()  # Atualiza o texto dinâmico
+            self.dynamic_text.draw(self.__display)  # Desenha o texto dinâmico
 
         # Atualiza a movimentação do jogador
         self.player.move(self.camera, keys)
 
+        # Captura de tela (pressione F12 para salvar)
+        if keys[pygame.K_F12]:
+            pygame.image.save(self.__display, "screenshot.png")
+            print("Screenshot salva como 'screenshot.png'")
+
+
         # Atualiza a tela
         pygame.display.flip()
+
 
     def on_last_execution(self):
         self.__execution_counter = 0

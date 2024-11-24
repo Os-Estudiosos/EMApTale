@@ -31,9 +31,7 @@ class InteractionManager:
             rect = pygame.Rect(interaction['x'], interaction['y'], interaction['width'], interaction['height'])
             player_rect = self.player.rect
             if player_rect.colliderect(rect):  # Verifica proximidade
-                if keys[pygame.K_e]:  # Verifica tecla "E"
-                    print(f"Interação ativada: {interaction['interaction_name']}")
-                    print(f"Mensagem: {interaction['value']}")
+                if keys[pygame.K_z]:  # Verifica tecla "Z"
                     self.active_interaction = interaction
                     return interaction
 
