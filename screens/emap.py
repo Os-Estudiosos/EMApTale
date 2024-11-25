@@ -22,6 +22,9 @@ class EMAp:
         self.map_loader = MapLoader(os.path.join('tileset', 'emap.tmx'))
         self.map_loaded = False
 
+        # Configuração do Pygame
+        pygame.key.set_repeat(200, 50)  # Configura repetição de teclas
+
         # Inicializa o jogador
         self.player = Frisk(self.map_loader.walls)
 
@@ -39,16 +42,18 @@ class EMAp:
         # Carrega a imagem da caixa de texto
         self.chatbox = pygame.image.load(os.path.join('sprites', 'hud', 'chatbox.png'))
 
-        new_width = self.chatbox.get_width() + 1100 # Aumenta a largura em 100 pixels
-        new_height = self.chatbox.get_height() + 250  # Aumenta a altura em 50 pixels
 
-        # Redimensiona a caixa
+        self.tecla_z_image = pygame.image.load(os.path.join('sprites', 'hud', 'tecla_z.png'))
+        self.tecla_z_image = pygame.transform.scale(self.tecla_z_image, (50, 50))  
+
+        new_width = self.chatbox.get_width() + 1100  
+        new_height = self.chatbox.get_height() + 250  
         self.chatbox = pygame.transform.scale(self.chatbox, (new_width, new_height))
 
-        # Atualiza a posição da caixa para centralizar
+    
         self.chatbox_position = (
-            (self.__display.get_width() - new_width) // 2,  # Centraliza horizontalmente
-            self.__display.get_height() - new_height       # Posiciona no rodapé
+            (self.__display.get_width() - new_width) // 2,
+            self.__display.get_height() - new_height       
         )
 
     def on_first_execution(self):
@@ -65,9 +70,6 @@ class EMAp:
 
         # Atualiza a posição da câmera para seguir o jogador
         self.camera.update(self.player.rect)
-
-        # Renderiza as áreas de interação
-        self.interaction_manager.draw(self.__display, self.camera)
 
         # Renderiza os tiles do mapa
         vector = pygame.math.Vector2(-100, -150)
@@ -114,39 +116,46 @@ class EMAp:
         for _, image, rect in renderables:
             if isinstance(image, pygame.Surface):
                 self.__display.blit(image, self.camera.apply(rect))
-            elif isinstance(image, Frisk):
+                continue
+            if isinstance(image, Frisk):
                 image.draw(self.__display, self.camera)
 
         # Captura eventos do Pygame
         events = pygame.event.get()
         interaction = self.interaction_manager.check_interaction(events)
 
-        # Detecta o pressionamento da tecla Enter para pular o texto
-        for event in events:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                if self.dynamic_text and not self.dynamic_text.finished:
-                    self.dynamic_text.skip_text()
-
-        # Gerencia o texto dinâmico e o estado da interação
+        # Exibe a tecla "Z" se o jogador estiver na área de interação
         if interaction:
-            if not self.dynamic_text:
-                # Inicializa o texto dinâmico ao detectar uma nova interação
-                self.dynamic_text = DynamicText(
-                    text=f"{interaction['value']}",
-                    font="fonts/Gamer.ttf",
-                    letters_per_second=20,
-                    text_size=50,
-                    position=(
-                        self.chatbox_position[0] + 20,  # Margem lateral
-                        self.chatbox_position[1] + 20  # Margem superior
-                    ),
-                    color=(255, 255, 255),
-                    max_length=self.chatbox.get_width() - 40
-                )
-        else:
-            # Remove o texto dinâmico somente se o jogador saiu da área de interação
-            if not self.interaction_manager.active_interaction:
-                self.dynamic_text = None
+            self.__display.blit(self.tecla_z_image, (20, 20))  # Exibe a imagem no canto superior esquerdo
+
+        # Gerencia o estado da interação e do texto dinâmico
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    # Se apertar Z, inicia ou encerra a interação
+                    if self.dynamic_text:
+                        if self.dynamic_text.finished:
+                            # Se o texto terminou, encerra a interação
+                            self.dynamic_text = None
+                            interaction = None
+                    elif interaction:
+                        # Inicia a interação se não há texto dinâmico ativo
+                        self.dynamic_text = DynamicText(
+                            text=f"{interaction['value']}",
+                            font="fonts/Gamer.ttf",
+                            letters_per_second=20,
+                            text_size=50,
+                            position=(
+                                self.chatbox_position[0] + 20,  # Margem lateral
+                                self.chatbox_position[1] + 20  # Margem superior
+                            ),
+                            color=(255, 255, 255),
+                            max_length=self.chatbox.get_width() - 40
+                        )
+                elif event.key == pygame.K_RETURN:
+                    # Se apertar Enter, pula o texto, mas mantém a interação ativa
+                    if self.dynamic_text and not self.dynamic_text.finished:
+                        self.dynamic_text.skip_text()
 
         # Renderiza a caixa de texto e o texto dinâmico enquanto houver interação
         if self.dynamic_text:
@@ -154,9 +163,10 @@ class EMAp:
             self.dynamic_text.update()  # Atualiza o texto dinâmico
             self.dynamic_text.draw(self.__display)  # Desenha o texto dinâmico
 
-        # Atualiza a movimentação do jogador
+        # Atualiza a movimentação do jogador apenas se não houver interação ativa
         keys = pygame.key.get_pressed()
-        self.player.move(self.camera, keys)
+        if not self.dynamic_text:  # Movimento desativado durante a interação
+            self.player.move(self.camera, keys)
 
         # Captura de tela (pressione F12 para salvar)
         if keys[pygame.K_F12]:
@@ -165,7 +175,6 @@ class EMAp:
 
         # Atualiza a tela
         pygame.display.flip()
-
 
 
     def on_last_execution(self):
