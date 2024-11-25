@@ -1,11 +1,9 @@
 from pytmx import load_pygame
 import pygame
-# import math
-
 from classes.polygon.polygon import Polygon
 
 
-#Carrega e renderiza mapas do tipo .tmx
+# Carrega e renderiza mapas do tipo .tmx
 class MapLoader:
     def __init__(self, map_file):
         self.tmx_data = load_pygame(map_file)  # Carrega o mapa usando pytmx
@@ -32,6 +30,14 @@ class MapLoader:
                     })
         return interactions
 
+    def render_map(self, surface, camera):
+        """
+        Renderiza o mapa completo (tiles e objetos).
+        :param surface: Superfície onde o mapa será renderizado.
+        :param camera: Câmera para ajustar o deslocamento.
+        """
+        self.render_with_vector(surface, camera, self.offset_vector)
+        self.render_objects_with_gid(surface, camera, self.offset_vector)
 
     def render_with_vector(self, surface, camera, vector):
         for layer in self.tmx_data.layers:
@@ -42,10 +48,16 @@ class MapLoader:
                             x * self.tmx_data.tilewidth * self.scale_factor + vector.x,
                             y * self.tmx_data.tileheight * self.scale_factor + vector.y
                         )
+                        rect = pygame.Rect(
+                            *pos,
+                            self.tmx_data.tilewidth * self.scale_factor,
+                            self.tmx_data.tileheight * self.scale_factor
+                        )
                         surface.blit(
                             pygame.transform.scale_by(tile, self.scale_factor),
-                            camera.apply(pygame.Rect(*pos, self.tmx_data.tilewidth * self.scale_factor, self.tmx_data.tileheight * self.scale_factor))
+                            camera.apply(rect)  # Ajuste de posição pela câmera
                         )
+
 
     def render_objects_with_gid(self, surface, camera, vector):
         """
@@ -54,18 +66,21 @@ class MapLoader:
         for layer in self.tmx_data.objectgroups:
             for obj in layer:
                 if obj.gid > 0 and obj.visible:  # Verifica se o objeto tem gid e está visível
-                    # Obtém a imagem do objeto a partir do gid
                     tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
                     if tile_image:
-                        # Aplica o fator de escala e deslocamento
                         pos = (
                             obj.x * self.scale_factor + vector.x,
                             obj.y * self.scale_factor + vector.y
                         )
                         scaled_image = pygame.transform.scale_by(tile_image, self.scale_factor)
-                        surface.blit(scaled_image, camera.apply(pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())))
+                        surface.blit(scaled_image, camera.apply(
+                            pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())
+                        ))
 
     def load_walls(self):
+        """
+        Carrega as áreas de colisão do mapa.
+        """
         walls = []
         for layer in self.tmx_data.layers:
             if layer.name == "WallsColider":
@@ -87,22 +102,37 @@ class MapLoader:
                         ]
                         pol = Polygon(adjusted_points)
                         walls.append(pol)
-
-                    elif obj.gid > 0:  # É um tile
-                        tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
-                        if tile_image:
-                            pos = (
-                                obj.x * self.scale_factor + self.offset_vector.x,
-                                obj.y * self.scale_factor + self.offset_vector.y
-                            )
-                            # Renderizar ou armazenar o tile
-
-                    else:
-                        print(f"Objeto ignorado: {obj} (tipo: {obj.type})")
-
         return walls
 
+    def get_renderables(self, player):
+        """
+        Retorna uma lista de todos os itens renderizáveis (mapa e jogador).
+        """
+        renderables = []
+
+        # Adiciona objetos do mapa
+        for layer in self.tmx_data.objectgroups:
+            for obj in layer:
+                if obj.gid > 0 and obj.visible:
+                    tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
+                    if tile_image:
+                        pos = (
+                            obj.x * self.scale_factor + self.offset_vector.x,
+                            obj.y * self.scale_factor + self.offset_vector.y
+                        )
+                        scaled_image = pygame.transform.scale_by(tile_image, self.scale_factor)
+                        rect = pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())
+                        renderables.append((rect.bottom, scaled_image, rect))
+
+        # Adiciona o jogador
+        renderables.append((player.rect.bottom, player, player.rect))
+
+        return renderables
+
     def get_size(self):
+        """
+        Retorna o tamanho do mapa em pixels.
+        """
         width = self.tmx_data.width * self.tmx_data.tilewidth * self.scale_factor
         height = self.tmx_data.height * self.tmx_data.tileheight * self.scale_factor
         return width, height
