@@ -15,13 +15,14 @@ from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.laugh import Laugh
 from classes.bosses.attacks.integral import Integral
-from classes.bosses.attacks.horizontal_beam import HorizontalBeam
+from classes.bosses.attacks.integral_sword import IntegralSword
 
 from classes.bosses.attacks.empty_attack import EmptyAttack
 
 from classes.text.dialogue_box import DialogueBox
 
 from classes.effects.explosion import Explosion
+from classes.effects.eye_flash import EyeFlash
 
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
@@ -43,6 +44,8 @@ class Branco(Boss):
         self.rect = self.image.get_rect()
         self.state = 'idle'
         self.counter = 0
+
+        self.integral_sword = IntegralSword(60)
 
         self.laughing = False
         self.laugh_counter = 0
@@ -67,10 +70,13 @@ class Branco(Boss):
 
         # Container que vai mostrar quando o Professor tomar dano
         self.hp_container = BossHP()
+        
+        self.can_laugh = True
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            IntegralsAttack(self.__damage)
+            # IntegralsAttack(self.__damage),
+            IntegralSwordAttack(self.__damage, self.integral_sword, self)
         ]
         self.attack_to_execute = -1
 
@@ -88,6 +94,14 @@ class Branco(Boss):
         self.__death_explosions: list[Explosion] = []
         self.death_loops_counter = 255
     
+    def show_black(self):
+        self.image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'preto.png'))
+        self.rect = self.image.get_rect(center=self.rect.center)
+    
+    def show_white(self):
+        self.image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'branco.png'))
+        self.rect = self.image.get_rect(center=self.rect.center)
+
     def speak(self):
         if not self.dead:
             self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
@@ -113,6 +127,7 @@ class Branco(Boss):
         self.__attacks[self.attack_to_execute].restart()
     
     def draw(self, screen):
+        self.integral_sword.draw(screen)
         screen.blit(self.image, self.rect)
         if self.state == 'shaking':
             self.hp_container.draw(screen)
@@ -151,7 +166,8 @@ class Branco(Boss):
                     self.laughing = False
                 else:
                     self.__attacks[self.attack_to_execute].run()
-                    self.randomize_laugh()
+                    if self.can_laugh:
+                        self.randomize_laugh()
                     if self.laughing:
                         self.laugh()
         else:
@@ -171,6 +187,9 @@ class Branco(Boss):
                 self.state = 'idle'
                 self.counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
+        
+        self.integral_sword.rect.centerx = self.rect.centerx
+        self.integral_sword.rect.centery = self.rect.centery + 10
  
     def take_damage(self, amount):
         self.__life = self.__life - amount*amount/(amount+self.__defense)
@@ -284,45 +303,62 @@ class IntegralsAttack(Attack):
         return self.__duration_counter
 
 
-class DerronAttack(Attack):
-    def __init__(self, damage):
+class IntegralSwordAttack(Attack):
+    def __init__(self, damage, integral_sword: IntegralSword, boss: Branco):
         self.__player: Heart = CombatManager.get_variable('player')
         self.damage = damage
 
-        self.integral_group = pygame.sprite.Group()
-        self.integral_creation_counter = 0
-        self.integral_creation_rate = FPS*0.8
-        self.integral_list: list[Integral] = []
-
-        CombatManager.global_groups.append(self.integral_group)
+        self.integral_sword = integral_sword
+        self.boss = boss
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
 
+        # Lista com os flashes dos olhos
+        self.eye_flashes: list[EyeFlash] = []
+
+        self.display = pygame.display.get_surface()
+
+        self.showing_attacks = True
+        self.attacking = False
+
+        self.eye_flashes_group = pygame.sprite.Group()
+        self.eye_flashes_counter = 0
+        self.eye_flashes_rate = FPS/2
+
+        CombatManager.global_groups.append(self.eye_flashes_group)
+
     def run(self):
         self.__duration_counter += 1
-        self.integral_creation_counter += 1
+        self.eye_flashes_counter += 1
 
-        for integral in self.integral_list:
-            integral.update()
+        if self.showing_attacks:
+            if self.eye_flashes_counter >= self.eye_flashes_rate and len(self.eye_flashes) < 3:
+                self.eye_flashes_counter = 0
+                self.eye_flashes.append(EyeFlash(
+                    random.choice([1, -1]),
+                    random.choice([
+                        (5, 153, 245),
+                        (255, 145, 0)
+                    ]),
+                    self.eye_flashes_group
+                ))
 
-            offset = (integral.rect.x - self.__player.rect.x, integral.rect.y - self.__player.rect.y)
-
-            if self.__player.mask.overlap(integral.mask, offset):
-                self.__player.take_damage(self.damage)
-
-        if self.integral_creation_counter >= self.integral_creation_rate:
-            self.integral_creation_counter = 0
-            self.integral_list.append(Integral(1, 90, self.integral_group))
-            self.integral_list.append(Integral(-1, 90, self.integral_group))
+            self.boss.show_black()
         
+        for eye_flash in self.eye_flashes:
+            eye_flash.update()
+            eye_flash.rect.center = self.boss.rect.center
+            eye_flash.rect.centery -= 60
+            eye_flash.rect.centerx += eye_flash.rect.width//2*eye_flash.dir
+
         if self.__duration_counter >= self.__duration:
-            self.integral_list.clear()
-            self.integral_group.empty()
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+            self.boss.can_laugh = True
     
     def restart(self):
         self.__duration_counter = 0
+        self.boss.can_laugh = False
     
     @property
     def player(self):

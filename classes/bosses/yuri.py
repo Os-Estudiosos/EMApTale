@@ -57,7 +57,7 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            # VectorAttack(self.__damage),
+            VectorAttack(self.__damage),
             EliminationAttack(self.__damage)
         ]
         self.attack_to_execute = -1
