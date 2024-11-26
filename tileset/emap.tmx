@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1267">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1271">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -442,6 +442,26 @@
   <object id="1266" x="1919.25" y="238.5" width="11" height="23.5">
    <properties>
     <property name="value" value="esse jornal.. a matéria sobre os estudantes em 2023 é interessante!"/>
+   </properties>
+  </object>
+  <object id="1267" x="965.125" y="148.5" width="31.625" height="15.5">
+   <properties>
+    <property name="value" value="Philip Thompson? eu não faço ideia de quem é esse cara.."/>
+   </properties>
+  </object>
+  <object id="1268" x="1004.25" y="148.25" width="31.25" height="15.875">
+   <properties>
+    <property name="value" value="Asla? essa era nossa antiga professora de AEDV.."/>
+   </properties>
+  </object>
+  <object id="1269" x="1165" y="144.875" width="31.625" height="20.625">
+   <properties>
+    <property name="value" value="Claúdio Struchinder? eu não faço ideia de quem é esse cara.."/>
+   </properties>
+  </object>
+  <object id="1270" x="1204.13" y="144.125" width="31.875" height="21.75">
+   <properties>
+    <property name="value" value="Vicente Gerard?  eu não faço ideia de quem é esse cara.."/>
    </properties>
   </object>
  </objectgroup>
