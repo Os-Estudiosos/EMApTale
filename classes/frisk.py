@@ -48,7 +48,7 @@ class Frisk(Player):
             self.scale_factor
         )
 
-        self.speed = 6
+        self.speed = 7
 
     def update_animation(self):
         if self.direction < len(self.frames):
