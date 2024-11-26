@@ -66,7 +66,7 @@ class InteractionManager:
                             text=f"{self.active_interaction['value']}",
                             font="fonts/Gamer.ttf",
                             letters_per_second=20,
-                            text_size=50,
+                            text_size=70,
                             position=(
                                 self.chatbox_position[0] + 20,  # Margem lateral
                                 self.chatbox_position[1] + 20  # Margem superior

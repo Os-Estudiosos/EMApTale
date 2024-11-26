@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1259">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1267">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -402,6 +402,46 @@
    <properties>
     <property name="interaction_name" value="cdmc"/>
     <property name="value" value="aqui é o cdmc, você foi encontrado graças a luziel el eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeel"/>
+   </properties>
+  </object>
+  <object id="1259" x="879.75" y="148.25" width="40.375" height="25">
+   <properties>
+    <property name="value" value="o que será que tem nesses armários?"/>
+   </properties>
+  </object>
+  <object id="1260" x="764.909" y="122.182" width="32" height="43.8182">
+   <properties>
+    <property name="value" value="Alfredo Iusem? eu não faço ideia de quem é esse cara.."/>
+   </properties>
+  </object>
+  <object id="1261" x="804.364" y="121.455" width="30.5455" height="44.3636">
+   <properties>
+    <property name="value" value="Rodrigo Targino.. dizem que inferência estatística com ele é difícil.. Bem, é melhor pensar nisso depois."/>
+   </properties>
+  </object>
+  <object id="1262" x="1305.5" y="120.625" width="31.125" height="45.125">
+   <properties>
+    <property name="value" value="Eduardo Wagner.. as aulas de GA dele eram incríveis!"/>
+   </properties>
+  </object>
+  <object id="1263" x="1121" y="237" width="38" height="23.75">
+   <properties>
+    <property name="value" value="quando terá coffe break de novo? o pão de queijo era tão bom.."/>
+   </properties>
+  </object>
+  <object id="1264" x="1320.25" y="218" width="18" height="22.75">
+   <properties>
+    <property name="value" value="esses livros amarelos.. eu não faço ideia do conteúdo dentro deles."/>
+   </properties>
+  </object>
+  <object id="1265" x="1380" y="198" width="19.75" height="46.5">
+   <properties>
+    <property name="value" value="não é hora de descansar agora..."/>
+   </properties>
+  </object>
+  <object id="1266" x="1919.25" y="238.5" width="11" height="23.5">
+   <properties>
+    <property name="value" value="esse jornal.. a matéria sobre os estudantes em 2023 é interessante!"/>
    </properties>
   </object>
  </objectgroup>
