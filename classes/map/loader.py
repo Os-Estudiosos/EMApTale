@@ -40,23 +40,32 @@ class MapLoader:
         self.render_objects_with_gid(surface, camera, self.offset_vector)
 
     def render_with_vector(self, surface, camera, vector):
+        # Calcula os limites visíveis da tela com base na posição da câmera
+        screen_rect = pygame.Rect(camera.camera_rect.x, camera.camera_rect.y, camera.screen_width, camera.screen_height)
+        
+        # Itera sobre as camadas do mapa e renderiza apenas os tiles visíveis
         for layer in self.tmx_data.layers:
             if hasattr(layer, 'tiles'):
                 for x, y, tile in layer.tiles():
                     if tile:
+                        # Calcula a posição do tile no mapa
                         pos = (
                             x * self.tmx_data.tilewidth * self.scale_factor + vector.x,
                             y * self.tmx_data.tileheight * self.scale_factor + vector.y
                         )
+                        # Cria um retângulo para o tile
                         rect = pygame.Rect(
                             *pos,
                             self.tmx_data.tilewidth * self.scale_factor,
                             self.tmx_data.tileheight * self.scale_factor
                         )
-                        surface.blit(
-                            pygame.transform.scale_by(tile, self.scale_factor),
-                            camera.apply(rect)  # Ajuste de posição pela câmera
-                        )
+                        
+                        # Verifica se o tile está dentro dos limites da tela
+                        if screen_rect.colliderect(rect):
+                            surface.blit(
+                                pygame.transform.scale_by(tile, self.scale_factor),
+                                camera.apply(rect)  # Aplica a câmera diretamente
+                            )
 
 
     def render_objects_with_gid(self, surface, camera, vector):

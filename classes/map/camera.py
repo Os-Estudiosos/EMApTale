@@ -39,7 +39,7 @@ class Camera:
         ]
 
     def update(self, target_rect: pygame.Rect):
-        """Atualiza a posição da câmera em relação ao jogador"""
+        """Atualiza a posição da câmera em relação ao jogador, otimizando os cálculos."""
         x = target_rect.centerx - self.screen_width // 2
         y = target_rect.centery - self.screen_height // 2
 
@@ -47,4 +47,6 @@ class Camera:
         x = max(0, min(x, self.map_width - self.screen_width))
         y = max(0, min(y, self.map_height - self.screen_height))
 
-        self.camera_rect = pygame.Rect(x, y, self.screen_width, self.screen_height)
+        # Atualiza a posição da câmera com base no jogador
+        self.camera_rect.x = x
+        self.camera_rect.y = y
