@@ -57,7 +57,7 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            VectorAttack(self.__damage),
+            # VectorAttack(self.__damage),
             EliminationAttack(self.__damage)
         ]
         self.attack_to_execute = -1
@@ -243,6 +243,8 @@ class EliminationAttack(Attack):
     def __init__(self, damage):
         self.__player: Heart = CombatManager.get_variable('player')
 
+        self.container = CombatManager.get_variable('battle_container')
+
         self.damage = damage
 
         self.brackets_group = pygame.sprite.Group()
@@ -256,10 +258,11 @@ class EliminationAttack(Attack):
 
         CombatManager.global_groups.append(self.horizontal_beans_group)
 
-        self.rows = [0, 1 , 2]  # Escolhendo qual linha o raio vai aparecer
+        self.rows = 4  # Escolhendo qual linha o raio vai aparecer
         self.horizontal_beams: list[HorizontalBeam] = []
         self.horizontal_beam_creation_rate = FPS/2.4
         self.horizontal_beam_counter = 0
+        self.row = 0
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
@@ -283,6 +286,12 @@ class EliminationAttack(Attack):
         (self.horizontal_beam_counter >= self.horizontal_beam_creation_rate)
         ):
             beam1 = HorizontalBeam(self.horizontal_beans_group)
+            row = random.choice([i for i in range(self.rows+1)])
+            beam1.max_rect_height = self.container.inner_rect.height//self.rows
+            beam1.correct_center_position = (
+                self.container.inner_rect.centerx,
+                self.container.inner_rect.y + (self.container.inner_rect.height//self.rows)*row - beam1.rect.height//2
+            )
             self.horizontal_beams.append(beam1)
             self.elimiation_matrices.append(ElimiationMatrix(
                 'E',
@@ -296,8 +305,9 @@ class EliminationAttack(Attack):
         # Atualizando todos os raios
         for i, beam in enumerate(self.horizontal_beams):
             beam.update()
+            offset = (beam.rect.x - self.player.rect.x, beam.rect.y - self.player.rect.y)
 
-            if self.player.rect.colliderect(beam.rect) and beam.animating:
+            if self.player.mask.overlap(beam.mask, offset) and beam.animating:
                 self.player.take_damage(self.damage)
 
             if beam.animating and beam.alpha <= 0:
