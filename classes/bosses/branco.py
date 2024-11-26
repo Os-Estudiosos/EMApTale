@@ -144,6 +144,20 @@ class Branco(Boss):
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
+        if self.state == 'shaking':
+            self.integral_sword.rect.centerx = self.rect.centerx
+            self.integral_sword.rect.centery = self.rect.centery + 10
+
+            self.counter += 10
+            counter_in_radians = self.counter*math.pi/180
+            wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
+            self.rect.x += 40 * wave_factor
+            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
+            if self.counter >= FPS*1.5*10:
+                self.state = 'idle'
+                self.counter = 0
+                pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
+
         if not self.dead:
             if self.speaking:
                 self.dialogue.update()
@@ -173,23 +187,13 @@ class Branco(Boss):
         else:
             self.death_animation()
         
+        if self.attack_to_execute == -1:
+            self.integral_sword.rect.centerx = self.rect.centerx
+            self.integral_sword.rect.centery = self.rect.centery + 10
+        
         for event in EventManager.events:
             if event.type == BOSS_ACT_EFFECT:
                 self.apply_effect(event.effect)
-        
-        if self.state == 'shaking':
-            self.counter += 10
-            counter_in_radians = self.counter*math.pi/180
-            wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
-            self.rect.x += 40 * wave_factor
-            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
-            if self.counter >= FPS*1.5*10:
-                self.state = 'idle'
-                self.counter = 0
-                pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
-        
-        self.integral_sword.rect.centerx = self.rect.centerx
-        self.integral_sword.rect.centery = self.rect.centery + 10
  
     def take_damage(self, amount):
         self.__life = self.__life - amount*amount/(amount+self.__defense)
@@ -319,12 +323,17 @@ class IntegralSwordAttack(Attack):
 
         self.display = pygame.display.get_surface()
 
+        self.eye_flashes_amount = 3
+
         self.showing_attacks = True
         self.attacking = False
 
         self.eye_flashes_group = pygame.sprite.Group()
         self.eye_flashes_counter = 0
         self.eye_flashes_rate = FPS/2
+
+        self.transition_time = 0
+        self.transition_duration = FPS/2
 
         CombatManager.global_groups.append(self.eye_flashes_group)
 
@@ -333,24 +342,40 @@ class IntegralSwordAttack(Attack):
         self.eye_flashes_counter += 1
 
         if self.showing_attacks:
-            if self.eye_flashes_counter >= self.eye_flashes_rate and len(self.eye_flashes) < 3:
+            if self.eye_flashes_counter >= self.eye_flashes_rate and len(self.eye_flashes) < self.eye_flashes_amount:
                 self.eye_flashes_counter = 0
                 self.eye_flashes.append(EyeFlash(
                     random.choice([1, -1]),
                     random.choice([
-                        (5, 153, 245),
-                        (255, 145, 0)
+                        'stop',
+                        'movement'
                     ]),
                     self.eye_flashes_group
                 ))
 
             self.boss.show_black()
         
-        for eye_flash in self.eye_flashes:
-            eye_flash.update()
-            eye_flash.rect.center = self.boss.rect.center
-            eye_flash.rect.centery -= 60
-            eye_flash.rect.centerx += eye_flash.rect.width//2*eye_flash.dir
+            for eye_flash in self.eye_flashes:
+                eye_flash.update()
+                eye_flash.rect.center = self.boss.rect.center
+                eye_flash.rect.centery -= 60
+                eye_flash.rect.centerx += eye_flash.rect.width//2*eye_flash.dir
+            
+            if len(self.eye_flashes) == self.eye_flashes_amount and all([(not ef.animating) for ef in self.eye_flashes]):
+                self.showing_attacks = False
+        else:
+            self.transition_time += 1
+            
+            if self.transition_time >= self.transition_duration:
+                self.transition_time = self.transition_duration
+                self.attacking = True
+            
+            if self.attacking:
+                self.boss.show_white()
+                self.integral_sword.rotate_image_to(-90)
+                self.integral_sword.rect.centery = self.boss.rect.centery + 10
+                
+                self.integral_sword.go_to((self.boss.rect.right+self.boss.rect.width//2, self.boss.rect.centery + 10))
 
         if self.__duration_counter >= self.__duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
