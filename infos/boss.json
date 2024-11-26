@@ -1,18 +1,16 @@
 {
-"Yuri" : {
-    "name": "Yuri Saporito",
-    "life": 30,
-    "defense": 3,
-    "damage": 3,
-    "voice": "yuri_txt.wav",
-    "starter_text": "O Coordenador do curso se aproxima, você sente as horas de procrastinação rastejando em suas costas",
+"Walter": {
+    "name": "Walter Sande",
+    "life": 15,
+    "defense": 1,
+    "damage": 2,
+    "voice": "walter_txt.wav",
+    "starter_text": "Um homem alto e descontraído se aproxima, com slides de gráficos em suas mãos. Ele começa a falar sobre algo chamado Vasco.",
     "attacks_dialogues": [
-        "Você prefere os sistemas lineares na row picture ou na column picture? Cuidado para não responder errado e acabar reprovando. Tô brincando, eu acho",
-        "Ontem me lembrei de uma aplicação da teorema espectral que vi no meu doutorado. Acho que meus alunos vão gostar, principalmente na hora da prova HAHAHAHA",
-        "FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE",
-        "Hoje eu cheguei no horário pela primeira vez (disse eu olhando para o relógio e vendo 12:00). O tempo passa rápido dando aula para essa turma.",
-        "Sempre que ando nos corredores da EMAp vejo alguns alunos estudando. Admiro eles, apesar de achar um desperdício de tempo se dedicar para uma matéria tão fácil. Análise Real é muito mais difícil",
-        "LU, LDU, LDL^T, QR, SVD, SΛS^-1, QΛQ^T, RR^T. Me pergunto qual delas é a favorita dos meus alunos."
+        "A vida é baseada em dois fundamentos: Vasco Futebol Clube e derivar e igualar a zero",
+        "Só uma coisa me deixa mais bravo do que slides com figuras e textos desalinhados: o Vasco",
+        "Fiz uma análise exploratória para uma empresa. Calculei Chi Quadrado, V de Cramer, Correlação, Covariância e R^2. Não saí do lugar",
+        "Não se atreva a fazer a horrorosidade do GRÁFICO DE PIZZA. Neste curso, ele é ESTRITAMENTE PROIBIDO"
     ],
     "act": [
         {
@@ -23,42 +21,47 @@
             "effect": null
         },
         {
-            "label": "Implorar Ponto",
+            "label": "Fazer Atividade",
             "responses": [
-                "Ele não parece convencido, vai ter que fazer muito mais que isso para o convencer"
+                "Apesar de Walter ficar feliz com a atividade feita, ele não mostra tanto interesse nisso"
             ],
             "effect": null
         },
         {
-            "label": "Chorar",
+            "label": "Vasco",
             "responses": [
-                "Ele olha para você com uma cara serena, seu chororô não funcionou!"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Tirar Dúvida",
-            "responses": [
-                "Você demonstrou interesse na matéria, Yuri mostra empatia por você!",
-                "A defesa de Yuri diminuiu!"
+                "Você diz que o seu time preferido é o Vasco Futebol Clube. Walter agora te considera como amigo",
+                "A defesa de Walter diminuiu!"
             ],
             "effect": "-defense"
+        },
+        {
+            "label": "Oferecer Pizza",
+            "responses": [
+                "Walter, com o olhar furioso, diz que odeia tudo relacionado a pizza",
+                "A defesa de Walter aumentou!",
+                "O ataque de Walter aumentou!"
+            ],
+            "effect": [
+                "+defense - COLOCAR O EFEITO NA CLASSE DOS BOSSES",
+                "+attack - COLOCAR O EFEITO NA CLASSE DOS BOSSES"       
+            ]  
         }
     ]
 },
 
-"Rafael": {
+"Pinho": {
     "name": "Rafael Pinho",
-    "life": 30,
-    "defense": 3,
-    "damage": 3,
+    "life": 20,
+    "defense": 2,
+    "damage": 2,
     "voice": "pinho_txt.wav",
     "starter_text": "Um homem nerd se aproxima. Você o reconhece: é o pai do Python",
     "attacks_dialogues": [
-        "Olá amiguinho, hoje tem teste surpresa de você sabe o que. Como você vem na minha aula, você poderá entrar na sala",
+        "Olá amiguinho, hoje tem teste surpresa. Como você vem na minha aula, você poderá entrar na sala",
         "Sempre agradeço as máquinas de café, apesar delas me decepcionarem a maioria das vezes",
         "Dei uma aula muito boa ontem e todos lactaram de conhecimento. Pena que depois eu acordei do meu sono",
-        "Hoje à tarde irei assistir o filme 13º guerreiro. Pelas minhas contas, essa é a 13ª vez que assisto. Odeio coincidências",
+        "Hoje à tarde irei assistir o filme 13º guerreiro. Pelas minhas contas, essa será a 13ª vez que assisto. Odeio coincidências",
         "Você não sabe fazer teste unitário, docstring, doctype e doctest? Que decepção amiguinho, parece que você não está lactando o suficiente"
     ],
     "act": [
@@ -70,29 +73,21 @@
             "effect": null
         },
         {
-            "label": "Implorar Ponto",
+            "label": "Lactar Conhecimento",
             "responses": [
-                "Você lembrou que ele odeia fazer AS. Implorar ponto não funcionou!"
+                "Pinho diz que você está lactando muito conhecimento, mas não o suficiente para passar!"
             ],
             "effect": null
         },
         {
-            "label": "Chorar",
+            "label": "Pergunta de Peano",
             "responses": [
-                "Ele olha para você com uma cara serena, seu chororô não funcionou!"
+                "Você pergunta sobre um assunto aleatório e Pinho te responde corretamente!"
             ],
             "effect": null
         },
         {
-            "label": "Tirar Dúvida",
-            "responses": [
-                "Parece que ele não deu muita atenção. Ele continuou a falar sobre o 13º Guerreiro!"
-            ],
-            "effect": null
-        },
-
-        {
-            "label": "Oferecer café",
+            "label": "Oferecer Café",
             "responses": [
                 "Ele disse que ama café, mas que não aceita nada de alunos. Contudo, agradeu a gentileza!",
                 "A defesa de Pinho diminuiu!"
@@ -104,17 +99,16 @@
 
 "Branco": {
     "name": "Branco Saraiva",
-    "life": 30,
-    "defense": 3,
+    "life": 25,
+    "defense": 2,
     "damage": 3,
     "voice": "branco_txt.wav",
     "starter_text": "Um senhor sorridente se aproxima, não deixe seu riso contagiante de atingir!",
     "attacks_dialogues": [
-        "Você acredita que quando estava remando ontem, um peixe que parecia uma integral apareceu? Dei uma RISADA sincera na hora HAHAHAHAHAHAHA",
-        "Eu sei que 8 exercícios de integral tripla parecem um saco, mas pense no lado positivo, você tem uma calculadora: a sua mão HAHAHAHAHAHAHA (sou muito bom com piadas) ",
-        "Você precisa fazer um desenho, mesmo que feio",
-        "Hoje à tarde irei assistir o filme 13º guerreiro. Pelas minhas contas, essa é a 13ª vez que assisto. Odeio coincidências",
-        "Você não sabe fazer teste unitário, docstring, doctype e doctest? Que decepção amiguinho, parece que você não está lactando o suficiente"
+        "As vezes deixo escapar minha outra personalidade, o Preto. Mas me contenho para usar ela na hora das provas HAHAHAHAHA",
+        "Você conseguiu fazer a questão 3? Pois é, eu também não HAHAHAHAHAHA",
+        "Ontem montei uma lista básica e curta sobre integrais para os meus alunos fixarem o conteúdo. Tinha apenas 75 questões HAHAHAHAHAHA",
+        "Não sou muito fã de calculadoras. Por isso que meus alunos não usam HAHAHAHA"
     ],
     "act": [
         {
@@ -125,90 +119,93 @@
             "effect": null
         },
         {
-            "label": "Implorar Ponto",
+            "label": "Contar Piada",
             "responses": [
-                "Ele não parece convencido, vai ter que fazer muito mais que isso para o convencer"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Chorar",
-            "responses": [
-                "Ele olha para você com uma cara serena, seu chororô não funcionou!"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Tirar Dúvida",
-            "responses": [
-                "Você demonstrou interesse na matéria, Yuri mostra empatia por você!",
-                "A defesa de Yuri diminuiu!"
+                "Você conta uma piada para Branco. Ele solta uma risadela sincera!",
+                "A defesa de Branco diminuiu!"
             ],
             "effect": "-defense"
-        }
-    ]
-},
-
-"Walter": {
-    "name": "Rafael Pinho",
-    "life": 30,
-    "defense": 3,
-    "damage": 3,
-    "voice": "pinho_txt.wav",
-    "starter_text": "Um homem nerd se aproxima. Você o reconhece: é o pai do Python",
-    "attacks_dialogues": [
-        "Olá amiguinho, hoje tem teste surpresa de você sabe o que. Como você vem na minha aula, você poderá entrar na sala",
-        "Sempre agradeço as máquinas de café, apesar delas me decepcionarem a maioria das vezes",
-        "Dei uma aula muito boa ontem e todos lactaram de conhecimento. Pena que depois eu acordei do meu sono",
-        "Hoje à tarde irei assistir o filme 13º guerreiro. Pelas minhas contas, essa é a 13ª vez que assisto. Odeio coincidências",
-        "Você não sabe fazer teste unitário, docstring, doctype e doctest? Que decepção amiguinho, parece que você não está lactando o suficiente"
-    ],
-    "act": [
-        {
-            "label": "Checar",
-            "responses": [
-                "ATK - 3  DEF - 100"
-            ],
-            "effect": null
         },
         {
-            "label": "Implorar Ponto",
+            "label": "Remar",
             "responses": [
-                "Ele não parece convencido, vai ter que fazer muito mais que isso para o convencer"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Chorar",
-            "responses": [
-                "Ele olha para você com uma cara serena, seu chororô não funcionou!"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Tirar Dúvida",
-            "responses": [
-                "Você demonstrou interesse na matéria, Yuri mostra empatia por você!",
-                "A defesa de Yuri diminuiu!"
+                "Ele diz que sente falta de remar algumas vezes. Ele te convida para uma sessão de remo!",
+                "A defesa de Branco diminuiu!"
             ],
             "effect": "-defense"
+        },
+        {
+            "label": "Pedir Revisão",
+            "responses": [
+                "Você pede revisão dos conteúdos de integrais. Mas, ele olha para você e diz que não faz revisões"
+            ],
+            "effect": null
         }
     ]
 },
 
 "Soledad": {
-    "name": "Rafael Pinho",
+    "name": "Maria Soledad",
     "life": 30,
     "defense": 3,
     "damage": 3,
-    "voice": "pinho_txt.wav",
-    "starter_text": "Um homem nerd se aproxima. Você o reconhece: é o pai do Python",
+    "voice": "soledad_txt.wav",
+    "starter_text": " OK LEGAL A VER",
     "attacks_dialogues": [
-        "Olá amiguinho, hoje tem teste surpresa de você sabe o que. Como você vem na minha aula, você poderá entrar na sala",
-        "Sempre agradeço as máquinas de café, apesar delas me decepcionarem a maioria das vezes",
-        "Dei uma aula muito boa ontem e todos lactaram de conhecimento. Pena que depois eu acordei do meu sono",
-        "Hoje à tarde irei assistir o filme 13º guerreiro. Pelas minhas contas, essa é a 13ª vez que assisto. Odeio coincidências",
-        "Você não sabe fazer teste unitário, docstring, doctype e doctest? Que decepção amiguinho, parece que você não está lactando o suficiente"
+        "OK",
+        "LEGAL",
+        "A VER",
+        "Vamos a demostrar ese teorema obscuro por un raciocinio nunca antes visto: induccion"
+    ],
+    "act": [
+        {
+            "label": "Checar",
+            "responses": [
+                "ATK - 3  DEF - 100"
+            ],
+            "effect": null
+        },
+        {
+            "label": "OK",
+            "responses": [
+                "OK",
+                "A defesa de Soledad aumentou!"
+            ],
+            "effect": "+defense"
+        },
+        {
+            "label": "LEGAL",
+            "responses": [
+                "LEGAL",
+                "A defesa de Soledad aumentou!"
+            ],
+            "effect": "+defense"
+        },
+        {
+            "label": "A VER",
+            "responses": [
+                "A VER",
+                "A defesa de Soledad aumentou!"
+            ],
+            "effect": "+defense"
+        }
+    ]
+},
+
+"Yuri" : {
+    "name": "Yuri Saporito",
+    "life": 35,
+    "defense": 4,
+    "damage": 4,
+    "voice": "yuri_txt.wav",
+    "starter_text": "O coordenador do curso se aproxima, você sente as horas de procrastinação rastejando em suas costas",
+    "attacks_dialogues": [
+        "Você prefere os sistemas lineares na row picture ou na column picture? Cuidado para não responder errado e acabar reprovando",
+        "Ontem me lembrei de uma aplicação da teorema espectral que vi no meu doutorado. Acho que meus alunos vão gostar, principalmente na hora da prova HAHAHAHA",
+        "FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE, FAÇA ANÁLISE",
+        "Hoje eu cheguei no horário pela primeira vez. Ainda é meio dia. O tempo passa rápido dando aula para essa turma.",
+        "Sempre que ando nos corredores da EMAp vejo alguns alunos estudando. Admiro eles, apesar de achar um desperdício de tempo se dedicar para uma matéria tão fácil",
+        "LU, CR, LDU, LDL^T, QR, SVD, SΛS^-1, QΛQ^T, RR^T. Me pergunto qual delas é a favorita dos meus alunos."
     ],
     "act": [
         {
@@ -242,5 +239,4 @@
         }
     ]
 }
-
 }
