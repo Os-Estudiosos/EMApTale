@@ -52,7 +52,7 @@ class Pinho(Boss):
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
             PythonAtatack(),
-            CoffeeAttack()
+            #CoffeeAttack()
         ]
         self.attack_to_execute = -1
 
@@ -183,21 +183,21 @@ class Pinho(Boss):
         return self.__music
 
 
-class CoffeeAttack(Attack):
-    def __init__(self):
-        self.__player: Heart = CombatManager.get_variable('player')
+# class CoffeeAttack(Attack):
+#     def __init__(self):
+#         self.__player: Heart = CombatManager.get_variable('player')
 
-        self.vectors_group = pygame.sprite.Group()
+#         self.vectors_group = pygame.sprite.Group()
 
-        CombatManager.global_groups.append(self.vectors_group)
+#         CombatManager.global_groups.append(self.vectors_group)
 
-        self.vectors: list[Coffee] = []
-        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
+#         self.vectors: list[Coffee] = []
+#         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
-        self.__duration_counter = 0
+#         self.__duration = FPS * 10  # O Ataque dura 10 segundos
+#         self.__duration_counter = 0
 
-        # self.vectors.append(Vector(self.vectors_group))
+#         # self.vectors.append(Vector(self.vectors_group))
 
 
 class PythonAtatack(Attack):

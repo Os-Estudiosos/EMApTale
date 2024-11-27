@@ -10,7 +10,7 @@ from config.soundmanager import SoundManager
 
 from utils import angle_between_vectors
 
-from sprites.spritesheet import SpriteSheet
+from classes.sprites.spritesheet import SpriteSheet
 
 
 class Coffee(pygame.sprite.Sprite):
@@ -55,9 +55,6 @@ class Coffee(pygame.sprite.Sprite):
 
         self.speed = 7
         SoundManager.play_sound('snake.wav')
-    
-    def point_to_center(self):
-        pass
 
     def fade_image(self):
         if self.counter <= 255:
