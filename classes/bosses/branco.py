@@ -178,6 +178,7 @@ class Branco(Boss):
                     self.laugh_group.empty()
                     self.laugh_animation_counter = 0
                     self.laughing = False
+                    self.integral_sword.rotate_image_to(60)
                 else:
                     self.__attacks[self.attack_to_execute].run()
                     if self.can_laugh:
@@ -323,7 +324,7 @@ class IntegralSwordAttack(Attack):
 
         self.display = pygame.display.get_surface()
 
-        self.eye_flashes_amount = 3
+        self.eye_flashes_amount = 5
 
         self.showing_attacks = True
         self.attacking = False
@@ -331,9 +332,14 @@ class IntegralSwordAttack(Attack):
         self.eye_flashes_group = pygame.sprite.Group()
         self.eye_flashes_counter = 0
         self.eye_flashes_rate = FPS/2
+        self.cuts_types = []
 
         self.transition_time = 0
         self.transition_duration = FPS/2
+
+        self.cutting_transition_counter = 0
+        self.cutting_transition_duration = FPS/2
+        self.wich_cut = 0
 
         CombatManager.global_groups.append(self.eye_flashes_group)
 
@@ -352,6 +358,7 @@ class IntegralSwordAttack(Attack):
                     ]),
                     self.eye_flashes_group
                 ))
+                self.cuts_types = [eye.type for eye in self.eye_flashes]
 
             self.boss.show_black()
         
@@ -375,7 +382,15 @@ class IntegralSwordAttack(Attack):
                 self.integral_sword.rotate_image_to(-90)
                 self.integral_sword.rect.centery = self.boss.rect.centery + 10
                 
-                self.integral_sword.go_to((self.boss.rect.right+self.boss.rect.width//2, self.boss.rect.centery + 10))
+                # self.integral_sword.go_to((self.boss.rect.right+self.boss.rect.width//2, self.boss.rect.centery + 10))
+
+                if not self.integral_sword.moving:
+                    self.cutting_transition_counter += 1
+                    self.integral_sword.update()
+                    if self.cutting_transition_counter >= self.cutting_transition_duration:
+                        self.cutting_transition_counter = 0
+                        self.integral_sword.cut(self.cuts_types[self.wich_cut%len(self.cuts_types)])
+                        self.wich_cut += 1
 
         if self.__duration_counter >= self.__duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
@@ -384,6 +399,14 @@ class IntegralSwordAttack(Attack):
     def restart(self):
         self.__duration_counter = 0
         self.boss.can_laugh = False
+        self.cuts_types.clear()
+        self.integral_sword.cuts_list.clear()
+        self.showing_attacks = True
+        self.attacking = False
+        self.transition_time = 0
+        self.eye_flashes_counter = 0
+        self.eye_flashes.clear()
+        self.wich_cut = 0
     
     @property
     def player(self):
