@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1272">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="1278">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -462,6 +462,46 @@
   <object id="1270" x="1204.13" y="144.125" width="31.875" height="21.75">
    <properties>
     <property name="value" value="Vicente Gerard?  eu não faço ideia de quem é esse cara.."/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="15" name="Boss">
+  <properties>
+   <property name="boss" value="Soledad"/>
+  </properties>
+  <object id="1272" x="2081" y="312.5" width="39.5" height="16.5">
+   <properties>
+    <property name="boss" value="Walter"/>
+    <property name="day" type="int" value="2"/>
+    <property name="value" value="Não usar gráfico de pizza acho que é o suficiente pra passar"/>
+   </properties>
+  </object>
+  <object id="1273" x="1879.5" y="311" width="40.5" height="16">
+   <properties>
+    <property name="boss" value="Yuri"/>
+    <property name="day" type="int" value="5"/>
+    <property name="value" value="Melhor eu começar a rezar"/>
+   </properties>
+  </object>
+  <object id="1274" x="1784.5" y="127" width="31" height="17">
+   <properties>
+    <property name="boss" value="Soledad"/>
+    <property name="day" type="int" value="3"/>
+    <property name="value" value="Nunca gostei de grafos... Ok, legal, vamos lá"/>
+   </properties>
+  </object>
+  <object id="1275" x="1679.5" y="311.5" width="40" height="18">
+   <properties>
+    <property name="boss" value="Pinho"/>
+    <property name="day" type="int" value="1"/>
+    <property name="value" value="Trouxe café, vai que ele pega mais leve"/>
+   </properties>
+  </object>
+  <object id="1276" x="2045.5" y="148" width="33.5" height="19.5">
+   <properties>
+    <property name="boss" value="Branco"/>
+    <property name="day" type="int" value="4"/>
+    <property name="value" value="Por favor que não caia lagrange"/>
    </properties>
   </object>
  </objectgroup>

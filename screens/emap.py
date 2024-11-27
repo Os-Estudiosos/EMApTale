@@ -1,6 +1,7 @@
 import pygame
 import os
 from config.savemanager import SaveManager
+from config.globalmanager import GlobalManager
 
 from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
@@ -47,8 +48,12 @@ class EMAp:
             self.__display.get_height() - new_height        # Posiciona no rodapé
         ))
 
+        # Grupo dos NPC
+        self.npc_group = pygame.sprite.Group()
+
     def on_first_execution(self):
         SaveManager.load()
+        GlobalManager.load_infos()
         self.map_loaded = True
 
     def run(self):
