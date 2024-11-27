@@ -15,25 +15,23 @@ class NewGameConfirmation(State):
     def __init__(
         self,
         name: str,
-        display: pygame.Surface,
-        game_state_manager: GameStateManager,
+        display: pygame.Surface
     ):
         # Variáveis padrão de qualquer Cenário
         self.__variables = {}
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__game_state_manager: GameStateManager = game_state_manager
 
         self.__execution_counter = 0
 
         self.menu_options = [
             {
                 'label': Text('SIM', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('new_name')
+                'func': lambda: GameStateManager.set_state('new_name')
             },
             {
                 'label': Text('CANCELAR', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('start')
+                'func': lambda: GameStateManager.set_state('start')
             }
         ]
         self.selected_option = 0  # Opção que está selecionada
@@ -66,7 +64,7 @@ class NewGameConfirmation(State):
         if SaveManager.save_exists():
             text_confirmation = 'Deseja sobrescrever seu progresso com um novo jogo?'
         else:
-            self.__game_state_manager.set_state('new_name')
+            GameStateManager.set_state('new_name')
         text_object = Text(text_confirmation, FontManager.fonts['Gamer'], 60)
         text_object.rect.center = (
             self.__display.get_width()/2,
@@ -117,10 +115,6 @@ class NewGameConfirmation(State):
     @property
     def display(self):
         return self.__display
-    
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
     
     @property
     def name(self):

@@ -1,7 +1,10 @@
 import pygame
+import os
+from config import *
 from classes.text.dynamic_text import DynamicText
 from config.eventmanager import EventManager
 from config.globalmanager import GlobalManager
+from config.gamestatemanager import GameStateManager
 
 
 class Interaction:
@@ -9,6 +12,18 @@ class Interaction:
         self.rect = pygame.Rect(kwargs['x'], kwargs['y'], kwargs['width'], kwargs['height'])
         self.interaction_name = kwargs['interaction_name']
         self.value = kwargs['value']
+        self.day = kwargs['day']
+    
+
+class BossIntercation(Interaction):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.boss = kwargs['boss']
+    
+    def go_to_boss_fight(self):
+        GameStateManager.set_state('combat', {
+            "enemy": GlobalManager.bosses[self.boss]
+        })
 
 
 class InteractionManager:
@@ -43,7 +58,15 @@ class InteractionManager:
         """
         for interaction in GlobalManager.interactions:
             # Jogador está na área de interação
-            if interaction.rect.colliderect(self.player.rect):
+            if (
+                (interaction.rect.colliderect(self.player.rect))
+                    and
+                (
+                    interaction.day == None
+                    or
+                    interaction.day == GlobalManager.day
+                )
+            ):
                 self.active_interaction = interaction
                 return interaction
 

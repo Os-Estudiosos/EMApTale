@@ -21,14 +21,12 @@ class GameOver(State):
     def __init__(
             self, 
             name:str, 
-            display:pygame.Surface,
-            game_state_manager:GameStateManager
+            display:pygame.Surface
             ):
         
         # Variáveis padrão de qualquer Cenário
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__game_state_manager: GameStateManager = game_state_manager
         #self.execution_counter = 0
 
     # @property
@@ -38,10 +36,6 @@ class GameOver(State):
     @property
     def display(self):
         return self.display
-    
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
     
     @property
     def name(self):

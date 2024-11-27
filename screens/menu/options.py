@@ -14,13 +14,11 @@ class Options(State):
         self,
         name: str,
         display: pygame.Surface,
-        game_state_manager: GameStateManager,
     ):
         # Variáveis padrão de qualquer Cenário
         self.__variables = {}
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__game_state_manager: GameStateManager = game_state_manager
 
         self.__execution_counter = 0
 
@@ -32,7 +30,7 @@ class Options(State):
             },
             {
                 'label': Text('VOLTAR', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('start')
+                'func': lambda: GameStateManager.set_state('start')
             }
         ]
         self.selected_option = 0  # Opção que está selecionada
@@ -118,10 +116,6 @@ class Options(State):
     @property
     def display(self):
         return self.display
-    
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
     
     @property
     def name(self):

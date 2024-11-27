@@ -1,5 +1,8 @@
 import pygame
 import os
+
+from screens import State
+
 from config.savemanager import SaveManager
 from config.globalmanager import GlobalManager
 
@@ -8,11 +11,11 @@ from classes.map.loader import MapLoader
 from classes.map.camera import Camera
 from classes.frisk import Frisk
 
-class EMAp:
-    def __init__(self, name, display, game_state_manager):
+class EMAp(State):
+    def __init__(self, name, display):
+        self.__variables = {}
         self.__name = name
-        self.__display = display  # Exemplo: 800x600 em modo janela
-        self.__game_state_manager = game_state_manager
+        self.__display: pygame.Surface = display
         self.__execution_counter = 0
 
         # Inicializa o loader do mapa
@@ -96,3 +99,25 @@ class EMAp:
 
     def on_last_execution(self):
         self.__execution_counter = 0
+    
+    @property
+    def execution_counter(self):
+        return self.__execution_counter
+
+    @property
+    def display(self):
+        return self.__display
+    
+    @property
+    def name(self):
+        return self.__name
+    
+    @property
+    def variables(self):
+        return self.__variables
+
+    @variables.setter
+    def variables(self, value: dict):
+        if not isinstance(value, dict):
+            raise TypeError("Você precisa passar um dicionário")
+        self.__variables = value

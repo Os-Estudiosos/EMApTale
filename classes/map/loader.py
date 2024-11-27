@@ -1,7 +1,7 @@
 from pytmx import load_pygame
 import pygame
 from classes.polygon.polygon import Polygon
-from classes.map.interaction import Interaction
+from classes.map.interaction import Interaction, BossIntercation
 from config.globalmanager import GlobalManager
 
 
@@ -28,6 +28,19 @@ class MapLoader:
                         y=obj.y * self.scale_factor + self.offset_vector.y,
                         width=obj.width * self.scale_factor,
                         height=obj.height * self.scale_factor,
+                        day=obj.properties.get('day', None)
+                    ))
+            if layer.name == "Boss":
+                for obj in layer:
+                    GlobalManager.interactions.append(BossIntercation(
+                        interaction_name=obj.properties.get('interaction_name', 'Unknown'),
+                        value=obj.properties.get('value', 'Sem mensagem'),
+                        x=obj.x * self.scale_factor + self.offset_vector.x,
+                        y=obj.y * self.scale_factor + self.offset_vector.y,
+                        width=obj.width * self.scale_factor,
+                        height=obj.height * self.scale_factor,
+                        day=obj.properties.get('day', None),
+                        boss=obj.properties.get('boss')
                     ))
 
     def render_map(self, surface, camera):

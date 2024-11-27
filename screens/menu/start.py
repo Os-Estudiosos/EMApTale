@@ -16,13 +16,11 @@ class Start(State):
         self,
         name: str,
         display: pygame.Surface,
-        game_state_manager: GameStateManager,
     ):
         # Variáveis padrão de qualquer Cenário
         self.__variables = {}
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__game_state_manager: GameStateManager = game_state_manager
 
         self.__execution_counter = 0
 
@@ -30,15 +28,15 @@ class Start(State):
         self.menu_options = [
             {
                 'label': Text('NOVO JOGO', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('new_game_confirmation')
+                'func': lambda: GameStateManager.set_state('new_game_confirmation')
             },
             {
                 'label': Text('CONTINUAR JOGO', FontManager.fonts['Gamer'], 50),
-                'func': lambda: self.__game_state_manager.set_state('emap')
+                'func': lambda: GameStateManager.set_state('emap')
             },
             # {
             #     'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50),
-            #     'func': lambda: self.__game_state_manager.set_state('options')
+            #     'func': lambda: GameStateManager.set_state('options')
             # },
             {
                 'label': Text('SAIR', FontManager.fonts['Gamer'], 50),
@@ -117,10 +115,6 @@ class Start(State):
     @property
     def display(self):
         return self.display
-    
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
     
     @property
     def name(self):
