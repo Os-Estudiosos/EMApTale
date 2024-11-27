@@ -75,7 +75,7 @@ class Branco(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            # IntegralsAttack(self.__damage),
+            IntegralsAttack(self.__damage),
             IntegralSwordAttack(self.__damage, self.integral_sword, self)
         ]
         self.attack_to_execute = -1
