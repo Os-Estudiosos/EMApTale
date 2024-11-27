@@ -40,6 +40,8 @@ class Pinho(Boss):
         self.__damage = infos['damage']
         self.__defense = infos['defense']
         self.__voice = infos['voice']
+        self.__music = infos['sound']
+
 
         self.__attacks_dialogues = infos['attacks_dialogues']
 
@@ -175,6 +177,10 @@ class Pinho(Boss):
     @property
     def voice(self):
         return self.__voice
+    
+    @property
+    def music(self):
+        return self.__music
 
 
 # class CoffeeAtatack(Attack):

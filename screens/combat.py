@@ -98,6 +98,8 @@ class Combat(State):
         self.act_menu.options.clear()
         self.act_menu.options = self.__variables['enemy']['act']
 
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
+
         self.starter_text.restart(self.__variables['enemy']['starter_text'])
 
         Player.load_infos()

@@ -117,9 +117,7 @@ class Snake(pygame.sprite.Sprite):
     
     def change_image_color(self):
         if self.type == 'Vanished':
-            graySurface = pygame.Surface(self.image.get_size())
-            graySurface.fill((211, 211, 211))
-            self.image.blit(graySurface, (0,0), special_flags=pygame.BLEND_MULT)
+            self.image_path = os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'snake_effect.png')
 
     def stop_rotating(self):
         self.rotating = False

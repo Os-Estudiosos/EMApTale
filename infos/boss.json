@@ -1,6 +1,7 @@
 {
 "Walter": {
     "name": "Walter Sande",
+    "sound":"",
     "life": 15,
     "defense": 1,
     "damage": 2,
@@ -52,6 +53,7 @@
 
 "Pinho": {
     "name": "Rafael Pinho",
+    "sound":"Pinho_theme.wav",
     "life": 20,
     "defense": 2,
     "damage": 2,
@@ -100,6 +102,7 @@
 "Branco": {
     "name": "Branco Saraiva",
     "life": 25,
+    "sound":"",
     "defense": 2,
     "damage": 3,
     "voice": "branco_txt.wav",
@@ -146,6 +149,7 @@
 
 "Soledad": {
     "name": "Maria Soledad",
+    "sound":"",
     "life": 30,
     "defense": 3,
     "damage": 3,
@@ -195,6 +199,7 @@
 "Yuri" : {
     "name": "Yuri Saporito",
     "life": 35,
+    "sound":"",
     "defense": 4,
     "damage": 4,
     "voice": "yuri_txt.wav",
