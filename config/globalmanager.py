@@ -1,0 +1,3 @@
+
+class GlobalManager:
+    interactions = []

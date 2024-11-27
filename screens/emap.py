@@ -36,11 +36,11 @@ class EMAp:
         chatbox = pygame.transform.scale(chatbox, (new_width, new_height))
 
         # Redimensiona a imagem da tecla "Z"
-        tecla_z_image = pygame.transform.scale(tecla_z_image, (50, 50))
+        tecla_z_image = pygame.transform.scale(tecla_z_image, (70, 70))
 
         # Inicializa o InteractionManager
         self.interaction_manager = InteractionManager(
-            self.map_loader.interactions, self.player, chatbox, tecla_z_image
+            self.player, chatbox, tecla_z_image
         )
         self.interaction_manager.set_chatbox_position((
             (self.__display.get_width() - new_width) // 2,  # Centraliza horizontalmente

@@ -1,9 +1,18 @@
 import pygame
 from classes.text.dynamic_text import DynamicText
 from config.eventmanager import EventManager
+from config.globalmanager import GlobalManager
+
+
+class Interaction:
+    def __init__(self, **kwargs):
+        self.rect = pygame.Rect(kwargs['x'], kwargs['y'], kwargs['width'], kwargs['height'])
+        self.interaction_name = kwargs['interaction_name']
+        self.value = kwargs['value']
+
 
 class InteractionManager:
-    def __init__(self, interactions, player, chatbox, tecla_z_image):
+    def __init__(self, player, chatbox, tecla_z_image):
         """
         Gerencia as interações do jogador com objetos do mapa.
         :param interactions: Lista de objetos de interação carregados do mapa.
@@ -11,7 +20,6 @@ class InteractionManager:
         :param chatbox: Imagem da caixa de texto.
         :param tecla_z_image: Imagem da tecla "Z" para exibir quando na área de interação.
         """
-        self.interactions = interactions
         self.player = player
         self.active_interaction = None
         self.interaction_in_progress = False  # Para manter interações
@@ -33,12 +41,9 @@ class InteractionManager:
         :param events: Lista de eventos do Pygame.
         :return: Objeto de interação ativo (se houver).
         """
-        player_rect = self.player.rect
-        for interaction in self.interactions:
-            rect = pygame.Rect(interaction['x'], interaction['y'], interaction['width'], interaction['height'])
-
+        for interaction in GlobalManager.interactions:
             # Jogador está na área de interação
-            if player_rect.colliderect(rect):
+            if interaction.rect.colliderect(self.player.rect):
                 self.active_interaction = interaction
                 return interaction
 
@@ -63,7 +68,7 @@ class InteractionManager:
                     elif self.active_interaction:
                         # Inicia interação com texto dinâmico
                         self.dynamic_text = DynamicText(
-                            text=f"{self.active_interaction['value']}",
+                            text=f"{self.active_interaction.value}",
                             font="fonts/Gamer.ttf",
                             letters_per_second=20,
                             text_size=70,
