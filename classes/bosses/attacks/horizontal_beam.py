@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 from config import *
 from config.combatmanager import CombatManager
@@ -9,19 +10,15 @@ from config.soundmanager import SoundManager
 class HorizontalBeam(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
-        self.rows = 4
-        self.container = CombatManager.get_variable('battle_container')
-
         self.actual_display = pygame.display.get_surface()
         self.alpha = 0
         self.color = pygame.Color(255, 0, 0, self.alpha)
 
-        self.max_rect_height = self.container.inner_rect.height//self.rows
+        self.max_rect_height = 0
         self.image = pygame.Surface((self.actual_display.get_width(), 10), pygame.SRCALPHA)
         self.image.fill(self.color)
+        self.update_mask()
         self.rect = self.image.get_rect()
-
-        self.row = random.choice([i for i in range(self.rows+1)])
 
         self.animating = False
         self.fading_counter = 0
@@ -31,8 +28,11 @@ class HorizontalBeam(pygame.sprite.Sprite):
 
         self.sound_counter = 0  # Evita do audio tocar sem parar
 
-        self.correct_centery_position = self.container.inner_rect.y + (self.container.inner_rect.height//self.rows)*self.row - self.rect.height//2
+        self.correct_center_position = (0,0)
     
+    def update_mask(self):
+        self.mask = pygame.mask.from_surface(self.image)
+
     def fade_out_rect(self):
         self.alpha -= self.fading_counter
         if self.alpha < 0:
@@ -51,11 +51,13 @@ class HorizontalBeam(pygame.sprite.Sprite):
         if not self.rect.height - 10 < 0:
             self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height-10))
             self.rect = self.image.get_rect()
+            self.update_mask()
     
     def grow_rect(self):
         if not self.rect.height + 10 > self.max_rect_height:
             self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height+10))
             self.rect = self.image.get_rect()
+            self.update_mask()
 
     def update(self):
         self.fading_counter += 1
@@ -80,4 +82,4 @@ class HorizontalBeam(pygame.sprite.Sprite):
                 self.alpha = 255
                 self.animating = True
         
-        self.rect.centery = self.correct_centery_position
+        self.rect.center = self.correct_center_position

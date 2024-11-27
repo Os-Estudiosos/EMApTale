@@ -1,6 +1,7 @@
 {
     "Yuri": {
         "name": "Yuri Saporito",
+        "sound": "Yuri_Theme.mp3",
         "life": 30,
         "defense": 3,
         "damage": 3,
@@ -46,6 +47,7 @@
     "Branco": {
         "name": "Branco Saraiva",
         "life": 30,
+        "sound": "Branco_Theme.mp3",
         "defense": 3,
         "damage": 3,
         "voice": "branco_txt.wav",

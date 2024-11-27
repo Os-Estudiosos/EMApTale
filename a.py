@@ -1,69 +1,57 @@
 import pygame
+import math
 
-# Inicialização do Pygame
+# Inicializar o Pygame
 pygame.init()
 
-# Configurações da tela
-screen = pygame.display.set_mode((800, 600))
-clock = pygame.time.Clock()
+# Configurações da janela
+width, height = 800, 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Gráfico de uma Função")
 
-# Definindo cores
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
+# Cores
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
 
-# Configurando o jogador como retângulo
-player = pygame.Rect(50, 50, 30, 30)  # x, y, largura, altura
-player_speed = 5
+# Função a ser desenhada (Exemplo: y = x^2)
+def f(x):
+    return math.sin(x)
 
-# Definindo uma parede poligonal
-wall_points = [(300, 200), (500, 200), (550, 300), (400, 400), (250, 300)]
+# Escalas e deslocamentos
+scale = 100  # Pixels por unidade
+offset_x = width // 2  # Centro do eixo X
+offset_y = height // 2  # Centro do eixo Y
 
-def point_in_polygon(point, poly_points):
-    """Função para verificar se o ponto está dentro do polígono."""
-    x, y = point
-    n = len(poly_points)
-    inside = False
-    p1x, p1y = poly_points[0]
-    for i in range(n + 1):
-        p2x, p2y = poly_points[i % n]
-        if y > min(p1y, p2y):
-            if y <= max(p1y, p2y):
-                if x <= max(p1x, p2x):
-                    if p1y != p2y:
-                        xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
-                    if p1x == p2x or x <= xinters:
-                        inside = not inside
-        p1x, p1y = p2x, p2y
-    return inside
-
+# Loop principal
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    # Movendo o jogador
-    keys = pygame.key.get_pressed()
-    move_x = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * player_speed
-    move_y = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * player_speed
+    # Limpar a tela
+    screen.fill(white)
 
-    # Movimento no eixo X e verificação de colisão
-    player.x += move_x
-    if point_in_polygon(player.center, wall_points):
-        player.x -= move_x  # Desfaz movimento no eixo X se houver colisão
+    # Desenhar eixos
+    pygame.draw.line(screen, black, (0, offset_y), (width, offset_y), 2)  # Eixo X
+    pygame.draw.line(screen, black, (offset_x, 0), (offset_x, height), 2)  # Eixo Y
 
-    # Movimento no eixo Y e verificação de colisão
-    player.y += move_y
-    if point_in_polygon(player.center, wall_points):
-        player.y -= move_y  # Desfaz movimento no eixo Y se houver colisão
+    # Desenhar o gráfico da função
+    for x_pixel in range(0, width):
+        # Converter pixel para coordenada no sistema cartesiano
+        x = (x_pixel - offset_x) / scale
+        y = f(x)
 
-    # Desenho na tela
-    screen.fill(WHITE)
-    pygame.draw.rect(screen, RED, player)  # Desenhar o jogador
-    pygame.draw.polygon(screen, BLUE, wall_points)  # Desenhar a parede poligonal
+        # Converter coordenada cartesiana para pixel
+        y_pixel = offset_y - y * scale
 
+        # Desenhar ponto no gráfico (se estiver visível na tela)
+        if 0 <= y_pixel < height:
+            screen.set_at((x_pixel, int(y_pixel)), red)
+
+    # Atualizar a tela
     pygame.display.flip()
-    clock.tick(30)
 
+# Encerrar o Pygame
 pygame.quit()
