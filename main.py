@@ -21,6 +21,9 @@ from screens.combat import Combat
 from screens.emap import EMAp
 from screens.cutscene.intro_cutscene import IntroCutscene # Teste Brunão
 
+from classes.text.text import Text
+
+
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
     e outras opções, carregamento das informações e etc.
@@ -93,19 +96,23 @@ class Game:
                     self.game_state_manager.set_state('start')
                 if event.key == pygame.K_2:
                     with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json')) as file:
-                        yuri = json.load(file)
+                        bosses = json.load(file)
                         self.game_state_manager.set_state('combat', {
-                            "enemy": yuri
+                            "enemy": bosses['Branco']
                         })
 
     def run(self):
         while self.running:
             self.handle_events()
 
+            text_fps = Text(f'FPS: {self.clock.get_fps()}', FontManager.fonts['Gamer'], 30)
+
             game.display.fill((0, 0, 0))
 
             # Trocando de Cena
             self.game_state_manager.get_current_state().run()
+
+            text_fps.draw(self.display)
 
             # Atualizando
             pygame.display.flip()

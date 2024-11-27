@@ -14,6 +14,9 @@ from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.vector import Vector
+from classes.bosses.attacks.square_brackets import SquareBracket
+from classes.bosses.attacks.horizontal_beam import HorizontalBeam
+from classes.bosses.attacks.elimination_matrix import ElimiationMatrix
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -46,6 +49,7 @@ class Yuri(Boss):
         self.__damage = infos['damage']
         self.__defense = infos['defense']
         self.__voice = infos['voice']
+        self.__music = infos['sound']
 
         self.__attacks_dialogues = infos['attacks_dialogues']
 
@@ -54,7 +58,8 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            VectorAttack()
+            VectorAttack(self.__damage),
+            EliminationAttack(self.__damage)
         ]
         self.attack_to_execute = -1
 
@@ -63,7 +68,7 @@ class Yuri(Boss):
             FontManager.fonts['Gamer'],
             15,
             30,
-            'yuri_txt.wav'
+            self.voice
         )
         self.speaking = False
 
@@ -148,8 +153,7 @@ class Yuri(Boss):
                 self.state = 'idle'
                 self.counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
-
-    
+ 
     def take_damage(self, amount):
         self.__life = self.__life - amount*amount/(amount+self.__defense)
         SoundManager.play_sound('damage.wav')
@@ -179,10 +183,15 @@ class Yuri(Boss):
     def voice(self):
         return self.__voice
 
+    @property
+    def music(self):
+        return self.__music
+
 
 class VectorAttack(Attack):
-    def __init__(self):
+    def __init__(self, damage):
         self.__player: Heart = CombatManager.get_variable('player')
+        self.damage = damage
 
         self.vectors_group = pygame.sprite.Group()
 
@@ -214,13 +223,120 @@ class VectorAttack(Attack):
                 if self.__player.rect.colliderect(vector.rect):
                     offset = (vector.rect.x - self.__player.rect.x, vector.rect.y - self.__player.rect.y)
                     if self.__player.mask.overlap(vector.mask, offset):
-                        self.__player.take_damage(CombatManager.enemy.damage)
+                        self.__player.take_damage(self.damage)
                         if vector.type == 'Inverted':
                             self.__player.apply_effect('inverse')
                         vector.kill()
     
     def restart(self):
         self.__duration_counter = 0
+    
+    @property
+    def player(self):
+        return self.__player
+
+    @property
+    def duration(self):
+        return self.__duration
+    
+    @property
+    def duration_counter(self):
+        return self.__duration_counter
+
+
+class EliminationAttack(Attack):
+    def __init__(self, damage):
+        self.__player: Heart = CombatManager.get_variable('player')
+
+        self.container = CombatManager.get_variable('battle_container')
+
+        self.damage = damage
+
+        self.brackets_group = pygame.sprite.Group()
+
+        CombatManager.global_groups.append(self.brackets_group)
+
+        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
+        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
+
+        self.horizontal_beans_group = pygame.sprite.Group()
+
+        CombatManager.global_groups.append(self.horizontal_beans_group)
+
+        self.rows = 4  # Escolhendo qual linha o raio vai aparecer
+        self.horizontal_beams: list[HorizontalBeam] = []
+        self.horizontal_beam_creation_rate = FPS/2.4
+        self.horizontal_beam_counter = 0
+        self.row = 0
+
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
+
+        self.elimiation_matrices: list[ElimiationMatrix] = []
+
+    def run(self):
+        self.__duration_counter += 1
+        self.horizontal_beam_counter += 1
+
+        # Atualizando os colchetes
+        self.squared_bracked_to_right.update()
+        self.squared_bracked_to_left.update()
+
+        # Condições para criar um novo raio
+        if (
+        (not self.squared_bracked_to_left.animating)
+            and
+        (not self.squared_bracked_to_right.animating)
+            and
+        (self.horizontal_beam_counter >= self.horizontal_beam_creation_rate)
+        ):
+            beam1 = HorizontalBeam(self.horizontal_beans_group)
+            row = random.choice([i for i in range(self.rows+1)])
+            beam1.max_rect_height = self.container.inner_rect.height//self.rows
+            beam1.correct_center_position = (
+                self.container.inner_rect.centerx,
+                self.container.inner_rect.y + (self.container.inner_rect.height//self.rows)*row - beam1.rect.height//2
+            )
+            self.horizontal_beams.append(beam1)
+            self.elimiation_matrices.append(ElimiationMatrix(
+                'E',
+                FontManager.fonts['Gamer'],
+                beam1,
+                200
+            ))
+            
+            self.horizontal_beam_counter = 0
+
+        # Atualizando todos os raios
+        for i, beam in enumerate(self.horizontal_beams):
+            beam.update()
+            offset = (beam.rect.x - self.player.rect.x, beam.rect.y - self.player.rect.y)
+
+            if self.player.mask.overlap(beam.mask, offset) and beam.animating:
+                self.player.take_damage(self.damage)
+
+            if beam.animating and beam.alpha <= 0:
+                beam.kill()
+
+        # Desenhando o E da matriz de eliminação
+        for i, matrix_text in enumerate(self.elimiation_matrices):
+            matrix_text.update(self.squared_bracked_to_right)
+            matrix_text.draw(pygame.display.get_surface())
+            if matrix_text.finished:
+                self.elimiation_matrices.pop(i)
+
+        # Condição para quando o ataque acabar
+        if self.__duration_counter >= self.__duration:
+            self.brackets_group.empty()
+            self.horizontal_beans_group.empty()
+            self.elimiation_matrices.clear()
+            self.horizontal_beams.clear()
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+
+    def restart(self):
+        self.__duration_counter = 0
+        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
+        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
     
     @property
     def player(self):
