@@ -14,6 +14,7 @@ from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.snake import Snake
+from classes.bosses.attacks.coffee import Coffee
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -50,9 +51,8 @@ class Pinho(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            PythonAtatack()
-        #     CoffeeAttack()
-        #     WarriorsAttack()
+            PythonAtatack(),
+            CoffeeAttack()
         ]
         self.attack_to_execute = -1
 
@@ -183,21 +183,21 @@ class Pinho(Boss):
         return self.__music
 
 
-# class CoffeeAtatack(Attack):
-#     def __init__(self):
-#         self.__player: Heart = CombatManager.get_variable('player')
+class CoffeeAttack(Attack):
+    def __init__(self):
+        self.__player: Heart = CombatManager.get_variable('player')
 
-#         self.vectors_group = pygame.sprite.Group()
+        self.vectors_group = pygame.sprite.Group()
 
-#         CombatManager.global_groups.append(self.vectors_group)
+        CombatManager.global_groups.append(self.vectors_group)
 
-#         self.vectors: list[Snake] = []
-#         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
+        self.vectors: list[Coffee] = []
+        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
-#         self.__duration = FPS * 10  # O Ataque dura 10 segundos
-#         self.__duration_counter = 0
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
 
-#         # self.vectors.append(Vector(self.vectors_group))
+        # self.vectors.append(Vector(self.vectors_group))
 
 
 class PythonAtatack(Attack):
@@ -254,35 +254,3 @@ class PythonAtatack(Attack):
     @property
     def duration_counter(self):
         return self.__duration_counter
-
-
-# class WarriorsAtatack(Attack):
-#     def __init__(self):
-#         self.__player: Heart = CombatManager.get_variable('player')
-
-#         self.vectors_group = pygame.sprite.Group()
-
-#         CombatManager.global_groups.append(self.vectors_group)
-
-#         self.snakes: list[Snake] = []
-#         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
-
-#         self.__duration = FPS * 10  # O Ataque dura 10 segundos
-#         self.__duration_counter = 0
-
-#         # self.vectors.append(Vector(self.vectors_group))
-
-#     def restart(self):
-#         self.__duration_counter = 0
-    
-#     @property
-#     def player(self):
-#         return self.__player
-
-#     @property
-#     def duration(self):
-#         return self.__duration
-    
-#     @property
-#     def duration_counter(self):
-#         return self.__duration_counter
