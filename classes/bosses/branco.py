@@ -65,6 +65,7 @@ class Branco(Boss):
         self.__damage = infos['damage']
         self.__defense = infos['defense']
         self.__voice = infos['voice']
+        self.__music = infos['sound']
 
         self.__attacks_dialogues = infos['attacks_dialogues']
 
@@ -254,6 +255,9 @@ class Branco(Boss):
     def voice(self):
         return self.__voice
 
+    @property
+    def music(self):
+        return self.__music
 
 class IntegralsAttack(Attack):
     def __init__(self, damage):
