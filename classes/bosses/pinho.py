@@ -47,11 +47,11 @@ class Pinho(Boss):
         self.hp_container = BossHP()
 
         # Lista dos ataques que ele vai fazer
-        # self.__attacks = [
+        self.__attacks = [
+            PythonAtatack()
         #     CoffeeAttack()
-        #     PythonAttack()
         #     WarriorsAttack()
-        # ]
+        ]
         self.attack_to_execute = -1
 
         self.dialogue = DialogueBox(
@@ -67,6 +67,7 @@ class Pinho(Boss):
         self.__death_animation_counter = 0
         self.__death_explosions: list[Explosion] = []
         self.death_loops_counter = 255
+
     
     def speak(self):
         if not self.dead:
@@ -176,88 +177,7 @@ class Pinho(Boss):
         return self.__voice
 
 
-class CoffeeAtatack(Attack):
-    def __init__(self):
-        self.__player: Heart = CombatManager.get_variable('player')
-
-        self.vectors_group = pygame.sprite.Group()
-
-        CombatManager.global_groups.append(self.vectors_group)
-
-        self.vectors: list[Snake] = []
-        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
-
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
-        self.__duration_counter = 0
-
-        # self.vectors.append(Vector(self.vectors_group))
-
-
-class PythonAtatack(Attack):
-    def __init__(self):
-        self.__player: Heart = CombatManager.get_variable('player')
-
-        self.vectors_group = pygame.sprite.Group()
-
-        CombatManager.global_groups.append(self.vectors_group)
-
-        self.vectors: list[Snake] = []
-        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
-
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
-        self.__duration_counter = 0
-
-        # self.vectors.append(Vector(self.vectors_group))
-
-    def restart(self):
-        self.__duration_counter = 0
-
-    @property
-    def player(self):
-        return self.__player
-
-    @property
-    def duration(self):
-        return self.__duration
-
-    @property
-    def duration_counter(self):
-        return self.__duration_counter
-
-
-class WarriorsAtatack(Attack):
-    def __init__(self):
-        self.__player: Heart = CombatManager.get_variable('player')
-
-        self.vectors_group = pygame.sprite.Group()
-
-        CombatManager.global_groups.append(self.vectors_group)
-
-        self.vectors: list[Snake] = []
-        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
-
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
-        self.__duration_counter = 0
-
-        # self.vectors.append(Vector(self.vectors_group))
-
-    def restart(self):
-        self.__duration_counter = 0
-    
-    @property
-    def player(self):
-        return self.__player
-
-    @property
-    def duration(self):
-        return self.__duration
-    
-    @property
-    def duration_counter(self):
-        return self.__duration_counter
-
-
-# class VectorAttack(Attack):
+# class CoffeeAtatack(Attack):
 #     def __init__(self):
 #         self.__player: Heart = CombatManager.get_variable('player')
 
@@ -265,7 +185,7 @@ class WarriorsAtatack(Attack):
 
 #         CombatManager.global_groups.append(self.vectors_group)
 
-#         self.vectors: list[Vector] = []
+#         self.vectors: list[Snake] = []
 #         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
 
 #         self.__duration = FPS * 10  # O Ataque dura 10 segundos
@@ -273,29 +193,79 @@ class WarriorsAtatack(Attack):
 
 #         # self.vectors.append(Vector(self.vectors_group))
 
-#     def run(self):
-#         self.__duration_counter += 1
 
-#         if self.__duration_counter % self.vectors_creation_rate == 0:
-#             self.vectors.append(Vector(self.vectors_group))
+class PythonAtatack(Attack):
+    def __init__(self):
+        self.__player: Heart = CombatManager.get_variable('player')
+
+        self.snakes_group = pygame.sprite.Group()
+
+        CombatManager.global_groups.append(self.snakes_group)
+
+        self.snakes: list[Snake] = []
+        self.snakes_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
+
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
+
+        # self.snakes.append(Vector(self.vectors_group))
+
+    def run(self):
+            self.__duration_counter += 1
+
+            if self.__duration_counter % self.snakes_creation_rate == 0:
+                self.snakes.append(Snake(self.snakes_group))
+            
+            if self.__duration_counter >= self.__duration:
+                pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+                self.snakes_group.empty()
+            
+            for snake in self.snakes:
+                snake.update(player_center=self.player.rect.center)
+            
+            for snake in self.snakes_group:
+                if self.__player != snake:
+                    if self.__player.rect.colliderect(snake.rect):
+                        offset = (snake.rect.x - self.__player.rect.x, snake.rect.y - self.__player.rect.y)
+                        if self.__player.mask.overlap(snake.mask, offset):
+                            self.__player.take_damage(CombatManager.enemy.damage)
+                            if snake.type == 'Vanished':
+                                self.__player.apply_effect('vanished')
+                            snake.kill()
         
-#         if self.__duration_counter >= self.__duration:
-#             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-#             self.vectors_group.empty()
-        
-#         for vector in self.vectors:
-#             vector.update(player_center=self.player.rect.center)
-        
-#         for vector in self.vectors_group:
-#             if self.__player != vector:
-#                 if self.__player.rect.colliderect(vector.rect):
-#                     offset = (vector.rect.x - self.__player.rect.x, vector.rect.y - self.__player.rect.y)
-#                     if self.__player.mask.overlap(vector.mask, offset):
-#                         self.__player.take_damage(CombatManager.enemy.damage)
-#                         if vector.type == 'Inverted':
-#                             self.__player.apply_effect('inverse')
-#                         vector.kill()
-    
+
+    def restart(self):
+        self.__duration_counter = 0
+
+    @property
+    def player(self):
+        return self.__player
+
+    @property
+    def duration(self):
+        return self.__duration
+
+    @property
+    def duration_counter(self):
+        return self.__duration_counter
+
+
+# class WarriorsAtatack(Attack):
+#     def __init__(self):
+#         self.__player: Heart = CombatManager.get_variable('player')
+
+#         self.vectors_group = pygame.sprite.Group()
+
+#         CombatManager.global_groups.append(self.vectors_group)
+
+#         self.snakes: list[Snake] = []
+#         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
+
+#         self.__duration = FPS * 10  # O Ataque dura 10 segundos
+#         self.__duration_counter = 0
+
+#         # self.vectors.append(Vector(self.vectors_group))
+
 #     def restart(self):
 #         self.__duration_counter = 0
     

@@ -3,7 +3,6 @@ import os
 import random
 import math
 import numpy as np
-import time
 
 from config import *
 from config.combatmanager import CombatManager
@@ -53,7 +52,7 @@ class Snake(pygame.sprite.Sprite):
         self.counter = 0
 
         self.speed = 7
-        SoundManager.play_sound('spearappear.wav')
+        SoundManager.play_sound('snake.wav')
     
     def point_to_center(self):
         pass
@@ -129,4 +128,4 @@ class Snake(pygame.sprite.Sprite):
             self.player_rect.centery - self.rect.centery
         ])
         self.vector_pointing_to_player = self.vector_pointing_to_player / np.linalg.norm(self.vector_pointing_to_player)
-        SoundManager.play_sound('arrow.wav')
+        SoundManager.play_sound('snake.wav')

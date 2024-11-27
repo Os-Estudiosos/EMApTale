@@ -89,7 +89,7 @@
         {
             "label": "Oferecer Café",
             "responses": [
-                "Ele disse que ama café, mas que não aceita nada de alunos. Contudo, agradeu a gentileza!",
+                "Ele disse que ama café, mas que não aceita nada de alunos. Contudo, agradeceu a gentileza!",
                 "A defesa de Pinho diminuiu!"
             ],
             "effect": "-defense"

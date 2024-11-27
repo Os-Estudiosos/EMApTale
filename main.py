@@ -95,7 +95,7 @@ class Game:
                     with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json'), 'r', encoding='utf-8') as file:
                         bosses = json.load(file)
                         self.game_state_manager.set_state('combat', {
-                            "enemy": bosses.get("Yuri")
+                            "enemy": bosses.get("Pinho")
                         })
 
     def run(self):
