@@ -3,6 +3,8 @@ import os
 import random
 import math
 
+import pygame.draw_py
+
 from config import *
 from config.eventmanager import EventManager
 from config.combatmanager import CombatManager
@@ -70,7 +72,6 @@ class Pinho(Boss):
         self.__death_explosions: list[Explosion] = []
         self.death_loops_counter = 255
 
-    
     def speak(self):
         if not self.dead:
             self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
@@ -189,10 +190,11 @@ class CoffeeAttack(Attack):
         self.__duration_counter = 0
         self.__duration = FPS*10
 
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
+
     def run(self):
         self.__duration_counter += 1
-
-        pass
 
     def restart(self):
         self.__duration_counter = 0
