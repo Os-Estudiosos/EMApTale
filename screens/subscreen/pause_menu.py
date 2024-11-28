@@ -1,15 +1,18 @@
 import pygame
 import os
+
 from screens import State
 from config import *
 from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
+from config.eventmanager import EventManager
+from config.globalmanager import GlobalManager
 
 from classes.text.text import Text
 
 
-class Options(State):
+class PauseMenu(State):
     def __init__(
         self,
         name: str,
@@ -25,17 +28,40 @@ class Options(State):
         # Opções do Menu
         self.menu_options = [
             {
-                'label': Text('VOLUME', FontManager.fonts['Gamer'], 50),
-                'func': lambda: print('Volume')
+                'label': Text('CONTINUAR JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: GlobalManager.resume()
             },
             {
-                'label': Text('VOLTAR', FontManager.fonts['Gamer'], 50),
-                'func': lambda: GameStateManager.go_back()
+                'label': Text('SALVAR O JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: print("Salvando o Jogo")
+            },
+            {
+                'label': Text('CONFIGURAÇÕES', FontManager.fonts['Gamer'], 50),
+                'func': lambda: GameStateManager.set_state('options')
+            },
+            {
+                'label': Text('MENU PRINCIPAL', FontManager.fonts['Gamer'], 50),
+                'func': lambda: GameStateManager.set_state('start')
+            },
+            {
+                'label': Text('SAIR DO JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: pygame.quit()
             }
         ]
         self.selected_option = 0  # Opção que está selecionada
         self.option_measures = [500, 105]  # Medidas de cada Opção
         self.display_info = pygame.display.Info()  # Informações sobre a tela
+
+        self.auxiliar_surface = pygame.Surface((
+            self.display_info.current_w,
+            self.display_info.current_h
+        ), pygame.SRCALPHA)
+
+        self.background = pygame.Surface(
+            self.auxiliar_surface.get_size(),
+            pygame.SRCALPHA
+        )
+        self.background.fill((0,0,0,200))
 
         # Informações sobre o cursor que marca qual a opção selecionada
         self.cursor_icon = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')), 1.5)
@@ -48,10 +74,7 @@ class Options(State):
         self.entered_holding_confirm_button = False
     
     def on_first_execution(self):
-        # Checo se ele não iniciou a cena segurando o botão de confirmar
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RETURN] or keys[pygame.K_z]:
-            self.entered_holding_confirm_button = True
+        pass
 
     def move_cursor(self, increment):
         if self.selected_option + increment >= len(self.menu_options):
@@ -66,28 +89,20 @@ class Options(State):
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
-        
-        keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_DOWN] and not self.cursor_trying_to_move:  # Se eu apertar pra baixo
-            self.move_cursor(1)  # Movo uma opção pra baixo
-            self.cursor_trying_to_move = True
-            SoundManager.play_sound('select.wav')
-        elif keys[pygame.K_UP] and not self.cursor_trying_to_move:  # Se eu apertar para cima
-            self.move_cursor(-1)  # Movo uma opção pra cima
-            self.cursor_trying_to_move = True
-            SoundManager.play_sound('select.wav')
+        self.__display.blit(self.auxiliar_surface, self.auxiliar_surface.get_rect())
+        self.__display.blit(self.background, self.background.get_rect())
 
-        if (keys[pygame.K_z] or keys[pygame.K_RETURN]) and not self.entered_holding_confirm_button:  # Se eu apertar enter em alguma opção
-            self.menu_options[self.selected_option]['func']()
-
-        # Se ele estiver segurando o botão quando entrou na cena, ao soltar, podera clicar nas opções
-        if not keys[pygame.K_z] and not keys[pygame.K_RETURN]:
-            self.entered_holding_confirm_button = False
-        
-        # Só deixo mover o cursor se eu soltar a tecla e apertar de novo
-        if not keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
-            self.cursor_trying_to_move = False
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    self.move_cursor(1)  # Movo uma opção pra baixo
+                    SoundManager.play_sound('select.wav')
+                if event.key == pygame.K_UP:
+                    self.move_cursor(-1)  # Movo uma opção pra cima
+                    SoundManager.play_sound('select.wav')
+                if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                    self.menu_options[self.selected_option]['func']()
 
         self.cursor_rect.center = (  # Mexo o centro do cursor
             self.menu_options[self.selected_option]['label'].rect.center[0] + 300,  # Matemática para mexer o cursor
@@ -115,7 +130,7 @@ class Options(State):
 
     @property
     def display(self):
-        return self.display
+        return self.__display
     
     @property
     def name(self):

@@ -15,6 +15,15 @@ class GlobalManager:
     items = []
     groups = {}
     camera: Camera = None
+    paused = False
+
+    @classmethod
+    def pause(cls):
+        cls.paused = True
+    
+    @classmethod
+    def resume(cls):
+        cls.paused = False
 
     @classmethod
     def set_camera(cls, camera_instance):

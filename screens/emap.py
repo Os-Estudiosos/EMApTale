@@ -6,11 +6,14 @@ from screens import State
 from config import *
 from config.savemanager import SaveManager
 from config.globalmanager import GlobalManager
+from config.eventmanager import EventManager
 
 from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
 from classes.map.camera import Camera
 from classes.frisk import Frisk
+
+from screens.subscreen.pause_menu import PauseMenu
 
 class EMAp(State):
     def __init__(self, name, display):
@@ -56,11 +59,14 @@ class EMAp(State):
             self.__display.get_height() - new_height        # Posiciona no rodapé
         ))
 
+        self.pause_menu = PauseMenu('pause_menu', self.__display)
+
     def on_first_execution(self):
         SaveManager.load()
         GlobalManager.load_infos()
         self.map_loader.load_items()
         self.map_loaded = True
+        GlobalManager.paused = False
 
     def run(self):
         if not self.__execution_counter > 0:
@@ -80,7 +86,6 @@ class EMAp(State):
         renderables = self.map_loader.get_renderables(self.player)
         renderables = self.camera.apply_ysort(renderables)
 
-        self.items_group.update()
         self.items_group.draw(self.__display)
 
         # Renderiza os objetos na ordem correta
@@ -91,14 +96,24 @@ class EMAp(State):
                 image.draw(self.__display, self.camera)
 
         # Captura eventos e gerencia interações
-        self.interaction_manager.check_interaction()
         self.interaction_manager.handle_interaction()
         self.interaction_manager.render_interaction(self.__display)
 
-        # Atualiza a movimentação do jogador
-        if not self.interaction_manager.dynamic_text:
-            keys = pygame.key.get_pressed()
-            self.player.move(self.camera, keys)
+        # Checando se pausou
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    GlobalManager.paused = not GlobalManager.paused
+
+        # ====== UPDATES DO CENÁRIO =====
+        if not GlobalManager.paused:
+            self.interaction_manager.check_interaction()
+            self.items_group.update()
+            if not self.interaction_manager.dynamic_text:
+                keys = pygame.key.get_pressed()
+                self.player.move(self.camera, keys)
+        else:
+            self.pause_menu.run()
 
         # Atualiza a tela
         pygame.display.flip()

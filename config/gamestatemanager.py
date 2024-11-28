@@ -5,6 +5,7 @@ class GameStateManager:
     """
     states: dict[str, State] = {}  # Dicionário de todos os cenários
     current_state = 'start'  # Cenário que está rodando agora
+    previous_state = None
     
     @classmethod
     def get_current_state_name(cls) -> str:
@@ -25,6 +26,10 @@ class GameStateManager:
         return cls.states[cls.current_state]
 
     @classmethod
+    def go_back(cls):
+        cls.set_state(cls.previous_state)
+
+    @classmethod
     def set_state(cls, current_state: str, variables: dict = {}) -> None:
         """Função que altera o cenário atual de acordo com o nome que eu passar
 
@@ -38,6 +43,7 @@ class GameStateManager:
         if current_state not in cls.states.keys():
             raise KeyError('Você forneceu um nome de cenário que não está no dicionário geral')
         cls.get_current_state().on_last_execution()
+        cls.previous_state =  cls.current_state
         cls.current_state = current_state
         cls.get_current_state().variables = variables
 

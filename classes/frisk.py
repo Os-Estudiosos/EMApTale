@@ -77,8 +77,6 @@ class Frisk(Player):
             self.direction = 2  # Cima
 
     def move(self, camera, keys):
-        old_rect = self.rect.copy()
-
         direction = pygame.math.Vector2(
             sign((keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) or (keys[pygame.K_d] - keys[pygame.K_a])),
             sign((keys[pygame.K_DOWN] - keys[pygame.K_UP]) or (keys[pygame.K_s] - keys[pygame.K_w]))

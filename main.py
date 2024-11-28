@@ -53,7 +53,7 @@ class Game:
         self.Menu = Start('start', self.display)
         self.NewGameConfirmation = NewGameConfirmation('new_game_confirmation', self.display)
         self.NewName = NewName('new_name', self.display)
-        # self.Options = Options('options', self.display, GameStateManager)
+        self.Options = Options('options', self.display)
         # Considereando em tirar o menu de opções (Não há muitas opções, só volume)
 
         # Cenas mais genéricas
@@ -69,7 +69,7 @@ class Game:
             'start': self.Menu,
             'new_game_confirmation': self.NewGameConfirmation,
             'new_name': self.NewName,
-            # 'options': self.Options,
+            'options': self.Options,
 
             # Cenas das Cutscenes
             'intro_cutscene': self.IntroCutscene,
