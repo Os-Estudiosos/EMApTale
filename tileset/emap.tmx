@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="1278">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="17" nextobjectid="1281">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -503,6 +503,22 @@
     <property name="day" type="int" value="4"/>
     <property name="value" value="Por favor que não caia lagrange"/>
    </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="16" name="Objs">
+  <object id="1278" name="Caneta" type="Item" x="348.18" y="230.028">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="pen"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1279" name="Teste" type="Item" x="2141.91" y="226.91">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="test"/>
+   </properties>
+   <point/>
   </object>
  </objectgroup>
 </map>

@@ -8,6 +8,8 @@
     },
     {
         "id": "pen",
+        "sprite": "pen.png",
+        "scale": 1.1,
         "name": "Caneta",
         "type": "weapon",
         "damage": "10",
@@ -15,6 +17,8 @@
     },
     {
         "id": "test",
+        "sprite": "test.png",
+        "scale": 1,
         "name": "Simulado",
         "type": "weapon",
         "damage": "15",

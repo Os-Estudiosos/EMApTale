@@ -1,10 +1,10 @@
 import pygame
 from classes.polygon.polygon import Polygon
 
-class Camera:
+class Camera(pygame.sprite.Group):
     """Controla a área visível do mapa em relação ao jogador
     """
-    def __init__(self, map_width, map_height, screen_width, screen_height):
+    def __init__(self, map_width, map_height, screen_width, screen_height, *sprites):
         """Inicializa a câmera com as dimensões do mapa e da tela
 
         Args:
@@ -13,6 +13,7 @@ class Camera:
             screen_width (int): Largura da tela de exibição
             screen_height (int): Altura da tela de exibição
         """
+        super().__init__(*sprites)
         self.map_width = map_width
         self.map_height = map_height
         self.screen_width = screen_width
@@ -38,8 +39,13 @@ class Camera:
             (y, image, self.apply(rect)) for y, image, rect in renderables
         ]
 
-    def update(self, target_rect: pygame.Rect):
+    def update(self, target_rect: pygame.Rect, *args, **kwargs):
         """Atualiza a posição da câmera em relação ao jogador, otimizando os cálculos."""
+        super().update(*args, **kwargs)
+
+        for sprite in self.sprites():
+            sprite.rect = self.apply(sprite.original_rect)
+
         x = target_rect.centerx - self.screen_width // 2
         y = target_rect.centery - self.screen_height // 2
 

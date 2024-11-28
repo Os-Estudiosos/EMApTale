@@ -3,6 +3,7 @@ import os
 
 from screens import State
 
+from config import *
 from config.savemanager import SaveManager
 from config.globalmanager import GlobalManager
 
@@ -18,8 +19,11 @@ class EMAp(State):
         self.__display: pygame.Surface = display
         self.__execution_counter = 0
 
+        self.items_group = pygame.sprite.Group()
+        GlobalManager.groups['items'] = self.items_group
+
         # Inicializa o loader do mapa
-        self.map_loader = MapLoader(os.path.join('tileset', 'emap.tmx'))
+        self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loaded = False
 
         # Inicializa o jogador
@@ -29,10 +33,11 @@ class EMAp(State):
         map_width, map_height = self.map_loader.get_size()
         screen_width, screen_height = self.__display.get_size()
         self.camera = Camera(map_width, map_height, screen_width, screen_height)
+        GlobalManager.set_camera(self.camera)
 
         # Inicializa o InteractionManager
-        chatbox = pygame.image.load(os.path.join('sprites', 'hud', 'chatbox.png'))
-        tecla_z_image = pygame.image.load(os.path.join('sprites', 'hud', 'tecla_z.png'))
+        chatbox = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'chatbox.png'))
+        tecla_z_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'tecla_z.png'))
 
         # Redimensiona a chatbox
         new_width = chatbox.get_width() + 1100  # Ajuste personalizado
@@ -51,12 +56,10 @@ class EMAp(State):
             self.__display.get_height() - new_height        # Posiciona no rodapé
         ))
 
-        # Grupo dos NPC
-        self.npc_group = pygame.sprite.Group()
-
     def on_first_execution(self):
         SaveManager.load()
         GlobalManager.load_infos()
+        self.map_loader.load_items()
         self.map_loaded = True
 
     def run(self):
@@ -71,11 +74,14 @@ class EMAp(State):
         self.camera.update(self.player.rect)
 
         # Renderiza os tiles do mapa
-        self.map_loader.render_with_vector(self.__display, self.camera, self.map_loader.offset_vector)
+        self.map_loader.render_with_vector(self.__display, self.camera, MAP_OFFSET_VECTOR)
 
         # Coleta e ordena os objetos renderizáveis (incluindo o jogador)
         renderables = self.map_loader.get_renderables(self.player)
         renderables = self.camera.apply_ysort(renderables)
+
+        self.items_group.update()
+        self.items_group.draw(self.__display)
 
         # Renderiza os objetos na ordem correta
         for _, image, rect in renderables:
