@@ -51,8 +51,8 @@ class Pinho(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            PythonAtatack(),
-            #CoffeeAttack()
+            #PythonAtatack(),
+            CoffeeAttack()
         ]
         self.attack_to_execute = -1
 
@@ -183,21 +183,31 @@ class Pinho(Boss):
         return self.__music
 
 
-# class CoffeeAttack(Attack):
-#     def __init__(self):
-#         self.__player: Heart = CombatManager.get_variable('player')
+class CoffeeAttack(Attack):
+    def __init__(self):
+        self.__player: Heart = CombatManager.get_variable('player')
+        self.__duration_counter = 0
+        self.__duration = FPS*10
 
-#         self.vectors_group = pygame.sprite.Group()
+    def run(self):
+        self.__duration_counter += 1
 
-#         CombatManager.global_groups.append(self.vectors_group)
+        pass
 
-#         self.vectors: list[Coffee] = []
-#         self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
+    def restart(self):
+        self.__duration_counter = 0
 
-#         self.__duration = FPS * 10  # O Ataque dura 10 segundos
-#         self.__duration_counter = 0
+    @property
+    def player(self):
+        return self.__player
 
-#         # self.vectors.append(Vector(self.vectors_group))
+    @property
+    def duration(self):
+        return self.__duration
+
+    @property
+    def duration_counter(self):
+        return self.__duration_counter
 
 
 class PythonAtatack(Attack):
@@ -217,29 +227,28 @@ class PythonAtatack(Attack):
         # self.snakes.append(Vector(self.vectors_group))
 
     def run(self):
-            self.__duration_counter += 1
+        self.__duration_counter += 1
 
-            if self.__duration_counter % self.snakes_creation_rate == 0:
-                self.snakes.append(Snake(self.snakes_group))
-            
-            if self.__duration_counter >= self.__duration:
-                pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-                self.snakes_group.empty()
-            
-            for snake in self.snakes:
-                snake.update(player_center=self.player.rect.center)
-            
-            for snake in self.snakes_group:
-                if self.__player != snake:
-                    if self.__player.rect.colliderect(snake.rect):
-                        offset = (snake.rect.x - self.__player.rect.x, snake.rect.y - self.__player.rect.y)
-                        if self.__player.mask.overlap(snake.mask, offset):
-                            self.__player.take_damage(CombatManager.enemy.damage)
-                            if snake.type == 'Vanished':
-                                self.__player.apply_effect('vanished')
-                            snake.kill()
+        if self.__duration_counter % self.snakes_creation_rate == 0:
+            self.snakes.append(Snake(self.snakes_group))
         
-
+        if self.__duration_counter >= self.__duration:
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+            self.snakes_group.empty()
+        
+        for snake in self.snakes:
+            snake.update(player_center=self.player.rect.center)
+        
+        for snake in self.snakes_group:
+            if self.__player != snake:
+                if self.__player.rect.colliderect(snake.rect):
+                    offset = (snake.rect.x - self.__player.rect.x, snake.rect.y - self.__player.rect.y)
+                    if self.__player.mask.overlap(snake.mask, offset):
+                        self.__player.take_damage(CombatManager.enemy.damage)
+                        if snake.type == 'Vanished':
+                            self.__player.apply_effect('vanished')
+                        snake.kill()
+        
     def restart(self):
         self.__duration_counter = 0
 
