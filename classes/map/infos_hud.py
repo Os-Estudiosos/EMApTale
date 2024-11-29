@@ -103,6 +103,11 @@ class InfosHud:
         self.result_rect = self.result_sprite.get_rect()
         self.result_rect.y = self.display.get_height()/self.result_sprite_scale_dict['y']
         self.result_rect.x = self.display.get_width()/self.result_sprite_scale_dict['x']
+
+        # Informações para o inventário
+        self.items_per_page = 10
+        self.items_per_column = 5
+        self.page = 0
     
     def move_cursor(self, increment):
         self.wich_one_cursor_is_on = (self.wich_one_cursor_is_on+increment)%len(self.options)
@@ -139,6 +144,23 @@ class InfosHud:
 
         if self.option_selected:
             self.display.blit(self.result_sprite, self.result_rect)
+
+        column = 0
+        if self.option_selected == 'inventory':  # Se eu selecionar inventário
+            for i in range(self.items_per_page):
+                if i >= self.items_per_column:
+                    column = 1
+                
+                if (i+self.items_per_page*self.page) >= len(Player.inventory):
+                    break
+                    
+                item = Player.inventory[(i+self.items_per_page*self.page)]
+                item_text = Text(f'{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+
+                item_text.rect.x = self.result_rect.x + 10*abs(column-1) + self.result_rect.width*column/2 + (1 - 2 * column)*self.cursor_rect.width
+                item_text.rect.y = self.result_rect.y + item_text.rect.height*(i%self.items_per_column) + 30
+
+                item_text.draw(self.display)
         
         for i, option in enumerate(self.options):
             option['label'].draw(self.display)
