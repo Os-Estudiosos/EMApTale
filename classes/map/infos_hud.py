@@ -1,5 +1,6 @@
 import pygame
 import os
+import math
 
 from config import *
 from config.globalmanager import GlobalManager
@@ -105,17 +106,31 @@ class InfosHud:
         self.result_rect.x = self.display.get_width()/self.result_sprite_scale_dict['x']
 
         # Informações para o inventário
-        self.items_per_page = 10
-        self.items_per_column = 5
+        self.inventory_items = [
+            Text(f'{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())) for item in Player.inventory
+        ]
+
+        self.items_per_column = math.floor(self.result_rect.height // self.inventory_items[0].rect.height)-3
+        self.items_per_page = self.items_per_column*2
         self.page = 0
+        self.selected_item = 0
     
     def move_cursor(self, increment):
-        self.wich_one_cursor_is_on = (self.wich_one_cursor_is_on+increment)%len(self.options)
+        if self.option_selected == 'inventory':
+            self.selected_item = (self.selected_item+increment)%len(self.inventory_items)
+            self.page = math.floor(self.selected_item/(self.items_per_page))
+        if not self.option_selected:
+            self.wich_one_cursor_is_on = (self.wich_one_cursor_is_on+increment)%len(self.options)
 
     def update(self):
         # Atualizando a posição do cursor
-        self.cursor_rect.left = self.options[self.wich_one_cursor_is_on]['label'].rect.right
-        self.cursor_rect.centery = self.options[self.wich_one_cursor_is_on]['label'].rect.centery
+        if not self.option_selected:
+            self.cursor_rect.left = self.options[self.wich_one_cursor_is_on]['label'].rect.right
+            self.cursor_rect.centery = self.options[self.wich_one_cursor_is_on]['label'].rect.centery
+        
+        if self.option_selected == 'inventory':
+            self.cursor_rect.left = self.inventory_items[self.selected_item].rect.right
+            self.cursor_rect.centery = self.inventory_items[self.selected_item].rect.centery
 
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
@@ -137,8 +152,6 @@ class InfosHud:
         self.display.blit(self.stats_sprite, self.stats_rect)
         self.display.blit(self.options_sprite, self.options_rect)
 
-        self.display.blit(self.cursor_icon, self.cursor_rect)
-
         for status in self.status_texts:
             status.draw(self.display)
 
@@ -153,9 +166,8 @@ class InfosHud:
                 
                 if (i+self.items_per_page*self.page) >= len(Player.inventory):
                     break
-                    
-                item = Player.inventory[(i+self.items_per_page*self.page)]
-                item_text = Text(f'{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+                  
+                item_text = self.inventory_items[(i+self.items_per_page*self.page)]
 
                 item_text.rect.x = self.result_rect.x + 10*abs(column-1) + self.result_rect.width*column/2 + (1 - 2 * column)*self.cursor_rect.width
                 item_text.rect.y = self.result_rect.y + item_text.rect.height*(i%self.items_per_column) + 30
@@ -164,3 +176,5 @@ class InfosHud:
         
         for i, option in enumerate(self.options):
             option['label'].draw(self.display)
+
+        self.display.blit(self.cursor_icon, self.cursor_rect)
