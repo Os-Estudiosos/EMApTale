@@ -16,6 +16,7 @@ class GlobalManager:
     groups = {}
     camera: Camera = None
     paused = False
+    on_inventory = False
 
     @classmethod
     def pause(cls):

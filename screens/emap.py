@@ -12,6 +12,7 @@ from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
 from classes.map.camera import Camera
 from classes.frisk import Frisk
+from classes.map.infos_hud import InfosHud
 
 from screens.subscreen.pause_menu import PauseMenu
 
@@ -61,11 +62,16 @@ class EMAp(State):
 
         self.pause_menu = PauseMenu('pause_menu', self.__display)
 
+        GlobalManager.on_inventory = False
+        self.infos_hud: InfosHud = None
+
     def on_first_execution(self):
         SaveManager.load()
         GlobalManager.load_infos()
+        self.player.load_infos()
         self.map_loader.load_items()
         self.map_loaded = True
+        self.infos_hud = InfosHud()
         GlobalManager.paused = False
 
     def run(self):
@@ -104,16 +110,23 @@ class EMAp(State):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     GlobalManager.paused = not GlobalManager.paused
+                if event.key == pygame.K_e:
+                    GlobalManager.on_inventory = not GlobalManager.on_inventory
 
         # ====== UPDATES DO CENÁRIO =====
-        if not GlobalManager.paused:
+        # Se o jogo não estiver pausado nem estiver no inventário
+        if not GlobalManager.paused and not GlobalManager.on_inventory:
             self.interaction_manager.check_interaction()
             self.items_group.update()
             if not self.interaction_manager.dynamic_text:
                 keys = pygame.key.get_pressed()
                 self.player.move(self.camera, keys)
         else:
-            self.pause_menu.run()
+            if GlobalManager.paused:  # Se o jogo estiver pausado
+                self.pause_menu.run()
+            elif GlobalManager.on_inventory:  # Se o jogador estiver no inventário
+                self.infos_hud.update()
+                self.infos_hud.draw()
 
         # Atualiza a tela
         pygame.display.flip()

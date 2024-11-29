@@ -10,6 +10,7 @@ from classes.inventory import Inventory
 class Player(pygame.sprite.Sprite):
     # Definindo as variáveis do Player
     inventory = Inventory()
+    level = 1
     life = 0
     max_life = 0
     name = ''
