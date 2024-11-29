@@ -12,7 +12,8 @@ class CDynamicText:
         text_size: int = 12,
         max_length: float = 0,
         position: tuple[float] = (0, 0),
-        color: pygame.Color = (255, 255, 255)
+        color: pygame.Color = (255, 255, 255),
+        sound = None,
     ):
         """Inicialização da classe"""
         self.words = text.split()  # Divide o texto em palavras

@@ -9,6 +9,7 @@ from config.eventmanager import EventManager
 from config.soundmanager import SoundManager
 
 from classes.text.text import Text
+from classes.text.dynamic_text import DynamicText
 
 from classes.player import Player
 
@@ -109,16 +110,36 @@ class InfosHud:
         self.inventory_items = [
             Text(f'{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())) for item in Player.inventory
         ]
+        self.inventory_actions = [
+            {
+                'text': Text(f'USAR', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                'action': lambda: print('a')
+            },
+            {
+                'text': Text(f'INFO', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                'action': lambda: print('b')
+            },
+            {
+                'text': Text(f'DROPAR', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                'action': lambda: print('c')
+            }
+        ]
+
+        self.wich_inventory_action = 0
 
         self.items_per_column = math.floor(self.result_rect.height // self.inventory_items[0].rect.height)-3
         self.items_per_page = self.items_per_column*2
         self.page = 0
         self.selected_item = 0
+        self.item_is_selected = False  # Quando eu aperto enter e seleciono um item
     
     def move_cursor(self, increment):
         if self.option_selected == 'inventory':
-            self.selected_item = (self.selected_item+increment)%len(self.inventory_items)
-            self.page = math.floor(self.selected_item/(self.items_per_page))
+            if not self.item_is_selected:
+                self.selected_item = (self.selected_item+increment)%len(self.inventory_items)
+                self.page = math.floor(self.selected_item/(self.items_per_page))
+            else:
+                self.wich_inventory_action = (self.wich_inventory_action+increment)%len(self.inventory_actions)
         if not self.option_selected:
             self.wich_one_cursor_is_on = (self.wich_one_cursor_is_on+increment)%len(self.options)
 
@@ -127,26 +148,69 @@ class InfosHud:
         if not self.option_selected:
             self.cursor_rect.left = self.options[self.wich_one_cursor_is_on]['label'].rect.right
             self.cursor_rect.centery = self.options[self.wich_one_cursor_is_on]['label'].rect.centery
-        
-        if self.option_selected == 'inventory':
-            self.cursor_rect.left = self.inventory_items[self.selected_item].rect.right
-            self.cursor_rect.centery = self.inventory_items[self.selected_item].rect.centery
 
-        for event in EventManager.events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    self.move_cursor(1)  # Movo uma opção pra baixo
-                    SoundManager.play_sound('squeak.wav')
-                if event.key == pygame.K_UP:
-                    self.move_cursor(-1)  # Movo uma opção pra cima
-                    SoundManager.play_sound('squeak.wav')
-                if event.key == pygame.K_z or event.key == pygame.K_RETURN:
-                    self.option_selected = self.options[self.wich_one_cursor_is_on]['value']
-                if event.key == pygame.K_x or event.key == pygame.K_BACKSPACE:
-                    if self.option_selected:
-                        self.option_selected = None
-                    else:
-                        GlobalManager.on_inventory = False
+
+        if self.option_selected == 'inventory':
+            # Atualizando a posição do texto que indica as ações que pode fazer com um item
+            for i in range(len(self.inventory_actions)):
+                opt = self.inventory_actions[i]['text']
+                opt.rect.x = self.result_rect.width//(len(self.inventory_actions)+1)*i + self.result_rect.x + 30
+                opt.rect.bottom = self.result_rect.bottom - 30
+            
+            if not self.item_is_selected:
+                self.cursor_rect.right = self.inventory_items[self.selected_item].rect.left
+                self.cursor_rect.centery = self.inventory_items[self.selected_item].rect.centery
+
+            if self.item_is_selected:
+                self.cursor_rect.left = self.inventory_actions[self.wich_inventory_action]['text'].rect.right
+                self.cursor_rect.centery = self.inventory_actions[self.wich_inventory_action]['text'].rect.centery
+
+        for event in EventManager.events:  # Analiso todos os eventos
+            if event.type == pygame.KEYDOWN:  # Se o evento for tecla apertada
+                if self.item_is_selected:  # Se eu estiver lidando com um item que selecionei
+                    ################## Posso ir para a esquerda ou direita nas opções
+                    if event.key == pygame.K_LEFT and self.item_is_selected:
+                        self.move_cursor(-1)
+                        SoundManager.play_sound('squeak.wav')
+                    if event.key == pygame.K_RIGHT and self.item_is_selected:
+                        self.move_cursor(1)
+                        SoundManager.play_sound('squeak.wav')
+                    ##################
+                    ################## Se eu selecionar o item
+                    if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                        print('aaaaa')
+                    ##################
+                    ################## Se eu cancelar a seleção
+                    if event.key == pygame.K_x or event.key == pygame.K_BACKSPACE:
+                        self.item_is_selected = False
+                    ##################
+                else:  ################## Se não for um item
+                    ##################  Movo a opção pra baixo
+                    if event.key == pygame.K_DOWN:
+                        self.move_cursor(1)  # Movo uma opção pra baixo
+                        SoundManager.play_sound('squeak.wav')
+                    ##################  Movo para cima
+                    if event.key == pygame.K_UP:
+                        self.move_cursor(-1)  # Movo uma opção pra cima
+                        SoundManager.play_sound('squeak.wav')
+                    ##################  Seleciono a opção
+                    if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                        ## Se eu estiver no inventário
+                        if self.option_selected == 'inventory':
+                            self.item_is_selected = True  # Eu selecionei um item
+                            SoundManager.play_sound('item.wav')
+
+                        ## Se eu estiver nas opções iniciais
+                        if not self.option_selected:
+                            ## Eu indico se eu selecionei o inventário ou os status
+                            self.option_selected = self.options[self.wich_one_cursor_is_on]['value']
+                            SoundManager.play_sound('select.wav')
+                    ## Se eu aperei para cancelar alguma seleção
+                    if event.key == pygame.K_x or event.key == pygame.K_BACKSPACE:
+                        if self.option_selected:  # Se eu tiver selecionado qualquer opção
+                            self.option_selected = None  # Eu a cancelo
+                        else:  # Do contrário
+                            GlobalManager.on_inventory = False  # Eu saio do inventário (Menu de HUD)
 
     def draw(self):
         self.display.blit(self.stats_sprite, self.stats_rect)
@@ -160,6 +224,7 @@ class InfosHud:
 
         column = 0
         if self.option_selected == 'inventory':  # Se eu selecionar inventário
+            # Desenhando os itens que estão no inventário
             for i in range(self.items_per_page):
                 if i >= self.items_per_column:
                     column = 1
@@ -173,6 +238,10 @@ class InfosHud:
                 item_text.rect.y = self.result_rect.y + item_text.rect.height*(i%self.items_per_column) + 30
 
                 item_text.draw(self.display)
+            
+            # Desenhando as opções do que pode fazer com os itens
+            for opt in self.inventory_actions:
+                opt['text'].draw(self.display)
         
         for i, option in enumerate(self.options):
             option['label'].draw(self.display)
