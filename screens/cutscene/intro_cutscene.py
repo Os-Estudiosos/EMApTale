@@ -193,11 +193,11 @@ class IntroCutscene(State):
             self.current_text.draw(self.__display)  
 
 
-            # Pula a 
+            # Pula a cutscene
             for event in EventManager.events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
-                        if self.stage < len(self.texts):
+                        if self.stage < len(self.texts) -3:
                             self.stage += 1
                             self.current_text = CDynamicText(
                                 text=self.texts[self.stage],
