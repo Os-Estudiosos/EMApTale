@@ -15,6 +15,7 @@ class Player(pygame.sprite.Sprite):
     max_life = 0
     name = ''
     last_hit = 0
+    map_position = [0, 0]
 
     # Carregando sa informações do Player
     @classmethod
@@ -41,6 +42,11 @@ class Player(pygame.sprite.Sprite):
                 Player.life = 0
             Player.last_hit = actual_hit
             SoundManager.play_sound('hurt.wav')
+    
+    @classmethod
+    def update_position(cls, x, y):
+        Player.map_position[0] = x
+        Player.map_position[1] = y
     
     @classmethod
     def heal(cls, value: int):

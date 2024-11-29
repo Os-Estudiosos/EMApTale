@@ -114,6 +114,8 @@ class Frisk(Player):
         if isinstance(wall, Polygon):
             self.rect.y -= self.speed * direction.y
 
+        self.update_position(self.rect.centerx, self.rect.centery)
+
     def check_wall_collisions(self, camera, direction):
         """
         Verifica colisão de máscara entre o jogador e as paredes.

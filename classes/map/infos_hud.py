@@ -15,7 +15,7 @@ from classes.player import Player
 
 
 class InfosHud:
-    def __init__(self):
+    def __init__(self, items_group):
         chatbox_sprite = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'chatbox.png'))
 
         self.display = pygame.display.get_surface()   # Pego a superfície da tela
@@ -124,7 +124,7 @@ class InfosHud:
         self.inventory_actions = [
             {
                 'text': Text(f'USAR', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
-                'action': lambda: print('a')
+                'action': self.use_item
             },
             {
                 'text': Text(f'INFO', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
@@ -132,9 +132,11 @@ class InfosHud:
             },
             {
                 'text': Text(f'LARGAR', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
-                'action': lambda: print('c')
+                'action': self.drop_item
             }
         ]
+
+        self.items_group: pygame.sprite.Group = items_group
 
         self.show_item_description_text = False
         self.wich_inventory_action = 0
@@ -150,8 +152,13 @@ class InfosHud:
             ),
             sound='text_1.wav'
         )
-    
-    def move_cursor(self, increment):
+        
+    def move_cursor(self, increment: int):
+        """Função responsável por mover os cursores pelas telas do menu
+
+        Args:
+            increment (int): Quanto vai aumentar
+        """
         if self.option_selected == 'inventory':
             if not self.item_is_selected:
                 self.selected_item = (self.selected_item+increment)%len(self.inventory_items)
@@ -162,10 +169,57 @@ class InfosHud:
             self.wich_one_cursor_is_on = (self.wich_one_cursor_is_on+increment)%len(self.options)
 
     def show_item_description(self):
+        """Função que faz com que eu mostre a descrição do item selecionado
+        """
         self.show_item_description_text = True
         self.item_description_text.restart(Player.inventory[self.selected_item].description)
+    
+    def update_infos(self):
+        self.status_texts = [
+            Text(Player.name, FontManager.fonts['Gamer'], 50),
+            Text(f'HP {Player.life}/{Player.max_life}', FontManager.fonts['Gamer'], 30),
+            Text(f'LV {Player.level}', FontManager.fonts['Gamer'], 30)
+        ]
+        self.inventory_items = [
+            {
+                'text': Text(f'{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                'item': item
+            } for item in Player.inventory
+        ]
+        for i, status in enumerate(self.status_texts):
+            status.rect.x = self.stats_rect.x+30
+            status.rect.y = self.stats_rect.y+(i)*(status.rect.height) + 20
+            if i > 0:
+                status.rect.y += 20
+
+
+    def use_item(self):
+        """Função que utiliza o item selecionado
+        """
+        item = self.inventory_items[self.selected_item]['item']
+        if item.type == 'miscellaneous':
+            item.func()
+            Player.inventory.remove_item(item.id)
+            self.update_infos()
+            self.item_is_selected = False
+            self.selected_item = 0
+    
+    def drop_item(self):
+        """Função que larga um item no chão
+        """
+        item = self.inventory_items[self.selected_item]['item']
+        if not item.equiped:
+            item.original_rect.centerx = Player.map_position[0]
+            item.original_rect.centery = Player.map_position[1]
+            self.items_group.add(item)
+            GlobalManager.camera.add(item)
+            self.item_is_selected = False
+            self.selected_item = 0
+            Player.inventory.remove_item(item.id)
 
     def update(self):
+        """Função que roda todo quadro
+        """
         # Atualizando a posição do cursor
         if not self.option_selected:
             self.cursor_rect.left = self.options[self.wich_one_cursor_is_on]['label'].rect.right
@@ -173,7 +227,6 @@ class InfosHud:
         
         if self.show_item_description_text:
             self.item_description_text.update()
-
 
         if self.option_selected == 'inventory':
             # Atualizando a posição do texto que indica as ações que pode fazer com um item
@@ -241,6 +294,8 @@ class InfosHud:
                             GlobalManager.on_inventory = False  # Eu saio do inventário (Menu de HUD)
 
     def draw(self):
+        """Função que desenha todas as informações e telas do HUD
+        """
         self.display.blit(self.stats_sprite, self.stats_rect)
         self.display.blit(self.options_sprite, self.options_rect)
 

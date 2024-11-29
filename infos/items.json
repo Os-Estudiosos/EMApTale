@@ -1,6 +1,8 @@
 [
     {
         "id": "pencil",
+        "scale": 1,
+        "sprite": "pencil.png",
         "name": "Lápis",
         "type": "weapon",
         "damage": "5",
@@ -26,6 +28,8 @@
     },
     {
         "id": "book",
+        "scale": 1,
+        "sprite": "book.png",
         "name": "Livro",
         "type": "weapon",
         "damage": "20",
@@ -34,6 +38,8 @@
     
     {
         "id": "carrot-cake",
+        "sprite": "cake.png",
+        "scale": 1,
         "name": "Bolo de Cenoura",
         "type": "miscellaneous",
         "description": "Ninguém do hotel te viu saindo com isso, ainda bem!",
@@ -43,6 +49,8 @@
     },
     {
         "id": "cheese-bread",
+        "scale": 1,
+        "sprite": "cheese-break.png",
         "name": "Pão de Queijo",
         "type": "miscellaneous",
         "description": "O pão de queijo mais cobiçado do prédio",
@@ -52,6 +60,8 @@
     },
     {
         "id": "coffee",
+        "sprite": "coffee.png",
+        "scale": 1,
         "name": "Café",
         "type": "miscellaneous",
         "description": "Um café frio ruim",
@@ -61,6 +71,8 @@
     },
     {
         "id": "lemon-tea",
+        "scale": 1,
+        "sprite": "cup.png",
         "name": "Chá de Limão",
         "type": "miscellaneous",
         "description": "Um chá de limão bem quentinho",
@@ -70,6 +82,8 @@
     },
     {
         "id": "chocolate-bar",
+        "scale": 1,
+        "sprite": "chocolate-bar.png",
         "name": "Barra de Chocolate",
         "type": "miscellaneous",
         "description": "Estava na sessão dos 'Quase Vencendo' do Pão de Açúcar",

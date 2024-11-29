@@ -71,7 +71,7 @@ class EMAp(State):
         self.player.load_infos()
         self.map_loader.load_items()
         self.map_loaded = True
-        self.infos_hud = InfosHud()
+        self.infos_hud = InfosHud(self.items_group)
         GlobalManager.paused = False
 
     def run(self):
