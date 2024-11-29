@@ -106,10 +106,21 @@ class InfosHud:
         self.result_rect.y = self.display.get_height()/self.result_sprite_scale_dict['y']
         self.result_rect.x = self.display.get_width()/self.result_sprite_scale_dict['x']
 
-        # Informações para o inventário
+        ########### Informações para o inventário
         self.inventory_items = [
-            Text(f'{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())) for item in Player.inventory
+            {
+                'text': Text(f'{item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                'item': item
+            } for item in Player.inventory
         ]
+
+        self.items_per_column = math.floor(self.result_rect.height // self.inventory_items[0]['text'].rect.height)-3
+        self.items_per_page = self.items_per_column
+        self.page = 0
+        self.selected_item = 0
+        self.item_is_selected = False  # Quando eu aperto enter e seleciono um item
+
+        ### Informações das ações que podem fazer num item
         self.inventory_actions = [
             {
                 'text': Text(f'USAR', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
@@ -117,21 +128,28 @@ class InfosHud:
             },
             {
                 'text': Text(f'INFO', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
-                'action': lambda: print('b')
+                'action': self.show_item_description
             },
             {
-                'text': Text(f'DROPAR', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
+                'text': Text(f'LARGAR', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
                 'action': lambda: print('c')
             }
         ]
 
+        self.show_item_description_text = False
         self.wich_inventory_action = 0
-
-        self.items_per_column = math.floor(self.result_rect.height // self.inventory_items[0].rect.height)-3
-        self.items_per_page = self.items_per_column*2
-        self.page = 0
-        self.selected_item = 0
-        self.item_is_selected = False  # Quando eu aperto enter e seleciono um item
+        self.item_description_text = DynamicText(
+            '',
+            FontManager.fonts['Gamer'],
+            20,
+            int((450*100)/self.display.get_height()),
+            self.result_rect.width - 60,
+            (
+                self.result_rect.x + 30,
+                self.result_rect.y + 30
+            ),
+            sound='text_1.wav'
+        )
     
     def move_cursor(self, increment):
         if self.option_selected == 'inventory':
@@ -143,11 +161,18 @@ class InfosHud:
         if not self.option_selected:
             self.wich_one_cursor_is_on = (self.wich_one_cursor_is_on+increment)%len(self.options)
 
+    def show_item_description(self):
+        self.show_item_description_text = True
+        self.item_description_text.restart(Player.inventory[self.selected_item].description)
+
     def update(self):
         # Atualizando a posição do cursor
         if not self.option_selected:
             self.cursor_rect.left = self.options[self.wich_one_cursor_is_on]['label'].rect.right
             self.cursor_rect.centery = self.options[self.wich_one_cursor_is_on]['label'].rect.centery
+        
+        if self.show_item_description_text:
+            self.item_description_text.update()
 
 
         if self.option_selected == 'inventory':
@@ -158,8 +183,8 @@ class InfosHud:
                 opt.rect.bottom = self.result_rect.bottom - 30
             
             if not self.item_is_selected:
-                self.cursor_rect.right = self.inventory_items[self.selected_item].rect.left
-                self.cursor_rect.centery = self.inventory_items[self.selected_item].rect.centery
+                self.cursor_rect.right = self.inventory_items[self.selected_item]['text'].rect.left
+                self.cursor_rect.centery = self.inventory_items[self.selected_item]['text'].rect.centery
 
             if self.item_is_selected:
                 self.cursor_rect.left = self.inventory_actions[self.wich_inventory_action]['text'].rect.right
@@ -178,7 +203,10 @@ class InfosHud:
                     ##################
                     ################## Se eu selecionar o item
                     if event.key == pygame.K_z or event.key == pygame.K_RETURN:
-                        print('aaaaa')
+                        if self.show_item_description_text:
+                            self.show_item_description_text = False
+                        else:
+                            self.inventory_actions[self.wich_inventory_action]['action']()
                     ##################
                     ################## Se eu cancelar a seleção
                     if event.key == pygame.K_x or event.key == pygame.K_BACKSPACE:
@@ -223,27 +251,28 @@ class InfosHud:
             self.display.blit(self.result_sprite, self.result_rect)
 
         column = 0
-        if self.option_selected == 'inventory':  # Se eu selecionar inventário
-            # Desenhando os itens que estão no inventário
-            for i in range(self.items_per_page):
-                if i >= self.items_per_column:
-                    column = 1
+        if not self.show_item_description_text:
+            if self.option_selected == 'inventory':  # Se eu selecionar inventário
+                # Desenhando os itens que estão no inventário
+                for i in range(self.items_per_page):
+                    if (i+self.items_per_page*self.page) >= len(Player.inventory):
+                        break
+                    
+                    item_text = self.inventory_items[(i+self.items_per_page*self.page)]['text']
+
+                    item_text.rect.x = self.result_rect.x + 10*abs(column-1) + self.result_rect.width*column/2 + (1 - 2 * column)*self.cursor_rect.width
+                    item_text.rect.y = self.result_rect.y + item_text.rect.height*(i%self.items_per_column) + 30
+
+                    item_text.draw(self.display)
                 
-                if (i+self.items_per_page*self.page) >= len(Player.inventory):
-                    break
-                  
-                item_text = self.inventory_items[(i+self.items_per_page*self.page)]
+                # Desenhando as opções do que pode fazer com os itens
+                for opt in self.inventory_actions:
+                    opt['text'].draw(self.display)
+        else:
+            self.item_description_text.draw(self.display)
 
-                item_text.rect.x = self.result_rect.x + 10*abs(column-1) + self.result_rect.width*column/2 + (1 - 2 * column)*self.cursor_rect.width
-                item_text.rect.y = self.result_rect.y + item_text.rect.height*(i%self.items_per_column) + 30
-
-                item_text.draw(self.display)
-            
-            # Desenhando as opções do que pode fazer com os itens
-            for opt in self.inventory_actions:
-                opt['text'].draw(self.display)
-        
         for i, option in enumerate(self.options):
-            option['label'].draw(self.display)
+                option['label'].draw(self.display)
 
-        self.display.blit(self.cursor_icon, self.cursor_rect)
+        if not self.show_item_description_text:
+            self.display.blit(self.cursor_icon, self.cursor_rect)
