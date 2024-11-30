@@ -11,18 +11,16 @@ class Smoke(pygame.sprite.Sprite):
         super().__init__(*groups)
 
         # Inicializando o caminho para o spritesheet de fumaça
-        self.smoke_sprites_path = os.path.join(
-            GET_PROJECT_PATH(), 'sprites', 'effects', 'smoke_animation_sheet.png'
-        )
+        self.smoke_sprites_path = os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'smoke_animation_sheet.png')
 
         # Carregando o spritesheet
-        smoke_sprites = pygame.image.load(self.smoke_sprites_path).convert_alpha()
+        self.smoke_sprites = pygame.image.load(self.smoke_sprites_path).convert_alpha()
 
         # Criando os frames a partir do SpriteSheet
         self.smoke_frames = SpriteSheet(
             rows=2,
             columns=13,
-            image=smoke_sprites,
+            image=self.smoke_sprites,
             frame_width=63,
             frame_heigth=80,
             x_offset=0,
@@ -36,6 +34,7 @@ class Smoke(pygame.sprite.Sprite):
         self.finished = False
         self.counter = 0
         self.fps = fps
+        SoundManager.play_sound('blade.wav')
 
     def update(self, *args, **kwargs):
         # Incrementa o contador para controlar o tempo entre os quadros

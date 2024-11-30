@@ -17,6 +17,7 @@ from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.snake import Snake
 from classes.bosses.attacks.coffee import Coffee
+from classes.effects.smoke import Smoke
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -44,8 +45,6 @@ class Pinho(Boss):
         self.__defense = infos['defense']
         self.__voice = infos['voice']
         self.__music = infos['sound']
-
-
         self.__attacks_dialogues = infos['attacks_dialogues']
 
         # Container que vai mostrar quando o Professor tomar dano
@@ -53,7 +52,7 @@ class Pinho(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            #PythonAtatack(),
+            PythonAtatack(),
             CoffeeAttack()
         ]
         self.attack_to_execute = -1
@@ -185,12 +184,9 @@ class Pinho(Boss):
 
 
 class CoffeeAttack(Attack):
-    """
-    Ataque que utiliza xícaras de café com vapor animado.
-    """
     def __init__(self):
         """
-        Inicializa o ataque de café.
+        Inicializa o ataque de café com xícaras e vapor sincronizado.
         """
         super().__init__()
         self._player: Heart = CombatManager.get_variable('player')
@@ -206,23 +202,17 @@ class CoffeeAttack(Attack):
             (3 * screen_width // 4, screen_height - 100)
         ]
 
-        # Criando as xícaras e adicionando-as a um grupo
+        # Criando xícaras
         self._cups = pygame.sprite.Group()
         for pos in cup_positions:
             Coffee(*pos, self._cups)
 
     def run(self):
         """
-        Executa o ataque, atualizando as xícaras.
-
-        Retorna:
-            bool: `True` se o ataque ainda estiver ativo, `False` caso contrário.
+        Executa o ataque, atualizando as xícaras e verificando colisões.
         """
         self._duration_counter += 1
-
-        # Atualiza e desenha as xícaras
         self._cups.update()
-        self._cups.draw(pygame.display.get_surface())
 
         # Retorna `False` se o ataque terminou
         return self._duration_counter < self._duration
@@ -233,28 +223,26 @@ class CoffeeAttack(Attack):
         """
         self._duration_counter = 0
 
+    def draw(self, surface):
+        """
+        Desenha as xícaras e o vapor na tela.
+
+        Args:
+            surface (pygame.Surface): Superfície onde os elementos serão desenhados.
+        """
+        self._cups.draw(surface)
+
     @property
     def player(self):
-        """
-        Retorna o jogador associado ao ataque.
-        """
         return self._player
 
     @property
     def duration(self):
-        """
-        Retorna a duração total do ataque em frames.
-        """
         return self._duration
 
     @property
     def duration_counter(self):
-        """
-        Retorna o contador atual do ataque em frames.
-        """
         return self._duration_counter
-
-
 
 class PythonAtatack(Attack):
     def __init__(self):
