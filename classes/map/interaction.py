@@ -81,13 +81,17 @@ class InteractionManager:
         """
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_z:
+                if event.key == pygame.K_z or event.key == pygame.K_RETURN:
                     # Inicia ou encerra interações
                     if self.dynamic_text:
                         if self.dynamic_text.finished:
                             # Encerra a interação
+                            if isinstance(self.active_interaction, BossIntercation):
+                                self.active_interaction.go_to_boss_fight()
                             self.dynamic_text = None
                             self.active_interaction = None
+                        else:
+                            self.dynamic_text.skip_text()
                     elif self.active_interaction:
                         # Inicia interação com texto dinâmico
                         self.dynamic_text = DynamicText(
@@ -102,10 +106,6 @@ class InteractionManager:
                             color=(255, 255, 255),
                             max_length=self.chatbox.get_width() - 40
                         )
-                elif event.key == pygame.K_RETURN or event.key == pygame.K_z:
-                    # Pula o texto se não estiver terminado
-                    if self.dynamic_text and not self.dynamic_text.finished:
-                        self.dynamic_text.skip_text()
 
     def render_interaction(self, display):
         """
