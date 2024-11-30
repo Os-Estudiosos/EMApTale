@@ -115,7 +115,9 @@ class InteractionManager:
         """
         # Exibe a tecla "Z" se o jogador estiver na área de interação
         if self.active_interaction and not self.dynamic_text:
-            display.blit(self.tecla_z_image, (20, 20))
+            key_rect = self.tecla_z_image.get_rect(center=self.player.rect.center)
+            key_rect.bottom = self.player.rect.top - 20
+            display.blit(self.tecla_z_image, GlobalManager.camera.apply(key_rect))
 
         # Renderiza a caixa de texto e o texto dinâmico
         if self.dynamic_text:

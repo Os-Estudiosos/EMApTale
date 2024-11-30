@@ -45,6 +45,7 @@ class EMAp(State):
         # Inicializa o InteractionManager
         chatbox = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'chatbox.png'))
         tecla_z_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'tecla_z.png'))
+        self.tecla_f_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'tecla_f.png'))
 
         # Redimensiona a chatbox
         new_width = chatbox.get_width() + 1100  # Ajuste personalizado
@@ -52,7 +53,8 @@ class EMAp(State):
         chatbox = pygame.transform.scale(chatbox, (new_width, new_height))
 
         # Redimensiona a imagem da tecla "Z"
-        tecla_z_image = pygame.transform.scale(tecla_z_image, (70, 70))
+        tecla_z_image = pygame.transform.scale_by(tecla_z_image, 0.9)
+        self.tecla_f_image = pygame.transform.scale_by(self.tecla_f_image, 0.9)
 
         # Inicializa o InteractionManager
         self.interaction_manager = InteractionManager(
@@ -113,6 +115,11 @@ class EMAp(State):
         self.interaction_manager.render_interaction(self.__display)
 
         item_collided = pygame.sprite.spritecollide(self.player, self.items_group, False, pygame.sprite.collide_mask)
+
+        if item_collided:
+            key_rect = self.tecla_f_image.get_rect(center=self.player.rect.center)
+            key_rect.bottom = self.player.rect.top - 20
+            self.__display.blit(self.tecla_f_image, self.camera.apply(key_rect))
 
         # Checando se pausou
         for event in EventManager.events:

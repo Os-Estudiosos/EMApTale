@@ -93,14 +93,10 @@ class Game:
         while self.running:
             self.handle_events()
 
-            text_fps = Text(f'FPS: {self.clock.get_fps()}', FontManager.fonts['Gamer'], 30)
-
             game.display.fill((0, 0, 0))
 
             # Trocando de Cena
             GameStateManager.get_current_state().run()
-
-            text_fps.draw(self.display)
 
             # Atualizando
             pygame.display.flip()
