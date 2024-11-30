@@ -14,8 +14,7 @@ class MapLoader:
     def __init__(self, map_file):
         self.tmx_data = load_pygame(map_file)  # Carrega o mapa usando pytmx
         GlobalManager.offset_vector = MAP_OFFSET_VECTOR
-        self.walls = self.load_walls()  # Carrega as áreas de colisão do mapa
-        self.load_interactions()
+        self.walls = []
 
     def load_interactions(self):
         """
@@ -142,7 +141,8 @@ class MapLoader:
                         ]
                         pol = Polygon(adjusted_points)
                         walls.append(pol)
-        return walls
+        
+        self.walls = walls
 
     def get_renderables(self, player):
         """
@@ -152,17 +152,18 @@ class MapLoader:
 
         # Adiciona objetos do mapa
         for layer in self.tmx_data.objectgroups:
-            for obj in layer:
-                if obj.gid > 0 and obj.visible:
-                    tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
-                    if tile_image:
-                        pos = (
-                            obj.x * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x,
-                            obj.y * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y
-                        )
-                        scaled_image = pygame.transform.scale_by(tile_image, MAP_SCALE_FACTOR)
-                        rect = pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())
-                        renderables.append((rect.bottom, scaled_image, rect))
+            if layer.name != 'Objs':
+                for obj in layer:
+                    if obj.gid > 0 and obj.visible:
+                        tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
+                        if tile_image:
+                            pos = (
+                                obj.x * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x,
+                                obj.y * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y
+                            )
+                            scaled_image = pygame.transform.scale_by(tile_image, MAP_SCALE_FACTOR)
+                            rect = pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())
+                            renderables.append((rect.bottom, scaled_image, rect))
 
         # Adiciona o jogador
         renderables.append((player.rect.bottom, player, player.rect))

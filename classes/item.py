@@ -18,12 +18,17 @@ class Item(pygame.sprite.Sprite):
             **self.__dict__,
             **properties
         }
+
+        if self.type == 'weapon' and 'equiped' not in self.__dict__:
+            self.equiped = False
+
         self.func = self.define_action()
 
         self.image = pygame.transform.scale_by(
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'items', properties['sprite'])),
             properties['scale']
         )
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = position[0]*MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x
         self.rect.y = position[1]*MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y

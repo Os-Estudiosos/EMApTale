@@ -42,6 +42,10 @@ class Player(pygame.sprite.Sprite):
                 Player.life = 0
             Player.last_hit = actual_hit
             SoundManager.play_sound('hurt.wav')
+
+    @classmethod
+    def pick_item(cls, item):
+        Player.inventory.add_item(item)
     
     @classmethod
     def update_position(cls, x, y):

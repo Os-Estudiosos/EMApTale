@@ -1,6 +1,6 @@
 [
     {
-        "id": "pencil",
+        "id_item": "pencil",
         "scale": 1,
         "sprite": "pencil.png",
         "name": "Lápis",
@@ -9,7 +9,7 @@
         "description": "É o que eu tinha na mochila"
     },
     {
-        "id": "pen",
+        "id_item": "pen",
         "sprite": "pen.png",
         "scale": 1.1,
         "name": "Caneta",
@@ -18,7 +18,7 @@
         "description": "Uma caneta bem afiada. Agora posso pedir revisão da prova"
     },
     {
-        "id": "test",
+        "id_item": "test",
         "sprite": "test.png",
         "scale": 1,
         "name": "Simulado",
@@ -27,8 +27,8 @@
         "description": "Finalmente um simulado que tá no nível da prova"
     },
     {
-        "id": "book",
-        "scale": 1,
+        "id_item": "book",
+        "scale": 2,
         "sprite": "book.png",
         "name": "Livro",
         "type": "weapon",
@@ -37,7 +37,7 @@
     },
     
     {
-        "id": "carrot-cake",
+        "id_item": "carrot-cake",
         "sprite": "cake.png",
         "scale": 1,
         "name": "Bolo de Cenoura",
@@ -48,7 +48,7 @@
         "value": 8
     },
     {
-        "id": "cheese-bread",
+        "id_item": "cheese-bread",
         "scale": 1,
         "sprite": "cheese-break.png",
         "name": "Pão de Queijo",
@@ -59,7 +59,7 @@
         "value": 10
     },
     {
-        "id": "coffee",
+        "id_item": "coffee",
         "sprite": "coffee.png",
         "scale": 1,
         "name": "Café",
@@ -70,7 +70,7 @@
         "value": 4
     },
     {
-        "id": "lemon-tea",
+        "id_item": "lemon-tea",
         "scale": 1,
         "sprite": "cup.png",
         "name": "Chá de Limão",
@@ -81,7 +81,7 @@
         "value": 4
     },
     {
-        "id": "chocolate-bar",
+        "id_item": "chocolate-bar",
         "scale": 1,
         "sprite": "chocolate-bar.png",
         "name": "Barra de Chocolate",

@@ -208,14 +208,17 @@ class InfosHud:
         """Função que larga um item no chão
         """
         item = self.inventory_items[self.selected_item]['item']
-        if not item.equiped:
-            item.original_rect.centerx = Player.map_position[0]
-            item.original_rect.centery = Player.map_position[1]
-            self.items_group.add(item)
-            GlobalManager.camera.add(item)
-            self.item_is_selected = False
-            self.selected_item = 0
-            Player.inventory.remove_item(item.id)
+        if item.type == 'weapon' and item.equiped:
+            return
+
+        item.rect.centerx = Player.map_position[0]
+        item.rect.centery = Player.map_position[1]
+        self.items_group.add(item)
+        GlobalManager.camera.add(item)
+        self.item_is_selected = False
+        self.selected_item = 0
+        Player.inventory.remove_item(item.id)
+        self.update_infos()
 
     def update(self):
         """Função que roda todo quadro

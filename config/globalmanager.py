@@ -43,5 +43,5 @@ class GlobalManager:
     @classmethod
     def get_item(cls, item_id):
         for item in cls.items:
-            if item['id'] == item_id:
+            if item['id_item'] == item_id:
                 return item

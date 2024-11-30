@@ -30,14 +30,17 @@ class EMAp(State):
         self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loaded = False
 
-        # Inicializa o jogador
-        self.player = Frisk(self.map_loader.walls)
-
         # Configura a câmera com as dimensões do mapa e da tela
         map_width, map_height = self.map_loader.get_size()
         screen_width, screen_height = self.__display.get_size()
         self.camera = Camera(map_width, map_height, screen_width, screen_height)
         GlobalManager.set_camera(self.camera)
+
+        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
+        self.map_loader.load_interactions()
+
+        # Inicializa o jogador
+        self.player = Frisk(self.map_loader.walls)
 
         # Inicializa o InteractionManager
         chatbox = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'chatbox.png'))
@@ -78,6 +81,8 @@ class EMAp(State):
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
+        
+        keys = pygame.key.get_pressed()
 
         # Limpa a tela
         self.__display.fill((0, 0, 0))
@@ -92,24 +97,32 @@ class EMAp(State):
         renderables = self.map_loader.get_renderables(self.player)
         renderables = self.camera.apply_ysort(renderables)
 
-        self.items_group.draw(self.__display)
 
         # Renderiza os objetos na ordem correta
         for _, image, rect in renderables:
             if isinstance(image, pygame.Surface):
                 self.__display.blit(image, rect)
             elif isinstance(image, Frisk):
-                image.draw(self.__display, self.camera)
+                image.draw(self.__display)
+    
+        self.camera.draw(self.__display)
+
 
         # Captura eventos e gerencia interações
         self.interaction_manager.handle_interaction()
         self.interaction_manager.render_interaction(self.__display)
+
+        item_collided = pygame.sprite.spritecollide(self.player, self.items_group, False, pygame.sprite.collide_mask)
 
         # Checando se pausou
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     GlobalManager.paused = not GlobalManager.paused
+                if event.key == pygame.K_f and item_collided:
+                    self.player.inventory.add_item(item_collided[0])
+                    item_collided[0].kill()
+                    self.infos_hud.update_infos()
                 if event.key == pygame.K_e:
                     GlobalManager.on_inventory = not GlobalManager.on_inventory
 
@@ -120,7 +133,7 @@ class EMAp(State):
             self.items_group.update()
             if not self.interaction_manager.dynamic_text:
                 keys = pygame.key.get_pressed()
-                self.player.move(self.camera, keys)
+                self.player.move(keys)
         else:
             if GlobalManager.paused:  # Se o jogo estiver pausado
                 self.pause_menu.run()

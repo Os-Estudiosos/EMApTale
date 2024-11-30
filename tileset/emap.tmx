@@ -513,10 +513,10 @@
    </properties>
    <point/>
   </object>
-  <object id="1279" name="Teste" type="Item" x="2141.91" y="226.91">
+  <object id="1279" name="Livro" type="Item" x="864.41" y="217.41">
    <properties>
     <property name="day" type="int" value="1"/>
-    <property name="item_id" value="test"/>
+    <property name="item_id" value="book"/>
    </properties>
    <point/>
   </object>
