@@ -28,6 +28,8 @@ from classes.player import Player
 
 from constants import *
 
+import time
+
 
 class Combat(State):
     def __init__(
@@ -99,6 +101,7 @@ class Combat(State):
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "player", "hearts", 'heart-sherd-2.png')),
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "player", "hearts", 'heart-sherd-3.png'))
         ]
+        self.control_time = 2000
 
 
     def on_first_execution(self):
@@ -133,23 +136,70 @@ class Combat(State):
 
 
     def brake_heart_animation(self, heart_position, sprites):
-        
-        
-            # Obter o sprite do coração quebrado
-            broken = sprites[0]
-            sherd_1 = sprites[1]
-            sherd_2 = sprites[2]
-            sherd_3 = sprites[3]
+        # Obter sprites
+        broken = sprites[0]
+        sherd_1 = sprites[1]
+        sherd_2 = sprites[2]
+        sherd_3 = sprites[3]
+        sherd_4 = sprites[3]
+        sherd_5 = sprites[2]
+        sherd_6 = sprites[2]
 
-            broken_rect = broken.get_rect(center=heart_position)
+
+        # Variáveis para manipular o movimento dos cacos
+        sherd_positions = [list(heart_position) for n in range(6)]
+        sherd_speed = [(-1,-3), (0,-3), (2,-3), (-2,1), (-1,-5), (-2,-1)]  # Velocidades iniciais (x, y)
+        gravity = 0.1
+
+        # Delay entre as etapas
+        delay_broken_to_sherds = 1500  
+        start_time = pygame.time.get_ticks() 
+
+        stage = "broken"  # Etapa inicial
+        running = True
+
+        while running:
+            current_time = pygame.time.get_ticks()  # Tempo atual
+            elapsed_time = current_time - start_time  
+
+            # Limpar tela
             self.__display.fill((0, 0, 0))
-            self.__display.blit(broken, broken_rect)
+
+            if stage == "broken":
+                broken_rect = broken.get_rect(center=heart_position)
+                self.__display.blit(broken, broken_rect)
+
+                if elapsed_time >= delay_broken_to_sherds:
+                    SoundManager.play_sound('break_heart_2.wav')
+                    stage = "sherds"  # Passar para a próxima etapad
 
 
+            elif stage == "sherds":
+                for i, (vx, vy) in enumerate(sherd_speed):
+                    sherd_positions[i][0] += vx  # Atualizar posição x
+                    sherd_positions[i][1] += vy  # Atualizar posição y
+                    sherd_speed[i] = (vx, vy + gravity)  
 
-            # Atualizar a tela para refletir a alteração
+                # Desenhar os cacos
+                self.__display.blit(sherd_1, sherd_positions[0])
+                self.__display.blit(sherd_2, sherd_positions[1])
+                self.__display.blit(sherd_3, sherd_positions[2])
+                self.__display.blit(sherd_4, sherd_positions[3])
+                self.__display.blit(sherd_5, sherd_positions[4])
+                self.__display.blit(sherd_6, sherd_positions[5])
+
             pygame.display.flip()
-        
+
+            clock = pygame.time.Clock()
+            clock.tick(60)
+
+            if elapsed_time > 4500:
+                SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "gameover_music.mp3"))
+                self.game_state_manager.set_state('gameover_cutscene')
+                return
+                
+
+
 
     def run(self):
         # Inicio do ciclo de vida da cena
@@ -168,8 +218,8 @@ class Combat(State):
 
             # Desenhar o coração na última posição
             self.player_group.draw(self.__display)
+            SoundManager.play_sound('break_heart_1.wav')
             self.brake_heart_animation(heart_position, self.heart_sherd)    
-            
             return
 
 

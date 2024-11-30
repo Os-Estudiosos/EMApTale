@@ -24,10 +24,12 @@ class GameoverCutscene(State):
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
+            self.__game_state_manager.set_state("intro_cutscene")
         
+
     def on_last_execution(self):    
         self.__execution_counter = 0
-        
+        SoundManager.play_music
 
     @property
     def execution_counter(self):
