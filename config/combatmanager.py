@@ -1,6 +1,5 @@
 import pygame
 
-
 class CombatManager:
     turn = 'player'
     enemy = None

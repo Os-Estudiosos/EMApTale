@@ -136,30 +136,29 @@ class Combat(State):
 
 
     def brake_heart_animation(self, heart_position, sprites):
-        # Obter sprites
+        scale_factor = 1.3  
         broken = sprites[0]
-        sherd_1 = sprites[1]
-        sherd_2 = sprites[2]
-        sherd_3 = sprites[3]
-        sherd_4 = sprites[3]
-        sherd_5 = sprites[2]
-        sherd_6 = sprites[2]
-
+        sherd_1 = pygame.transform.scale_by(sprites[1], scale_factor)
+        sherd_2 = pygame.transform.scale_by(sprites[2], scale_factor)
+        sherd_3 = pygame.transform.scale_by(sprites[3], scale_factor)
+        sherd_4 = pygame.transform.scale_by(sprites[3], scale_factor)
+        sherd_5 = pygame.transform.scale_by(sprites[2], scale_factor)
+        sherd_6 = pygame.transform.scale_by(sprites[2], scale_factor)
 
         # Variáveis para manipular o movimento dos cacos
         sherd_positions = [list(heart_position) for n in range(6)]
-        sherd_speed = [(-1,-3), (0,-3), (2,-3), (-2,1), (-1,-5), (-2,-1)]  # Velocidades iniciais (x, y)
+        sherd_speed = [(-1, -3), (0, -3), (2, -3), (-2, 1), (-1, -5), (-2, -1)]  # Velocidades iniciais (x, y)
         gravity = 0.1
 
-        # Delay entre as etapas
+        # Delay
         delay_broken_to_sherds = 1500  
         start_time = pygame.time.get_ticks() 
 
-        stage = "broken"  # Etapa inicial
+        stage = "broken"  
         running = True
 
         while running:
-            current_time = pygame.time.get_ticks()  # Tempo atual
+            current_time = pygame.time.get_ticks()
             elapsed_time = current_time - start_time  
 
             # Limpar tela
@@ -171,8 +170,7 @@ class Combat(State):
 
                 if elapsed_time >= delay_broken_to_sherds:
                     SoundManager.play_sound('break_heart_2.wav')
-                    stage = "sherds"  # Passar para a próxima etapad
-
+                    stage = "sherds"  
 
             elif stage == "sherds":
                 for i, (vx, vy) in enumerate(sherd_speed):
@@ -194,11 +192,8 @@ class Combat(State):
             clock.tick(60)
 
             if elapsed_time > 4500:
-                SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "gameover_music.mp3"))
                 self.game_state_manager.set_state('gameover_cutscene')
                 return
-                
-
 
 
     def run(self):
@@ -206,7 +201,7 @@ class Combat(State):
         if not self.__execution_counter > 0:
             self.on_first_execution()
         
-         # Se o player morrer, executar o fim
+        # ============ GAME OVER ============
         if Player.life == 0:
             # Parar todas as ações, deixar fundo preto
             pygame.time.set_timer(BOSS_TURN_EVENT, 0)

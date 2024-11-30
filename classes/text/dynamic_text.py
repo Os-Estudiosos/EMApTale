@@ -84,38 +84,55 @@ class DynamicText:
         self.finished = True
         
     def update(self, *args, **kwargs):
-        self.counter += 1  # Aumenta a contagem
 
-        
-        # Se a montagem for maior que a frequência das letras e o contador de letras não for maior que a quantidade de letras
+        self.counter += 1  # Incrementa o contador
+
+        # Se for hora de adicionar uma nova letra e ainda restarem letras a processar
         if self.counter >= self.letter_rate and not self.letter_counter >= len(self.text):
+            self.counter = 0  # Reseta o contador
+            
             if self.text[self.letter_counter] != ' ' and self.sound:
                 SoundManager.stop_sound(self.sound)
                 SoundManager.play_sound(self.sound)
-            
-            self.counter = 0  # Zera o contador
 
-            self.progressive_text += self.text[self.letter_counter]
+            # Pegamos o texto restante
+            remaining_text = self.text[self.letter_counter:]
+            next_space_index = remaining_text.find(' ')  # Índice do próximo espaço
+            if next_space_index == -1:
+                next_space_index = len(remaining_text)  # Última palavra
 
-            new_text = self.font.render(self.progressive_text, True, self.color)
+            # Define a palavra atual
+            next_word = remaining_text[:next_space_index + 1]
 
-            if new_text.get_rect().width >= self.max_length:  # Se a linha passar da largura máxima
-                self.progressive_text = self.text[self.letter_counter]
+            # Renderiza a linha atual com a próxima palavra para checar o tamanho
+            temp_line = self.progressive_text + next_word
+            rendered_line = self.font.render(temp_line, True, self.color)
+
+            # Se a próxima palavra não couber, inicie uma nova linha
+            if rendered_line.get_rect().width >= self.max_length:
+                self.progressive_text = ''  # Reseta o texto da linha
                 self.rows.append(self.font.render(self.progressive_text, True, self.color))
                 self.wich_row_to_update += 1
 
-                new_text = self.font.render(self.progressive_text, True, self.color)
+            # Adiciona uma letra à vez na linha atual
+            next_letter = self.text[self.letter_counter]
+            self.progressive_text += next_letter
 
-            # Atualizo a linha com o novo texto
+            # Atualiza o texto renderizado
+            new_text = self.font.render(self.progressive_text, True, self.color)
+
+            # Atualiza a linha atual
             self.rows[self.wich_row_to_update] = new_text
 
-            # Atualizo a próxima letra
+            # Incrementa o contador de letras
             self.letter_counter += 1
-        
-        if self.letter_counter >= len(self.text):
-            self.finished = True
 
-        
+            # Se todo o texto foi processado, marca como finalizado
+            if self.letter_counter >= len(self.text):
+                self.finished = True
+
+
+
     def draw(self, screen: pygame.Surface):
         for i, text in enumerate(self.rows):
             text_rect = text.get_rect()

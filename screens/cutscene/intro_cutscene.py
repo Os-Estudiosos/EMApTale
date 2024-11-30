@@ -8,7 +8,7 @@ from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
 from config.eventmanager import EventManager
 
-from classes.text.cuts_dynamic_text import CDynamicText
+from classes.text.dynamic_text import DynamicText
 
 class IntroCutscene(State):
     def __init__(self, name: str, display: pygame.Surface, game_state_manager: GameStateManager):
@@ -25,9 +25,9 @@ class IntroCutscene(State):
             "Conseguiu, com muito esforço, conquistar um CR 5.9, mas você precisa mais do que isso!",
             "Buscando a redenção, você pretende encarar as AS para se provar digno de um CR 7+",
             "Mas não tenha otimismo, pois 5 Entidades da EMAp tentarão impedi-lo de conseguir! Boa sorte!",
-            "                                                                                            ", 
-            "                                                                                            ", 
-            "                                                                                            ", 
+            "               ", 
+            "                                   ", 
+            "", 
 
         ]
         self.images = [
@@ -42,15 +42,17 @@ class IntroCutscene(State):
         ]
         self.letters_per_second = 17
 
-        self.current_text = CDynamicText(
+        self.current_text = DynamicText(
             text=self.texts[self.stage],
-            font=FontManager.fonts['Pixel'],
+            font=FontManager.fonts['Pixel'],  # Verifique se 'Pixel' é o caminho ou o nome correto
             letters_per_second=self.letters_per_second,
             text_size=40,
             max_length=self.__display.get_width() - 40,
             position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
-            color=(255,255,255)
+            color=(255, 255, 255),
+            sound=None  # Adicione um som se for necessário
         )
+
         self.current_image = self.images[self.stage]
 
         # Variáveis que controlam o tempo dos elementos da cutscene
@@ -82,34 +84,36 @@ class IntroCutscene(State):
         self.current_time_local = current_time - self.initial_time
 
         # Define o last_time_define única e exclusivamente quando o texto acabou e seu valor for igual a zero 
-        if self.current_text.is_finished and self.last_time_define == 0:
+        if self.current_text.finished and self.last_time_define == 0:
             self.last_time_define = self.current_time_local
             
             # Da útlima image history para o título do jogo, dar um intervalo maior (gerar suspense)
-            if  self.stage == len(self.images) -2:
-                self.wait_a_second += 1480 
+            if  self.stage == len(self.images) -1:
+                self.wait_a_second += 1200
             else:
                 self.wait_a_second = 1600   
 
         #print(current_time, self.current_time_local, self.initial_time, self.last_time_define, self.wait_a_second)
 
         # Verificar se o tempo de espera passou
-        if self.current_text.is_finished and self.last_time_define + self.wait_a_second < self.current_time_local:
+        if self.current_text.finished and self.last_time_define + self.wait_a_second < self.current_time_local:
             
             # Modifica as variáveis para continuar valendo o loop
             self.stage += 1
             self.last_time_define = 0            
 
             if self.stage < len(self.texts):
-                self.current_text = CDynamicText(
+                self.current_text = DynamicText(
                     text=self.texts[self.stage],
-                    font=FontManager.fonts['Pixel'],
+                    font=FontManager.fonts['Pixel'],  # Verifique se 'Pixel' é o caminho ou o nome correto
                     letters_per_second=self.letters_per_second,
                     text_size=40,
                     max_length=self.__display.get_width() - 40,
                     position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
-                    color=(255,255,255)
+                    color=(255, 255, 255),
+                    sound=None  # Adicione um som se for necessário
                 )
+
                 self.current_image = self.images[self.stage]
 
         # Desenho da imagem e texto
@@ -156,7 +160,6 @@ class IntroCutscene(State):
                 self.stage == len(self.images) -3
             ])
 
-
             # Define para esclarecer a imagem | Fade In
             if current_time - self.last_time_define >= self.wait_a_second and its_final_true:
                 self.alpha += 2
@@ -191,14 +194,15 @@ class IntroCutscene(State):
                     if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
                         if self.stage < len(self.texts) -3:
                             self.stage += 1
-                            self.current_text = CDynamicText(
+                            self.current_text = DynamicText(
                                 text=self.texts[self.stage],
-                                font=FontManager.fonts['Pixel'],
+                                font=FontManager.fonts['Pixel'],  # Verifique se 'Pixel' é o caminho ou o nome correto
                                 letters_per_second=self.letters_per_second,
                                 text_size=40,
                                 max_length=self.__display.get_width() - 40,
                                 position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
-                                color=(255, 255, 255)
+                                color=(255, 255, 255),
+                                sound=None  # Adicione um som se for necessário
                             )
                             self.current_image = self.images[self.stage]
                     
