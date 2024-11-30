@@ -43,9 +43,6 @@ class Camera(pygame.sprite.Group):
         """Atualiza a posição da câmera em relação ao jogador, otimizando os cálculos."""
         super().update(*args, **kwargs)
 
-        for sprite in self.sprites():
-            sprite.rect = self.apply(sprite.original_rect)
-
         x = target_rect.centerx - self.screen_width // 2
         y = target_rect.centery - self.screen_height // 2
 
@@ -56,3 +53,7 @@ class Camera(pygame.sprite.Group):
         # Atualiza a posição da câmera com base no jogador
         self.camera_rect.x = x
         self.camera_rect.y = y
+    
+    def draw(self, surface, bgsurf = None, special_flags = 0):
+        for sprite in self.sprites():
+            surface.blit(sprite.image, self.apply(sprite.rect))

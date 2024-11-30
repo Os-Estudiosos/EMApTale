@@ -69,6 +69,9 @@ class Inventory:
         
         self.equiped_weapon = self.get_item(id)
 
+    def __len__(self):
+        return len(self.items)
+
     def __eq__(self, value: list):
         return self.items == value
 
@@ -77,3 +80,6 @@ class Inventory:
 
     def __next__(self):
         return next(iter(self.items))
+
+    def __getitem__(self, index):
+        return self.items[index]

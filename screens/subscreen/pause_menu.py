@@ -66,7 +66,6 @@ class PauseMenu(State):
         # Informações sobre o cursor que marca qual a opção selecionada
         self.cursor_icon = pygame.transform.scale_by(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')), 1.5)
         self.cursor_rect = self.cursor_icon.get_rect()
-        self.cursor_trying_to_move = False  # Marca se eu estou tentando mexer o cursor
 
         # Essa variável é responsável por checar se o player entrou na cena com o botão
         # de confirmação selecionado (Enter ou Z), assim eu posso evitar que ele entre
@@ -97,10 +96,10 @@ class PauseMenu(State):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
                     self.move_cursor(1)  # Movo uma opção pra baixo
-                    SoundManager.play_sound('select.wav')
+                    SoundManager.play_sound('squeak.wav')
                 if event.key == pygame.K_UP:
                     self.move_cursor(-1)  # Movo uma opção pra cima
-                    SoundManager.play_sound('select.wav')
+                    SoundManager.play_sound('squeak.wav')
                 if event.key == pygame.K_z or event.key == pygame.K_RETURN:
                     self.menu_options[self.selected_option]['func']()
 

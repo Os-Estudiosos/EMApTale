@@ -14,13 +14,15 @@ class SaveManager:
         "equiped_item": 0,
         "inventory": [
             {
-                'id': 'pencil',
+                "id": "pencil",
+                "scale": 1,
+                "sprite": "pencil.png",
                 "name": "Lápis",
                 "type": "weapon",
-                "damage": 5,
+                "damage": "5",
                 "description": "É o que eu tinha na mochila",
-                "equiped": True
-            }
+                "equiped": False
+            },
         ],
         "player": {
             "life": 20,
