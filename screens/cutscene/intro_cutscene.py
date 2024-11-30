@@ -64,7 +64,7 @@ class IntroCutscene(State):
         self.sub_alpha = 0
 
     def on_first_execution(self):
-        # Define uma única vez, o tempo incial da cena
+        # Define uma única vez, o tempo incial da cena    BIRA BRUNAO
         SoundManager.stop_music()
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "intro_history.mp3"))
         self.initial_time = pygame.time.get_ticks()
@@ -118,13 +118,6 @@ class IntroCutscene(State):
             # Define a largura/altura da tela e da imagem (todas as imagens tem o mesmo tamanho! 1280 x 720)
             screen_width, screen_height = self.__display.get_size()
             image_width, image_height = self.current_image.get_size()
-    
-
-            if  self.stage == len(self.images)-4:
-                SoundManager.stop_music()
-                if self.last_time_define + self.wait_a_second/2 < self.current_time_local:
-                    SoundManager.play_sound("cymbal.ogg")
-
 
             # Configura o tamano e a posição da imagem, para a última, deixa em tela cheia
             if  self.stage == len(self.images)-2:
@@ -192,7 +185,6 @@ class IntroCutscene(State):
             # Plota o texto
             self.current_text.draw(self.__display)  
 
-
             # Pula a cutscene
             for event in EventManager.events:
                 if event.type == pygame.KEYDOWN:
@@ -236,14 +228,17 @@ class IntroCutscene(State):
     def name(self):
         return self.__name    
     
+    
     @property
     def game_state_manager(self):
         return self.__game_state_manager
+    
     
     @property
     def variables(self):
         return self.__variables
     
+
     @variables.setter
     def variables(self, value: dict):
         if not isinstance(value, dict):

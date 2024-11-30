@@ -126,6 +126,26 @@ class Combat(State):
         if not self.__execution_counter > 0:
             self.on_first_execution()
         
+
+         # Se o player morrer, executar o fim
+        if Player.life == 0:
+            # Parar todas as ações
+            pygame.time.set_timer(BOSS_TURN_EVENT, 0)
+            pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
+
+            # Obter a posição do coração
+            heart_position = self.player.rect.center
+
+            # Preencher a tela com preto
+            self.__display.fill((0, 0, 0))
+
+            # Desenhar o coração na última posição
+            self.player.rect.center = heart_position
+            self.player_group.draw(self.__display)
+            
+            return
+
+
         self.handle_events()
         
         # Ajustando o nome do personagem
