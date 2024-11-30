@@ -185,31 +185,75 @@ class Pinho(Boss):
 
 
 class CoffeeAttack(Attack):
+    """
+    Ataque que utiliza xícaras de café com vapor animado.
+    """
     def __init__(self):
-        self.__player: Heart = CombatManager.get_variable('player')
-        self.__duration_counter = 0
-        self.__duration = FPS*10
+        """
+        Inicializa o ataque de café.
+        """
+        super().__init__()
+        self._player: Heart = CombatManager.get_variable('player')
+        self._duration = FPS * 10  # O ataque dura 10 segundos
+        self._duration_counter = 0
 
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
-        self.__duration_counter = 0
+        # Configurações das xícaras
+        screen_width = pygame.display.get_surface().get_width()
+        screen_height = pygame.display.get_surface().get_height()
+        cup_positions = [
+            (screen_width // 4, screen_height - 100),
+            (screen_width // 2, screen_height - 100),
+            (3 * screen_width // 4, screen_height - 100)
+        ]
+
+        # Criando as xícaras e adicionando-as a um grupo
+        self._cups = pygame.sprite.Group()
+        for pos in cup_positions:
+            Coffee(*pos, self._cups)
 
     def run(self):
-        self.__duration_counter += 1
+        """
+        Executa o ataque, atualizando as xícaras.
+
+        Retorna:
+            bool: `True` se o ataque ainda estiver ativo, `False` caso contrário.
+        """
+        self._duration_counter += 1
+
+        # Atualiza e desenha as xícaras
+        self._cups.update()
+        self._cups.draw(pygame.display.get_surface())
+
+        # Retorna `False` se o ataque terminou
+        return self._duration_counter < self._duration
 
     def restart(self):
-        self.__duration_counter = 0
+        """
+        Reinicia o ataque, zerando o contador de duração.
+        """
+        self._duration_counter = 0
 
     @property
     def player(self):
-        return self.__player
+        """
+        Retorna o jogador associado ao ataque.
+        """
+        return self._player
 
     @property
     def duration(self):
-        return self.__duration
+        """
+        Retorna a duração total do ataque em frames.
+        """
+        return self._duration
 
     @property
     def duration_counter(self):
-        return self.__duration_counter
+        """
+        Retorna o contador atual do ataque em frames.
+        """
+        return self._duration_counter
+
 
 
 class PythonAtatack(Attack):

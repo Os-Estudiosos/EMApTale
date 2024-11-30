@@ -1,41 +1,42 @@
 import pygame
 import os
 import random
-import math
-import numpy as np
 
 from config import *
 from config.combatmanager import CombatManager
 from config.soundmanager import SoundManager
 
-from classes.sprites.spritesheet import SpriteSheet
 from classes.effects.smoke import Smoke
 
 
 class Coffee(pygame.sprite.Sprite):
-    def __init__(self, *groups):
+    def __init__(self, x, y, *groups):
+        """
+        Representa uma xícara de café com vapor animado.
+        
+        Args:
+            x (int): Coordenada x da posição inicial da xícara.
+            y (int): Coordenada y da posição inicial da xícara.
+            groups (pygame.sprite.Group): Grupos aos quais o sprite pertence.
+        """
         super().__init__(*groups)
 
-        # Vou randomizar com 10% de chance de "aplicar o efeito de sumiço"
-        self.type = 'Normal'
-        if random.randint(0, 100) <= 15:
-            self.type = 'Vanished'
-
-        # Inicializando os sprites da xícara e do vapor de café
+        # Carregando o sprite da xícara
         self.cup_path = os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'cup_coffee.png')
-        '''Pegar a classe Smoke para fazer a animação do vapor'''
-        self.rect = self.cup.get_rect()
+        self.image = pygame.image.load(self.cup_path).convert_alpha()  # Define `self.image` esperado pelo Pygame
+        self.rect = self.image.get_rect(center=(x, y))  # Define `self.rect` com a posição inicial
 
-        # Pegando o retângulo do player
-        self.player_rect = CombatManager.get_variable('player').rect.copy()
-
-        # Iniciando variáveis gerais de turno e som
-        self.counter = 0
-        self.speed = 5
-        SoundManager.play_sound('blade.wav')
+        # Inicializando o efeito de fumaça
+        self.smoke = Smoke()
+        self.smoke.rect.midbottom = self.rect.midtop  # Alinha a fumaça com o topo da xícara
+        self.smoke_group = pygame.sprite.Group(self.smoke)
 
     def update(self, *args, **kwargs):
-        self.counter += 1
-        battle_container = CombatManager.get_variable('battle_container')
-        display_surface_rect = pygame.display.get_surface().get_rect()
-        
+        """
+        Atualiza o estado da xícara e anima o vapor.
+        """
+        # Atualiza a posição da fumaça para alinhar com a xícara
+        self.smoke.rect.midbottom = self.rect.midtop
+
+        # Atualiza a fumaça
+        self.smoke_group.update()
