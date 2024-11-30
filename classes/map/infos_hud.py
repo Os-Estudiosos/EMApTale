@@ -152,6 +152,40 @@ class InfosHud:
             ),
             sound='text_1.wav'
         )
+
+        ########### Informações para o inventário
+        self.stats_name_text = Text(f'\"{Player.name}\"', FontManager.fonts['Gamer'], int((500*100)/self.display.get_height()))
+        self.stats_name_text.rect.x = self.result_rect.x + 20
+        self.stats_name_text.rect.y = self.result_rect.y + 40
+
+        self.stats_level_text = Text(f'LV {Player.level}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_level_text.rect.x = self.result_rect.x + 20
+        self.stats_level_text.rect.y = self.result_rect.y + self.result_rect.height/2.76
+
+        self.stats_xp_text = Text(f'EXP {Player.xp}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_xp_text.rect.x = self.result_rect.x + 20
+        self.stats_xp_text.rect.top = self.stats_level_text.rect.bottom
+
+        self.stats_hp_text = Text(f'HP {Player.life}/{Player.max_life}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_hp_text.rect.x = self.result_rect.x + 20
+        self.stats_hp_text.rect.top = self.stats_xp_text.rect.bottom
+
+        self.stats_weapon_text = Text(f'WEAPON {Player.inventory.equiped_weapon.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_weapon_text.rect.x = self.result_rect.x + 20
+        self.stats_weapon_text.rect.top = self.stats_hp_text.rect.bottom + 40
+
+        self.stats_weapon_damage_text = Text(f'ATK {Player.inventory.equiped_weapon.damage}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_weapon_damage_text.rect.x = self.result_rect.x + 20
+        self.stats_weapon_damage_text.rect.top = self.stats_weapon_text.rect.bottom
+
+        self.stats_menu_texts = [
+            self.stats_name_text,
+            self.stats_level_text,
+            self.stats_xp_text,
+            self.stats_hp_text,
+            self.stats_weapon_text,
+            self.stats_weapon_damage_text
+        ]
         
     def move_cursor(self, increment: int):
         """Função responsável por mover os cursores pelas telas do menu
@@ -191,7 +225,39 @@ class InfosHud:
             status.rect.y = self.stats_rect.y+(i)*(status.rect.height) + 20
             if i > 0:
                 status.rect.y += 20
+        
+        self.stats_name_text = Text(f'\"{Player.name}\"', FontManager.fonts['Gamer'], int((500*100)/self.display.get_height()))
+        self.stats_name_text.rect.x = self.result_rect.x + 20
+        self.stats_name_text.rect.y = self.result_rect.y + 40
 
+        self.stats_level_text = Text(f'LV {Player.level}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_level_text.rect.x = self.result_rect.x + 20
+        self.stats_level_text.rect.y = self.result_rect.y + self.result_rect.height/2.76
+
+        self.stats_xp_text = Text(f'EXP {Player.xp}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_xp_text.rect.x = self.result_rect.x + 20
+        self.stats_xp_text.rect.top = self.stats_level_text.rect.bottom
+
+        self.stats_hp_text = Text(f'HP {Player.life}/{Player.max_life}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_hp_text.rect.x = self.result_rect.x + 20
+        self.stats_hp_text.rect.top = self.stats_xp_text.rect.bottom
+
+        self.stats_weapon_text = Text(f'WEAPON {Player.inventory.equiped_weapon.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_weapon_text.rect.x = self.result_rect.x + 20
+        self.stats_weapon_text.rect.top = self.stats_hp_text.rect.bottom + 40
+
+        self.stats_weapon_damage_text = Text(f'ATK {Player.inventory.equiped_weapon.damage}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height()))
+        self.stats_weapon_damage_text.rect.x = self.result_rect.x + 20
+        self.stats_weapon_damage_text.rect.top = self.stats_weapon_text.rect.bottom
+
+        self.stats_menu_texts = [
+            self.stats_name_text,
+            self.stats_level_text,
+            self.stats_xp_text,
+            self.stats_hp_text,
+            self.stats_weapon_text,
+            self.stats_weapon_damage_text
+        ]
 
     def use_item(self):
         """Função que utiliza o item selecionado
@@ -203,6 +269,11 @@ class InfosHud:
             self.update_infos()
             self.item_is_selected = False
             self.selected_item = 0
+        elif item.type == 'weapon':
+            Player.inventory.equip_weapon(item.id)
+            self.update_infos()
+            self.item_is_selected = False
+            SoundManager.play_sound('item.wav')
     
     def drop_item(self):
         """Função que larga um item no chão
@@ -265,7 +336,7 @@ class InfosHud:
                             self.inventory_actions[self.wich_inventory_action]['action']()
                     ##################
                     ################## Se eu cancelar a seleção
-                    if event.key == pygame.K_x or event.key == pygame.K_BACKSPACE:
+                    if (event.key == pygame.K_x or event.key == pygame.K_BACKSPACE) and not self.show_item_description_text:
                         self.item_is_selected = False
                     ##################
                 else:  ################## Se não for um item
@@ -326,6 +397,9 @@ class InfosHud:
                 # Desenhando as opções do que pode fazer com os itens
                 for opt in self.inventory_actions:
                     opt['text'].draw(self.display)
+            elif self.option_selected == 'status':
+                for stats_menu_text in self.stats_menu_texts:
+                    stats_menu_text.draw(self.display)
         else:
             self.item_description_text.draw(self.display)
 

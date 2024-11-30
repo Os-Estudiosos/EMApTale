@@ -81,7 +81,7 @@ class InteractionManager:
         """
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                if (event.key == pygame.K_z or event.key == pygame.K_RETURN) and (not GlobalManager.on_inventory and not GlobalManager.paused):
                     # Inicia ou encerra interações
                     if self.dynamic_text:
                         if self.dynamic_text.finished:
@@ -104,7 +104,8 @@ class InteractionManager:
                                 self.chatbox_position[1] + 20  # Margem superior
                             ),
                             color=(255, 255, 255),
-                            max_length=self.chatbox.get_width() - 40
+                            max_length=self.chatbox.get_width() - 40,
+                            sound='text_1.wav'
                         )
 
     def render_interaction(self, display):

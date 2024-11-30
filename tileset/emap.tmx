@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="17" nextobjectid="1283">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="17" nextobjectid="1284">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -401,7 +401,7 @@
   <object id="1258" x="280.333" y="141" width="39.6667" height="58.6667">
    <properties>
     <property name="interaction_name" value="cdmc"/>
-    <property name="value" value="aqui é o cdmc, você foi encontrado graças a luziel el eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeel"/>
+    <property name="value" value="aqui é o cdmc, você foi encontrado graças a luziel"/>
    </properties>
   </object>
   <object id="1259" x="879.75" y="148.25" width="40.375" height="25">
@@ -462,6 +462,12 @@
   <object id="1270" x="1204.13" y="144.125" width="31.875" height="21.75">
    <properties>
     <property name="value" value="Vicente Gerard?  eu não faço ideia de quem é esse cara.."/>
+   </properties>
+  </object>
+  <object id="1283" x="511" y="257" width="38.5" height="21">
+   <properties>
+    <property name="interaction_name" value="direcionamento"/>
+    <property name="value" value="As salas dos professores estão na direita, é pra lá que eu vou"/>
    </properties>
   </object>
  </objectgroup>

@@ -13,6 +13,9 @@ class Player(pygame.sprite.Sprite):
     level = 1
     life = 0
     max_life = 0
+    level = 0
+    xp = 0
+    max_xp = 0
     name = ''
     last_hit = 0
     map_position = [0, 0]
@@ -25,6 +28,9 @@ class Player(pygame.sprite.Sprite):
         Player.name = SaveManager.loaded_save['name']
         Player.life = SaveManager.loaded_save['player']['life']
         Player.max_life = SaveManager.loaded_save['player']['max_life']
+        Player.level = SaveManager.loaded_save['player']['level']
+        Player.xp = SaveManager.loaded_save['player']['actual_xp']
+        Player.max_xp = SaveManager.loaded_save['player']['max_xp']
         Player.inventory = Inventory(SaveManager.loaded_save['inventory'])
 
     @classmethod
