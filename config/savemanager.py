@@ -21,7 +21,7 @@ class SaveManager:
                 "type": "weapon",
                 "damage": "5",
                 "description": "É o que eu tinha na mochila",
-                "equiped": False
+                "equiped": True
             },
         ],
         "player": {

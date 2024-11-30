@@ -4,7 +4,7 @@ from uuid import uuid4, UUID
 class Inventory:
     def __init__(self, items: list = []):
         self.items = []
-        self.equiped_weapon = []
+        self.equiped_weapon = None
         for item in items:
             self.add_item(item)
             if item['type'] == 'weapon' and item['equiped']:
