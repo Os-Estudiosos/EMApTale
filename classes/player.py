@@ -10,10 +10,15 @@ from classes.inventory import Inventory
 class Player(pygame.sprite.Sprite):
     # Definindo as variáveis do Player
     inventory = Inventory()
+    level = 1
     life = 0
     max_life = 0
+    level = 0
+    xp = 0
+    max_xp = 0
     name = ''
     last_hit = 0
+    map_position = [0, 0]
 
     # Carregando sa informações do Player
     @classmethod
@@ -23,6 +28,9 @@ class Player(pygame.sprite.Sprite):
         Player.name = SaveManager.loaded_save['name']
         Player.life = SaveManager.loaded_save['player']['life']
         Player.max_life = SaveManager.loaded_save['player']['max_life']
+        Player.level = SaveManager.loaded_save['player']['level']
+        Player.xp = SaveManager.loaded_save['player']['actual_xp']
+        Player.max_xp = SaveManager.loaded_save['player']['max_xp']
         Player.inventory = Inventory(SaveManager.loaded_save['inventory'])
 
     @classmethod
@@ -40,6 +48,15 @@ class Player(pygame.sprite.Sprite):
                 Player.life = 0
             Player.last_hit = actual_hit
             SoundManager.play_sound('hurt.wav')
+
+    @classmethod
+    def pick_item(cls, item):
+        Player.inventory.add_item(item)
+    
+    @classmethod
+    def update_position(cls, x, y):
+        Player.map_position[0] = x
+        Player.map_position[1] = y
     
     @classmethod
     def heal(cls, value: int):

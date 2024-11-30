@@ -15,6 +15,16 @@ class GlobalManager:
     items = []
     groups = {}
     camera: Camera = None
+    paused = False
+    on_inventory = False
+
+    @classmethod
+    def pause(cls):
+        cls.paused = True
+    
+    @classmethod
+    def resume(cls):
+        cls.paused = False
 
     @classmethod
     def set_camera(cls, camera_instance):
@@ -33,5 +43,5 @@ class GlobalManager:
     @classmethod
     def get_item(cls, item_id):
         for item in cls.items:
-            if item['id'] == item_id:
+            if item['id_item'] == item_id:
                 return item
