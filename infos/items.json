@@ -1,27 +1,35 @@
 [
     {
-        "id": "pencil",
+        "id_item": "pencil",
+        "scale": 1,
+        "sprite": "pencil.png",
         "name": "Lápis",
         "type": "weapon",
         "damage": "5",
         "description": "É o que eu tinha na mochila"
     },
     {
-        "id": "pen",
+        "id_item": "pen",
+        "sprite": "pen.png",
+        "scale": 1.1,
         "name": "Caneta",
         "type": "weapon",
         "damage": "10",
         "description": "Uma caneta bem afiada. Agora posso pedir revisão da prova"
     },
     {
-        "id": "test",
+        "id_item": "test",
+        "sprite": "test.png",
+        "scale": 1,
         "name": "Simulado",
         "type": "weapon",
         "damage": "15",
         "description": "Finalmente um simulado que tá no nível da prova"
     },
     {
-        "id": "book",
+        "id_item": "book",
+        "scale": 2,
+        "sprite": "book.png",
         "name": "Livro",
         "type": "weapon",
         "damage": "20",
@@ -29,7 +37,9 @@
     },
     
     {
-        "id": "carrot-cake",
+        "id_item": "carrot-cake",
+        "sprite": "cake.png",
+        "scale": 1,
         "name": "Bolo de Cenoura",
         "type": "miscellaneous",
         "description": "Ninguém do hotel te viu saindo com isso, ainda bem!",
@@ -38,7 +48,9 @@
         "value": 8
     },
     {
-        "id": "cheese-bread",
+        "id_item": "cheese-bread",
+        "scale": 1,
+        "sprite": "cheese-break.png",
         "name": "Pão de Queijo",
         "type": "miscellaneous",
         "description": "O pão de queijo mais cobiçado do prédio",
@@ -47,7 +59,9 @@
         "value": 10
     },
     {
-        "id": "coffee",
+        "id_item": "coffee",
+        "sprite": "coffee.png",
+        "scale": 1,
         "name": "Café",
         "type": "miscellaneous",
         "description": "Um café frio ruim",
@@ -56,7 +70,9 @@
         "value": 4
     },
     {
-        "id": "lemon-tea",
+        "id_item": "lemon-tea",
+        "scale": 1,
+        "sprite": "cup.png",
         "name": "Chá de Limão",
         "type": "miscellaneous",
         "description": "Um chá de limão bem quentinho",
@@ -65,7 +81,9 @@
         "value": 4
     },
     {
-        "id": "chocolate-bar",
+        "id_item": "chocolate-bar",
+        "scale": 1,
+        "sprite": "chocolate-bar.png",
         "name": "Barra de Chocolate",
         "type": "miscellaneous",
         "description": "Estava na sessão dos 'Quase Vencendo' do Pão de Açúcar",

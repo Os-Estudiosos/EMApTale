@@ -433,7 +433,7 @@
   <object id="1258" x="280.333" y="141" width="39.6667" height="58.6667">
    <properties>
     <property name="interaction_name" value="cdmc"/>
-    <property name="value" value="aqui é o cdmc, você foi encontrado graças a luziel el eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeel"/>
+    <property name="value" value="aqui é o cdmc, você foi encontrado graças a luziel"/>
    </properties>
   </object>
   <object id="1259" x="879.75" y="148.25" width="40.375" height="25">
@@ -495,6 +495,68 @@
    <properties>
     <property name="value" value="Vicente Gerard?  eu não faço ideia de quem é esse cara.."/>
    </properties>
+  </object>
+  <object id="1283" x="511" y="257" width="38.5" height="21">
+   <properties>
+    <property name="interaction_name" value="direcionamento"/>
+    <property name="value" value="As salas dos professores estão na direita, é pra lá que eu vou"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="15" name="Boss">
+  <properties>
+   <property name="boss" value="Soledad"/>
+  </properties>
+  <object id="1272" x="2081" y="312.5" width="39.5" height="16.5">
+   <properties>
+    <property name="boss" value="Walter"/>
+    <property name="day" type="int" value="2"/>
+    <property name="value" value="Não usar gráfico de pizza acho que é o suficiente pra passar"/>
+   </properties>
+  </object>
+  <object id="1274" x="1784.5" y="127" width="31" height="17">
+   <properties>
+    <property name="boss" value="Soledad"/>
+    <property name="day" type="int" value="3"/>
+    <property name="value" value="Nunca gostei de grafos... Ok, legal, vamos lá"/>
+   </properties>
+  </object>
+  <object id="1275" x="1679.5" y="311.5" width="40" height="18">
+   <properties>
+    <property name="boss" value="Pinho"/>
+    <property name="day" type="int" value="1"/>
+    <property name="value" value="Trouxe café, vai que ele pega mais leve"/>
+   </properties>
+  </object>
+  <object id="1276" x="2045.5" y="148" width="33.5" height="19.5">
+   <properties>
+    <property name="boss" value="Branco"/>
+    <property name="day" type="int" value="4"/>
+    <property name="value" value="Por favor que não caia lagrange"/>
+   </properties>
+  </object>
+  <object id="1282" x="1880.25" y="310" width="40.5" height="16">
+   <properties>
+    <property name="boss" value="Yuri"/>
+    <property name="day" type="int" value="5"/>
+    <property name="value" value="Melhor eu começar a rezar"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="16" name="Objs">
+  <object id="1278" name="Caneta" type="Item" x="348.18" y="230.028">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="pen"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1279" name="Livro" type="Item" x="864.41" y="217.41">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="book"/>
+   </properties>
+   <point/>
   </object>
  </objectgroup>
 </map>

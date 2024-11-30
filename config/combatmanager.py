@@ -30,9 +30,12 @@ class CombatManager:
             infos (dict): Dicionário com as informações do Boss
         """
         from classes.bosses.yuri import Yuri
+        from classes.bosses.branco import Branco
 
         if infos['name'] == 'Yuri Saporito':
             cls.enemy = Yuri(infos)
+        if infos['name'] == 'Branco Saraiva':
+            cls.enemy = Branco(infos)
     
     @classmethod
     def set_variable(cls, key: str, value):

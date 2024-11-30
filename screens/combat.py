@@ -34,13 +34,11 @@ class Combat(State):
         self,
         name: str,
         display: pygame.Surface,
-        game_state_manager: GameStateManager,
     ):
         # Variáveis padrão de qualquer Cenário
         self.__variables = {}
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__game_state_manager: GameStateManager = game_state_manager
 
         self.__execution_counter = 0
 
@@ -97,6 +95,8 @@ class Combat(State):
         SoundManager.stop_music()
         self.act_menu.options.clear()
         self.act_menu.options = self.__variables['enemy']['act']
+
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
 
         self.starter_text.restart(self.__variables['enemy']['starter_text'])
 
@@ -224,10 +224,6 @@ class Combat(State):
     @property
     def display(self):
         return self.__display
-    
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
     
     @property
     def name(self):

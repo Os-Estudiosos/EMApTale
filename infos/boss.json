@@ -1,44 +1,84 @@
 {
-    "name": "Yuri Saporito",
-    "life": 30,
-    "defense": 3,
-    "damage": 3,
-    "voice": "yuri_txt.wav",
-    "starter_text": "O Coordenador do curso se aproxima, você sente as horas de procrastinação rastejando em suas costas",
-    "attacks_dialogues": [
-        "Se prepare para o ataque do R²",
-        "Acha a decomposição QR disso aqui",
-        "ACHE O AUTOVELOR E O AUTOVATOR DA MATRIZ A!"
-    ],
-    "act": [
-        {
-            "label": "Checar",
-            "responses": [
-                "ATK - 3  DEF - 100"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Implorar Ponto",
-            "responses": [
-                "Ele não parece convencido, vai ter que fazer muito mais que isso para o convencer"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Chorar",
-            "responses": [
-                "Ele olha para você com uma cara serena, seu chororô não funcionou!"
-            ],
-            "effect": null
-        },
-        {
-            "label": "Tirar Dúvida",
-            "responses": [
-                "Você demonstrou interesse na matéria, Yuri mostra empatia por você!",
-                "A defesa de Yuri diminuiu!"
-            ],
-            "effect": "-defense"
-        }
-    ]
+    "Yuri": {
+        "name": "Yuri Saporito",
+        "sound": "Yuri_Theme.mp3",
+        "life": 30,
+        "defense": 3,
+        "damage": 3,
+        "voice": "yuri_txt.wav",
+        "starter_text": "O Coordenador do curso se aproxima, você sente as horas de procrastinação rastejando em suas costas",
+        "attacks_dialogues": [
+            "Se prepare para o ataque do R²",
+            "Acha a decomposição QR disso aqui",
+            "ACHE O AUTOVELOR E O AUTOVATOR DA MATRIZ A!"
+        ],
+        "act": [
+            {
+                "label": "Checar",
+                "responses": [
+                    "ATK - 3  DEF - 3"
+                ],
+                "effect": null
+            },
+            {
+                "label": "Implorar Ponto",
+                "responses": [
+                    "Ele não parece convencido, vai ter que fazer muito mais que isso para o convencer"
+                ],
+                "effect": null
+            },
+            {
+                "label": "Chorar",
+                "responses": [
+                    "Ele olha para você com uma cara serena, seu chororô não funcionou!"
+                ],
+                "effect": null
+            },
+            {
+                "label": "Tirar Dúvida",
+                "responses": [
+                    "Você demonstrou interesse na matéria, Yuri mostra empatia por você!",
+                    "A defesa de Yuri diminuiu!"
+                ],
+                "effect": "-defense"
+            }
+        ]
+    },
+    "Branco": {
+        "name": "Branco Saraiva",
+        "life": 30,
+        "sound": "Branco_Theme.mp3",
+        "defense": 3,
+        "damage": 3,
+        "voice": "branco_txt.wav",
+        "starter_text": "Um senhor sorridente se aproxima, não deixe seu riso contagiante de atingir!",
+        "attacks_dialogues": [
+            "Calcula essas integral aqui"
+        ],
+        "act": [
+            {
+                "label": "Checar",
+                "responses": [
+                    "ATK - 3  DEF - 3"
+                ],
+                "effect": null
+            },
+            {
+                "label": "Contar Piada",
+                "responses": [
+                    "Branco escuta sua piada e começa a rir muito, você é um comediante nato!",
+                    "A defesa de Branco diminuiu!"
+                ],
+                "effect": "-defense"
+            },
+            {
+                "label": "Corrigir Prova",
+                "responses": [
+                    "Você levou sua prova para questionar a correção de Branco, ele aponta inúmeros erros na sua prova",
+                    "Seu questionamento não foi efetivo"
+                ],
+                "effect": null
+            }
+        ]
+    }
 }

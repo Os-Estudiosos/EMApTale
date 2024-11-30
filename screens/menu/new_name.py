@@ -17,13 +17,11 @@ class NewName(State):
         self,
         name: str,
         display: pygame.Surface,
-        game_state_manager: GameStateManager,
     ):
         # Variáveis padrão de qualquer Cenário
         self.__variables = {}
         self.__name = name
         self.__display: pygame.Surface = display
-        self.__game_state_manager: GameStateManager = game_state_manager
 
         self.__execution_counter = 0
 
@@ -56,7 +54,7 @@ class NewName(State):
 
                 if event.key == pygame.K_RETURN and len(self.player_name)>0:
                     SaveManager.create_new_save_file(self.player_name)
-                    self.__game_state_manager.set_state('intro_cutscene')
+                    GameStateManager.set_state('intro_cutscene')
         
         set_your_name_text = Text('DIGITE O SEU NOME', FontManager.fonts['Gamer'], self.font_size)
         confirm_text = Text('APERTE ENTER PARA CONFIRMAR', FontManager.fonts['Gamer'], self.font_size - 30)
@@ -86,10 +84,6 @@ class NewName(State):
         return self.__display
     
     @property
-    def game_state_manager(self):
-        return self.__game_state_manager
-    
-    @property
     def name(self):
         return self.__name
     
@@ -102,4 +96,3 @@ class NewName(State):
         if not isinstance(value, dict):
             raise TypeError("Você precisa passar um dicionário")
         self.__variables = value
-        

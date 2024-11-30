@@ -1,9 +1,33 @@
 import pygame
+import os
+from config import *
 from classes.text.dynamic_text import DynamicText
 from config.eventmanager import EventManager
+from config.globalmanager import GlobalManager
+from config.gamestatemanager import GameStateManager
+
+
+class Interaction:
+    def __init__(self, **kwargs):
+        self.rect = pygame.Rect(kwargs['x'], kwargs['y'], kwargs['width'], kwargs['height'])
+        self.interaction_name = kwargs['interaction_name']
+        self.value = kwargs['value']
+        self.day = kwargs['day']
+    
+
+class BossIntercation(Interaction):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.boss = kwargs['boss']
+    
+    def go_to_boss_fight(self):
+        GameStateManager.set_state('combat', {
+            "enemy": GlobalManager.bosses[self.boss]
+        })
+
 
 class InteractionManager:
-    def __init__(self, interactions, player, chatbox, tecla_z_image):
+    def __init__(self, player, chatbox, tecla_z_image):
         """
         Gerencia as interações do jogador com objetos do mapa.
         :param interactions: Lista de objetos de interação carregados do mapa.
@@ -11,7 +35,6 @@ class InteractionManager:
         :param chatbox: Imagem da caixa de texto.
         :param tecla_z_image: Imagem da tecla "Z" para exibir quando na área de interação.
         """
-        self.interactions = interactions
         self.player = player
         self.active_interaction = None
         self.interaction_in_progress = False  # Para manter interações
@@ -33,12 +56,17 @@ class InteractionManager:
         :param events: Lista de eventos do Pygame.
         :return: Objeto de interação ativo (se houver).
         """
-        player_rect = self.player.rect
-        for interaction in self.interactions:
-            rect = pygame.Rect(interaction['x'], interaction['y'], interaction['width'], interaction['height'])
-
+        for interaction in GlobalManager.interactions:
             # Jogador está na área de interação
-            if player_rect.colliderect(rect):
+            if (
+                (interaction.rect.colliderect(self.player.rect))
+                    and
+                (
+                    interaction.day == None
+                    or
+                    interaction.day == GlobalManager.day
+                )
+            ):
                 self.active_interaction = interaction
                 return interaction
 
@@ -53,17 +81,21 @@ class InteractionManager:
         """
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_z:
+                if (event.key == pygame.K_z or event.key == pygame.K_RETURN) and (not GlobalManager.on_inventory and not GlobalManager.paused):
                     # Inicia ou encerra interações
                     if self.dynamic_text:
                         if self.dynamic_text.finished:
                             # Encerra a interação
+                            if isinstance(self.active_interaction, BossIntercation):
+                                self.active_interaction.go_to_boss_fight()
                             self.dynamic_text = None
                             self.active_interaction = None
+                        else:
+                            self.dynamic_text.skip_text()
                     elif self.active_interaction:
                         # Inicia interação com texto dinâmico
                         self.dynamic_text = DynamicText(
-                            text=f"{self.active_interaction['value']}",
+                            text=f"{self.active_interaction.value}",
                             font="fonts/Gamer.ttf",
                             letters_per_second=20,
                             text_size=70,
@@ -72,12 +104,9 @@ class InteractionManager:
                                 self.chatbox_position[1] + 20  # Margem superior
                             ),
                             color=(255, 255, 255),
-                            max_length=self.chatbox.get_width() - 40
+                            max_length=self.chatbox.get_width() - 40,
+                            sound='text_1.wav'
                         )
-                elif event.key == pygame.K_RETURN or event.key == pygame.K_z:
-                    # Pula o texto se não estiver terminado
-                    if self.dynamic_text and not self.dynamic_text.finished:
-                        self.dynamic_text.skip_text()
 
     def render_interaction(self, display):
         """
