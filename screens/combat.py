@@ -91,6 +91,16 @@ class Combat(State):
             f'{self.mercy_menu.__class__.__name__}': self.mercy_menu,
         }
 
+
+        # Variáveis de teste para game over
+        self.heart_sherd = [
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "player", "hearts", 'broken-heart.png')),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "player", "hearts", 'heart-sherd-1.png')),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "player", "hearts", 'heart-sherd-2.png')),
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "player", "hearts", 'heart-sherd-3.png'))
+        ]
+
+
     def on_first_execution(self):
         # Limpando os sons
         self.__execution_counter += 1
@@ -121,27 +131,44 @@ class Combat(State):
                     damage_taken
                 )
 
+
+    def brake_heart_animation(self, heart_position, sprites):
+        
+        
+            # Obter o sprite do coração quebrado
+            broken = sprites[0]
+            sherd_1 = sprites[1]
+            sherd_2 = sprites[2]
+            sherd_3 = sprites[3]
+
+            broken_rect = broken.get_rect(center=heart_position)
+            self.__display.fill((0, 0, 0))
+            self.__display.blit(broken, broken_rect)
+
+
+
+            # Atualizar a tela para refletir a alteração
+            pygame.display.flip()
+        
+
     def run(self):
         # Inicio do ciclo de vida da cena
         if not self.__execution_counter > 0:
             self.on_first_execution()
         
-
          # Se o player morrer, executar o fim
         if Player.life == 0:
-            # Parar todas as ações
+            # Parar todas as ações, deixar fundo preto
             pygame.time.set_timer(BOSS_TURN_EVENT, 0)
             pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
+            self.__display.fill((0, 0, 0))
 
             # Obter a posição do coração
             heart_position = self.player.rect.center
 
-            # Preencher a tela com preto
-            self.__display.fill((0, 0, 0))
-
             # Desenhar o coração na última posição
-            self.player.rect.center = heart_position
             self.player_group.draw(self.__display)
+            self.brake_heart_animation(heart_position, self.heart_sherd)    
             
             return
 
