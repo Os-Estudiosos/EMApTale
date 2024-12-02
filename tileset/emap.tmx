@@ -511,14 +511,14 @@
    <properties>
     <property name="boss" value="Walter"/>
     <property name="day" type="int" value="2"/>
-    <property name="value" value="Não usar gráfico de pizza acho que é o suficiente pra passar"/>
+    <property name="value" value="Talvez não usar grafico de pizza seja o suficiente pra passar"/>
    </properties>
   </object>
   <object id="1274" x="1784.5" y="127" width="31" height="17">
    <properties>
     <property name="boss" value="Soledad"/>
     <property name="day" type="int" value="3"/>
-    <property name="value" value="Nunca gostei de grafos... Ok, legal, vamos lá"/>
+    <property name="value" value="Será que se aplicar redes a nota sai máxima?"/>
    </properties>
   </object>
   <object id="1275" x="1679.5" y="311.5" width="40" height="18">
