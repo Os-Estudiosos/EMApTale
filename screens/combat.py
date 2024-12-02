@@ -18,7 +18,6 @@ from classes.text.dynamic_text import DynamicText
 from classes.text.text import Text
 
 from config.soundmanager import SoundManager
-from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.combatmanager import CombatManager
 from config.eventmanager import EventManager
@@ -88,6 +87,17 @@ class Combat(State):
             f'{self.fight_menu.__class__.__name__}': self.fight_menu,
             f'{self.mercy_menu.__class__.__name__}': self.mercy_menu,
         }
+
+        # Variáveis para quando o Boss morrer
+        self.opacity_helper_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
+        self.opacity_helper_surface.fill(pygame.Color(0,0,0,0))
+
+        self.transition_rate = FPS
+
+        self.white_transition_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
+        self.transition_alpha = 0
+        self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
+        self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())
 
     def on_first_execution(self):
         # Limpando os sons
@@ -213,6 +223,17 @@ class Combat(State):
                 
                 # Updates que são apenas do turno do boss
                 self.player_group.update(display=self.__display)
+        
+        if CombatManager.enemy.dead:
+            self.__execution_counter += 1
+            if self.__execution_counter%self.transition_rate == 0 and self.transition_alpha + 1 <= 255:
+                self.transition_alpha += 1
+
+            self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
+
+            self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())
+
+            self.__display.blit(self.opacity_helper_surface, self.opacity_helper_surface.get_rect())
         
     def on_last_execution(self):
         self.__execution_counter = 0

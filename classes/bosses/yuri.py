@@ -110,10 +110,6 @@ class Yuri(Boss):
 
         for explosion in self.__death_explosions:
             screen.blit(explosion.img, explosion.rect)
-
-    def apply_effect(self, effect):
-        if effect == '-defense':
-            self.__defense = 0
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
@@ -137,6 +133,7 @@ class Yuri(Boss):
                 else:
                     self.__attacks[self.attack_to_execute].run()
         else:
+            SoundManager.stop_music()
             self.death_animation()
         
         for event in EventManager.events:
@@ -153,15 +150,6 @@ class Yuri(Boss):
                 self.state = 'idle'
                 self.__counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
- 
-    def take_damage(self, amount):
-        self.__life = self.__life - amount*amount/(amount+self.__defense)
-        SoundManager.play_sound('damage.wav')
-        if self.__life <= 0:
-            self.__life = 0
-            self.__dead = True
-        self.state = 'shaking'
-        self.__counter = 0
 
     @property
     def counter(self):
