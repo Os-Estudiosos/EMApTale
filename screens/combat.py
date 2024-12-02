@@ -46,6 +46,9 @@ class Combat(State):
         self.player_group = pygame.sprite.Group()  # Grupo do player
         CombatManager.set_variable('player_group', self.player_group)
 
+        # Adiciono um canal específico
+        SoundManager.add_chanel()
+
         # ============ VARIÁVEIS DO HUD ============
         # Carregando o background da batalha
         self.background = pygame.transform.scale(
@@ -225,15 +228,22 @@ class Combat(State):
                 self.player_group.update(display=self.__display)
         
         if CombatManager.enemy.dead:
+            if self.__execution_counter == 1:
+                SoundManager.play_sound('cymbal.ogg', 0)
+            
             self.__execution_counter += 1
+
             if self.__execution_counter%self.transition_rate == 0 and self.transition_alpha + 1 <= 255:
                 self.transition_alpha += 1
 
             self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
 
-            self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())
+            self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())    
 
             self.__display.blit(self.opacity_helper_surface, self.opacity_helper_surface.get_rect())
+
+            if not SoundManager.is_chanel_playing(0):
+                print("Teste")
         
     def on_last_execution(self):
         self.__execution_counter = 0
