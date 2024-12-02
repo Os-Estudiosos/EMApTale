@@ -19,7 +19,7 @@ class SaveManager:
                 "sprite": "pencil.png",
                 "name": "Lápis",
                 "type": "weapon",
-                "damage": "5",
+                "damage": 5,
                 "description": "É o que eu tinha na mochila",
                 "equiped": True
             },
