@@ -531,14 +531,14 @@
   <object id="1276" x="2045.5" y="148" width="33.5" height="19.5">
    <properties>
     <property name="boss" value="Branco"/>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="4"/>
     <property name="value" value="Por favor que não caia lagrange"/>
    </properties>
   </object>
   <object id="1282" x="1880.25" y="310" width="40.5" height="16">
    <properties>
     <property name="boss" value="Yuri"/>
-    <property name="day" type="int" value="5"/>
+    <property name="day" type="int" value="1"/>
     <property name="value" value="Melhor eu começar a rezar"/>
    </properties>
   </object>

@@ -42,8 +42,8 @@ class Branco(Boss):
         # Carregando o sprite do Yuri
         self.image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'branco.png'))
         self.rect = self.image.get_rect()
-        self.state = 'idle'
-        self.counter = 0
+        self.__state = 'idle'
+        self.__counter = 0
 
         self.integral_sword = IntegralSword(60)
 
@@ -90,7 +90,7 @@ class Branco(Boss):
         )
         self.speaking = False
 
-        self.dead = False
+        self.__dead = False
         self.__death_animation_counter = 0
         self.__death_explosions: list[Explosion] = []
         self.death_loops_counter = 255
@@ -104,7 +104,7 @@ class Branco(Boss):
         self.rect = self.image.get_rect(center=self.rect.center)
 
     def speak(self):
-        if not self.dead:
+        if not self.__dead:
             self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
             self.speaking = True
     
@@ -130,36 +130,32 @@ class Branco(Boss):
     def draw(self, screen):
         self.integral_sword.draw(screen)
         screen.blit(self.image, self.rect)
-        if self.state == 'shaking':
+        if self.__state == 'shaking':
             self.hp_container.draw(screen)
         if self.speaking:
             self.dialogue.draw(screen)
 
         for explosion in self.__death_explosions:
             screen.blit(explosion.img, explosion.rect)
-
-    def apply_effect(self, effect):
-        if effect == '-defense':
-            self.__defense = 0
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
-        if self.state == 'shaking':
+        if self.__state == 'shaking':
             self.integral_sword.rect.centerx = self.rect.centerx
             self.integral_sword.rect.centery = self.rect.centery + 10
 
-            self.counter += 10
-            counter_in_radians = self.counter*math.pi/180
+            self.__counter += 10
+            counter_in_radians = self.__counter*math.pi/180
             wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
             self.rect.x += 40 * wave_factor
             self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
-            if self.counter >= FPS*1.5*10:
-                self.state = 'idle'
-                self.counter = 0
+            if self.__counter >= FPS*1.5*10:
+                self.__state = 'idle'
+                self.__counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
 
-        if not self.dead:
+        if not self.__dead:
             if self.speaking:
                 self.dialogue.update()
                 self.dialogue.rect.left = self.rect.right
@@ -196,15 +192,6 @@ class Branco(Boss):
         for event in EventManager.events:
             if event.type == BOSS_ACT_EFFECT:
                 self.apply_effect(event.effect)
- 
-    def take_damage(self, amount):
-        self.__life = self.__life - amount*amount/(amount+self.__defense)
-        SoundManager.play_sound('damage.wav')
-        if self.__life <= 0:
-            self.__life = 0
-            self.dead = True
-        self.state = 'shaking'
-        self.counter = 0
     
     def randomize_laugh(self):
         self.laugh_random_counter += 1  # Atualizando o contador da risada
@@ -236,6 +223,14 @@ class Branco(Boss):
             self.laugh_counter = 0
 
     @property
+    def counter(self):
+        return self.__counter
+
+    @property
+    def state(self):
+        return self.__state
+
+    @property
     def life(self):
         return self.__life
     
@@ -258,6 +253,47 @@ class Branco(Boss):
     @property
     def music(self):
         return self.__music
+    
+    @property
+    def dead(self):
+        return self.__dead
+    
+    @life.setter
+    def life(self, value):
+        self.__life = value
+    
+    @max_life.setter
+    def max_life(self, value):
+        self.__max_life = value
+
+    @damage.setter
+    def damage(self, value):
+        self.__damage = value
+    
+    @defense.setter
+    def defense(self, value):
+        self.__defense = value
+    
+    @voice.setter
+    def voice(self, value):
+        self.__voice = value
+
+    @music.setter
+    def music(self, value):
+        self.__music = value
+    
+    @dead.setter
+    def dead(self, value):
+        self.__dead = value
+    
+    @state.setter
+    def state(self, value):
+        self.__state = value
+    
+    @counter.setter
+    def counter(self, value):
+        self.__counter = value
+
 
 class IntegralsAttack(Attack):
     def __init__(self, damage):
