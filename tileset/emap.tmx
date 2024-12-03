@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="1314">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="1315">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -528,18 +528,18 @@
     <property name="value" value="Trouxe café, vai que ele pega mais leve"/>
    </properties>
   </object>
-  <object id="1276" x="2045.5" y="148" width="33.5" height="19.5">
-   <properties>
-    <property name="boss" value="Branco"/>
-    <property name="day" type="int" value="2"/>
-    <property name="value" value="Por favor que não caia lagrange"/>
-   </properties>
-  </object>
-  <object id="1311" x="257.75" y="218.5" width="40.5" height="16">
+  <object id="1311" x="412.25" y="324.5" width="40.5" height="16">
    <properties>
     <property name="boss" value="Yuri"/>
     <property name="day" type="int" value="1"/>
     <property name="value" value="Melhor eu começar a rezar"/>
+   </properties>
+  </object>
+  <object id="1314" x="601.75" y="324.75" width="33.5" height="19.5">
+   <properties>
+    <property name="boss" value="Branco"/>
+    <property name="day" type="int" value="2"/>
+    <property name="value" value="Por favor que não caia lagrange"/>
    </properties>
   </object>
  </objectgroup>
@@ -560,7 +560,7 @@
   </object>
  </objectgroup>
  <objectgroup id="15" name="Spawnpoint">
-  <object id="1312" name="Spawnpoint" x="543.5" y="328.5">
+  <object id="1312" name="Spawnpoint" x="538" y="325">
    <point/>
   </object>
  </objectgroup>

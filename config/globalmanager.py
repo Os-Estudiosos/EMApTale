@@ -2,7 +2,6 @@ import os
 import json
 
 from config import *
-from config.savemanager import SaveManager
 
 from classes.map.camera import Camera
 
@@ -37,7 +36,10 @@ class GlobalManager:
 
     @classmethod
     def load_infos(cls):
-        cls.day = SaveManager.loaded_save['day']  # Carregando o dia atual
+        from config.savemanager import SaveManager
+
+        if not cls.day:
+            cls.day = SaveManager.loaded_save['day']  # Carregando o dia atual
 
         with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'items.json')) as file:
             cls.items = json.load(file)
@@ -48,5 +50,5 @@ class GlobalManager:
     @classmethod
     def get_item(cls, item_id):
         for item in cls.items:
-            if item['id_item'] == item_id:
+            if item['item_id'] == item_id:
                 return item

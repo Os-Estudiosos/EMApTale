@@ -93,6 +93,22 @@ class Combat(State):
             f'{self.mercy_menu.__class__.__name__}': self.mercy_menu,
         }
 
+    def on_first_execution(self):
+        # Limpando os sons
+        self.__execution_counter += 1
+        SoundManager.stop_music()
+        self.act_menu.options.clear()
+        self.act_menu.options = self.__variables['enemy']['act']
+
+        CombatManager.turn = 'player'
+        BattleMenuManager.active_menu = 'MainMenu'
+
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
+
+        self.starter_text.restart(self.__variables['enemy']['starter_text'])
+
+        Player.load_infos()
+
         # Variáveis para quando o Boss morrer
         self.opacity_helper_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
         self.opacity_helper_surface.fill(pygame.Color(0,0,0,0))
@@ -106,19 +122,6 @@ class Combat(State):
 
         self.go_to_next_screen_transition_time = FPS  # Demora 1 segundo para sair do combate e ir pro próximo dia
         self.go_to_next_screen_transition_measurer = 0
-
-    def on_first_execution(self):
-        # Limpando os sons
-        self.__execution_counter += 1
-        SoundManager.stop_music()
-        self.act_menu.options.clear()
-        self.act_menu.options = self.__variables['enemy']['act']
-
-        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
-
-        self.starter_text.restart(self.__variables['enemy']['starter_text'])
-
-        Player.load_infos()
 
     def handle_events(self):
         for event in EventManager.events:
@@ -234,6 +237,7 @@ class Combat(State):
         
         if CombatManager.enemy.dead:
             if self.__execution_counter == 1:
+                SoundManager.stop_music()
                 SoundManager.play_sound('cymbal.ogg', 0)
                 self.go_to_next_screen_transition_measurer = pygame.time.get_ticks()
             

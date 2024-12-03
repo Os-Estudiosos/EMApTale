@@ -1,7 +1,6 @@
 import pygame
 from time import time
 
-from config.savemanager import SaveManager
 from config.soundmanager import SoundManager
 
 from classes.inventory import Inventory
@@ -25,6 +24,8 @@ class Player(pygame.sprite.Sprite):
     def load_infos(cls):
         """Classe responsável por carregar as informações do personagem
         """
+        from config.savemanager import SaveManager
+
         Player.name = SaveManager.loaded_save['name']
         Player.life = SaveManager.loaded_save['player']['life']
         Player.max_life = SaveManager.loaded_save['player']['max_life']

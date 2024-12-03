@@ -8,6 +8,7 @@ from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.eventmanager import EventManager
 from config.globalmanager import GlobalManager
+from config.savemanager import SaveManager
 
 from classes.text.text import Text
 
@@ -33,7 +34,7 @@ class PauseMenu(State):
             },
             {
                 'label': Text('SALVAR O JOGO', FontManager.fonts['Gamer'], 50),
-                'func': lambda: print("Salvando o Jogo")
+                'func': lambda: SaveManager.save()
             },
             {
                 'label': Text('CONFIGURAÇÕES', FontManager.fonts['Gamer'], 50),

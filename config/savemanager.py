@@ -3,6 +3,9 @@ import platform
 from pathlib import Path
 import json
 
+from classes.player import Player
+from config.globalmanager import GlobalManager
+
 
 class SaveManager:
     home = Path.home()
@@ -11,7 +14,6 @@ class SaveManager:
     default_save_information = {
         "name": "",
         "day": 1,
-        "equiped_item": 0,
         "inventory": [
             {
                 "id": "pencil",
@@ -29,7 +31,8 @@ class SaveManager:
             "max_life": 20,
             "actual_xp": 0,
             "max_xp": 100,
-            "level": 1
+            "level": 1,
+            "map_position": None
         }
     }
 
@@ -76,7 +79,22 @@ class SaveManager:
     
     @classmethod
     def save(cls):
-        raise NotImplementedError
+        folder_path = cls.get_save_folder_path()
+
+        if not cls.save_exists():  # Levantando erro caso use de forma errada
+            raise FileNotFoundError("Não podemos salvar o jogo sem que haja um arquivo de save")
+        
+        new_information = cls.loaded_save.copy()
+
+        new_information['player']['life'] = Player.life
+        new_information['player']['max_life'] = Player.max_life
+        new_information['player']['map_position'] = Player.map_position
+        new_information['inventory'] = Player.inventory.get_dict()
+
+        new_information['day'] = GlobalManager.day
+
+        with open(os.path.join(folder_path, 'save_file.json'), 'w') as file:
+            file.write(json.dumps(new_information, indent=4))
     
     @classmethod
     def save_exists(cls) -> bool:

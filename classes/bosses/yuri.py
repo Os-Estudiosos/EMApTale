@@ -133,7 +133,6 @@ class Yuri(Boss):
                 else:
                     self.__attacks[self.attack_to_execute].run()
         else:
-            SoundManager.stop_music()
             self.death_animation()
         
         for event in EventManager.events:

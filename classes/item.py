@@ -14,6 +14,8 @@ class Item(pygame.sprite.Sprite):
         self.name = properties['name']
         self.description = properties['description']
         self.type = properties['type']
+        self.item_id = properties['item_id']
+        self.json_item = properties
         self.__dict__ = {
             **self.__dict__,
             **properties
