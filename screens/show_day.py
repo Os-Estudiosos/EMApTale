@@ -37,7 +37,7 @@ class ShowDay(State):
     def on_first_execution(self):
         SoundManager.play_sound('intro_noise.ogg')
         self.__execution_counter += 1
-        GlobalManager.day += 1
+        GlobalManager.pass_day()
         self.day_text = Text(f'DIA {GlobalManager.day}', FontManager.fonts['Gamer'], int(self.__display.get_height() * 0.4))
         self.day_text.rect.center = self.__display.get_rect().center
         self.transition_from_text_to_black_screen_ticks = time.time()

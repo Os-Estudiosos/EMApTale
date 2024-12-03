@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="1313">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="1314">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -531,7 +531,7 @@
   <object id="1276" x="2045.5" y="148" width="33.5" height="19.5">
    <properties>
     <property name="boss" value="Branco"/>
-    <property name="day" type="int" value="4"/>
+    <property name="day" type="int" value="2"/>
     <property name="value" value="Por favor que não caia lagrange"/>
    </properties>
   </object>
@@ -560,7 +560,7 @@
   </object>
  </objectgroup>
  <objectgroup id="15" name="Spawnpoint">
-  <object id="1312" name="Spawnpoint" x="538.5" y="347">
+  <object id="1312" name="Spawnpoint" x="543.5" y="328.5">
    <point/>
   </object>
  </objectgroup>

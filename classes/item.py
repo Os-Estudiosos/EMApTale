@@ -30,8 +30,8 @@ class Item(pygame.sprite.Sprite):
         )
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
-        self.rect.x = position[0]*MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x
-        self.rect.y = position[1]*MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y
+        self.rect.x = position[0]*MAP_SCALE_FACTOR
+        self.rect.y = position[1]*MAP_SCALE_FACTOR
         self.original_rect: pygame.Rect = self.rect.copy()
 
     def define_action(self):

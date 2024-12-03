@@ -17,6 +17,11 @@ class GlobalManager:
     camera: Camera = None
     paused = False
     on_inventory = False
+    spawnpoint = [0,0]
+
+    @classmethod
+    def pass_day(cls):
+        cls.day += 1
 
     @classmethod
     def pause(cls):

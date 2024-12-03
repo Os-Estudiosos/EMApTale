@@ -30,14 +30,15 @@ class EMAp(State):
         self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loaded = False
 
+        self.map_loader.load_items()
+        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
+        self.map_loader.load_interactions()
+
         # Configura a câmera com as dimensões do mapa e da tela
         map_width, map_height = self.map_loader.get_size()
         screen_width, screen_height = self.__display.get_size()
         self.camera = Camera(map_width, map_height, screen_width, screen_height)
         GlobalManager.set_camera(self.camera)
-
-        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
-        self.map_loader.load_interactions()
 
         # Inicializa o jogador
         self.player = Frisk(self.map_loader.walls)
@@ -71,10 +72,14 @@ class EMAp(State):
         self.infos_hud: InfosHud = None
 
     def on_first_execution(self):
+        self.player.reset_position()
         SaveManager.load()
         GlobalManager.load_infos()
         self.player.load_infos()
+        self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loader.load_items()
+        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
+        self.map_loader.load_interactions()
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
         GlobalManager.paused = False
@@ -93,7 +98,7 @@ class EMAp(State):
         self.camera.update(self.player.rect)
 
         # Renderiza os tiles do mapa
-        self.map_loader.render_with_vector(self.__display, self.camera, MAP_OFFSET_VECTOR)
+        self.map_loader.render_with_vector(self.__display, self.camera)
 
         # Coleta e ordena os objetos renderizáveis (incluindo o jogador)
         renderables = self.map_loader.get_renderables(self.player)
@@ -153,6 +158,7 @@ class EMAp(State):
 
     def on_last_execution(self):
         self.__execution_counter = 0
+        self.map_loaded = False
     
     @property
     def execution_counter(self):
