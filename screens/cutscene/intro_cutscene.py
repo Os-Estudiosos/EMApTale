@@ -27,7 +27,7 @@ class IntroCutscene(State):
             "Mas não tenha otimismo, pois 5 Entidades da EMAp tentarão impedi-lo de conseguir! Boa sorte!",
             "               ", 
             "                                   ", 
-            "", 
+            " ", 
 
         ]
         self.images = [
@@ -44,13 +44,13 @@ class IntroCutscene(State):
 
         self.current_text = DynamicText(
             text=self.texts[self.stage],
-            font=FontManager.fonts['Pixel'],  # Verifique se 'Pixel' é o caminho ou o nome correto
+            font=FontManager.fonts['Pixel'],
             letters_per_second=self.letters_per_second,
             text_size=40,
             max_length=self.__display.get_width() - 40,
             position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
             color=(255, 255, 255),
-            sound=None  # Adicione um som se for necessário
+            sound="text_2.wav"  
         )
 
         self.current_image = self.images[self.stage]
@@ -93,8 +93,6 @@ class IntroCutscene(State):
             else:
                 self.wait_a_second = 1600   
 
-        #print(current_time, self.current_time_local, self.initial_time, self.last_time_define, self.wait_a_second)
-
         # Verificar se o tempo de espera passou
         if self.current_text.finished and self.last_time_define + self.wait_a_second < self.current_time_local:
             
@@ -105,13 +103,13 @@ class IntroCutscene(State):
             if self.stage < len(self.texts):
                 self.current_text = DynamicText(
                     text=self.texts[self.stage],
-                    font=FontManager.fonts['Pixel'],  # Verifique se 'Pixel' é o caminho ou o nome correto
+                    font=FontManager.fonts['Pixel'],  
                     letters_per_second=self.letters_per_second,
                     text_size=40,
                     max_length=self.__display.get_width() - 40,
                     position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
                     color=(255, 255, 255),
-                    sound=None  # Adicione um som se for necessário
+                    sound="text_2.wav"
                 )
 
                 self.current_image = self.images[self.stage]
@@ -150,9 +148,6 @@ class IntroCutscene(State):
 
             resized_image = pygame.transform.scale(self.current_image, (int(new_width), int(new_height)))
             image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
-
-            teste = self.current_time_local
-
         
             its_final_true = not all([
                 self.stage == len(self.images) -1,
@@ -196,7 +191,7 @@ class IntroCutscene(State):
                             self.stage += 1
                             self.current_text = DynamicText(
                                 text=self.texts[self.stage],
-                                font=FontManager.fonts['Pixel'],  # Verifique se 'Pixel' é o caminho ou o nome correto
+                                font=FontManager.fonts['Pixel'],  
                                 letters_per_second=self.letters_per_second,
                                 text_size=40,
                                 max_length=self.__display.get_width() - 40,

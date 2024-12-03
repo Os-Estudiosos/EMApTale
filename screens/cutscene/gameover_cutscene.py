@@ -7,66 +7,89 @@ from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.soundmanager import SoundManager
 from config.eventmanager import EventManager
+from random import randint
 
-from classes.text.text import Text 
+from classes.text.dynamic_text import DynamicText
 
 class GameoverCutscene(State):
     def __init__(self, name: str, display: pygame.Surface, game_state_manager: GameStateManager):
         self.__name = name
         self.__display = display
         self.__game_state_manager = game_state_manager
-        self.__variables = {}   
+        self.__variables = {}
 
         self.random_messages = [ 
             'Lutou bem, tente o IMPA TECH!',
             'Não tankou nem o segundo semestre...',
-            'Você falhou e perdeu a borceta'
             'Volte a criar galinhas e capinar mato, amigo!',
-            'Perdeu pois nãos arredondaram sua nota de 1,75 para 7',
-            'Isso que dar fazer ao mesmo tempo: Junior, Valley, Atlética, Amplia...',
+            'Perdeu pois não arredondaram sua nota de 1,75 para 7',
+            'Isso que da fazer ao mesmo tempo: Junior, Valley, Atlética, Amplia...',
             'Bem que a Bebel avisou sobre as entidades...',
-            'ROLAS BEM SUCULENTAS E GROSSAS HAHAHAHAHAHAH'
-
+            'Se fosse GREMISTA teria passado pois o GRÊMIO é IMORTAL tricolor!!!! VAMOS GRÊMIOOOOOOOOOO',
+            'O olhar gélido da Luziel entrou na sua alma!'
         ]
         self.__execution_counter = 0
+
+        # Configuração do texto dinâmico
+        self.current_text = DynamicText(
+            text=self.random_messages[randint(0,len(self.random_messages)-1)],
+            font=FontManager.fonts['Pixel'], 
+            letters_per_second=13,
+            text_size=30,
+            max_length=self.__display.get_width() - 70,
+            position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
+            color=(255, 255, 255),
+            sound=None
+        )
+
+        self.gameover_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "gameover.jpg"))
+
 
     def on_first_execution(self):
         SoundManager.stop_sound
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "gameover_music.mp3"))
 
+
     def run(self):
-        # Chama o que será executado apenas na primeira vez
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
 
-        self.__display.fill((0, 0, 0))
+        # Define as dimensões do que será plotado
+        screen_width, screen_height = self.__display.get_size()
+        image_width, image_height = self.gameover_image.get_size()
 
-        # Configura o texto
-        text = Text(
-            text="GAME", 
-            font=FontManager.fonts['Gamer'], 
-            size=300, 
-            color=(255, 255, 255)
-        )
-        text2 = Text(
-            text="OVER", 
-            font=FontManager.fonts['Gamer'], 
-            size=300, 
-            color=(255, 255, 255)
-        )
-
-        # Configura a posição do texto
-        text.rect.centerx = self.__display.get_width() // 2
-        text.rect.centery = self.__display.get_height() // 2 - 250 
-
-        text2.rect.centerx = self.__display.get_width() // 2
-        text2.rect.centery = self.__display.get_height() // 2 - 100  
+        new_width = screen_width * 0.35
+        aspect_ratio = image_height / image_width  
+        new_height = new_width * aspect_ratio 
 
 
-        # Desenhar o game over
-        text.draw(self.__display)
-        text2.draw(self.__display)
+        # Calcular a posição centralizada e levemente para cima
+        x_pos = screen_width * 0.5 - new_width * 0.5 
+        y_pos = screen_height * 0.5 - new_height * 0.5 - screen_height * 0.2
+
+
+        resized_image = pygame.transform.scale(self.gameover_image, (int(new_width), int(new_height)))
+        image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
+
+        # Preencher a tela com a imagem de fundo redimensionada
+        self.__display.blit(resized_image, image_rect)
+        
+        # Ajustar o texto para que não ultrapasse a largura da imagem
+        text_max_width = new_width  
+        self.current_text.max_length = int(text_max_width*1.5) 
+        self.current_text.update()
+
+        # Configuração do texto dinâmico
+        self.current_text.update()
+        self.current_text.draw(self.__display)
+
+        # Pula o game over
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
+                    self.__game_state_manager.set_state('emap')
+                    SoundManager.stop_music()
 
         pygame.display.flip()
 
@@ -78,16 +101,13 @@ class GameoverCutscene(State):
     def execution_counter(self):
         return self.execution_counter
 
-
     @property
     def display(self):
         return self.display
 
-
     @property
     def name(self):
         return self.__name    
-
 
     @property
     def game_state_manager(self):
