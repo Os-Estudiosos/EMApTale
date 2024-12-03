@@ -56,20 +56,3 @@ class GameOver(State):
 
     def on_last_execution(self):
         self.__execution_counter = 0
-
-
-'''
-on_first_execution:
-Tiro os sons
-Deixo só o personagem
-
-run:
-Executo a função de heart_break (substituo o sprite do coração e toco a música heart_break)
-Executo a função heart_pieces (subsituo pelas partículas do coração e toco a música heart_pieces)
-Mudo para a cena do Game Over e toco a música 
-Coloco uma caixa de texto
-
-on_last_execution:
-Volto para o menu principal
-Depois vamos ver se conseguimos fazer o personagem voltar para onde ele
-'''

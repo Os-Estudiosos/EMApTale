@@ -7,11 +7,13 @@ from config import *
 from config.savemanager import SaveManager
 from config.globalmanager import GlobalManager
 from config.eventmanager import EventManager
+from config.gamestatemanager import GameStateManager
 
 from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
 from classes.map.camera import Camera
 from classes.frisk import Frisk
+from classes.player import Player
 from classes.map.infos_hud import InfosHud
 
 from screens.subscreen.pause_menu import PauseMenu
@@ -30,14 +32,15 @@ class EMAp(State):
         self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loaded = False
 
+        self.map_loader.load_items()
+        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
+        self.map_loader.load_interactions()
+
         # Configura a câmera com as dimensões do mapa e da tela
         map_width, map_height = self.map_loader.get_size()
         screen_width, screen_height = self.__display.get_size()
         self.camera = Camera(map_width, map_height, screen_width, screen_height)
         GlobalManager.set_camera(self.camera)
-
-        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
-        self.map_loader.load_interactions()
 
         # Inicializa o jogador
         self.player = Frisk(self.map_loader.walls)
@@ -45,6 +48,7 @@ class EMAp(State):
         # Inicializa o InteractionManager
         chatbox = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'chatbox.png'))
         tecla_z_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'tecla_z.png'))
+        self.tecla_f_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'hud', 'tecla_f.png'))
 
         # Redimensiona a chatbox
         new_width = chatbox.get_width() + 1100  # Ajuste personalizado
@@ -52,7 +56,8 @@ class EMAp(State):
         chatbox = pygame.transform.scale(chatbox, (new_width, new_height))
 
         # Redimensiona a imagem da tecla "Z"
-        tecla_z_image = pygame.transform.scale(tecla_z_image, (70, 70))
+        tecla_z_image = pygame.transform.scale_by(tecla_z_image, 0.9)
+        self.tecla_f_image = pygame.transform.scale_by(self.tecla_f_image, 0.9)
 
         # Inicializa o InteractionManager
         self.interaction_manager = InteractionManager(
@@ -69,12 +74,24 @@ class EMAp(State):
         self.infos_hud: InfosHud = None
 
     def on_first_execution(self):
+        self.player.reset_position()
         SaveManager.load()
         GlobalManager.load_infos()
+        self.camera.empty()
+        self.items_group.empty()
         self.player.load_infos()
+        self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loader.load_items()
+        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
+        self.map_loader.load_interactions()
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
+
+        if Player.previous_map_position and GameStateManager.previous_state == 'start':
+            self.player.reset_position(Player.previous_map_position)
+        else:
+            self.player.reset_position()
+
         GlobalManager.paused = False
 
     def run(self):
@@ -91,7 +108,7 @@ class EMAp(State):
         self.camera.update(self.player.rect)
 
         # Renderiza os tiles do mapa
-        self.map_loader.render_with_vector(self.__display, self.camera, MAP_OFFSET_VECTOR)
+        self.map_loader.render_with_vector(self.__display, self.camera)
 
         # Coleta e ordena os objetos renderizáveis (incluindo o jogador)
         renderables = self.map_loader.get_renderables(self.player)
@@ -107,12 +124,16 @@ class EMAp(State):
     
         self.camera.draw(self.__display)
 
-
         # Captura eventos e gerencia interações
         self.interaction_manager.handle_interaction()
         self.interaction_manager.render_interaction(self.__display)
 
         item_collided = pygame.sprite.spritecollide(self.player, self.items_group, False, pygame.sprite.collide_mask)
+
+        if item_collided:
+            key_rect = self.tecla_f_image.get_rect(center=self.player.rect.center)
+            key_rect.bottom = self.player.rect.top - 20
+            self.__display.blit(self.tecla_f_image, self.camera.apply(key_rect))
 
         # Checando se pausou
         for event in EventManager.events:
@@ -146,6 +167,7 @@ class EMAp(State):
 
     def on_last_execution(self):
         self.__execution_counter = 0
+        self.map_loaded = False
     
     @property
     def execution_counter(self):

@@ -41,7 +41,7 @@ class Yuri(Boss):
         self.image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'yuri.png'))
         self.rect = self.image.get_rect()
         self.state = 'idle'
-        self.counter = 0
+        self.__counter = 0
 
         # Definindo os atributos
         self.__life = infos['life']
@@ -72,13 +72,13 @@ class Yuri(Boss):
         )
         self.speaking = False
 
-        self.dead = False
+        self.__dead = False
         self.__death_animation_counter = 0
         self.__death_explosions: list[Explosion] = []
         self.death_loops_counter = 255
     
     def speak(self):
-        if not self.dead:
+        if not self.__dead:
             self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
             self.speaking = True
     
@@ -110,15 +110,11 @@ class Yuri(Boss):
 
         for explosion in self.__death_explosions:
             screen.blit(explosion.img, explosion.rect)
-
-    def apply_effect(self, effect):
-        if effect == '-defense':
-            self.__defense = 0
     
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
-        if not self.dead:
+        if not self.__dead:
             if self.speaking:
                 self.dialogue.update()
                 self.dialogue.rect.left = self.rect.right
@@ -144,24 +140,23 @@ class Yuri(Boss):
                 self.apply_effect(event.effect)
         
         if self.state == 'shaking':
-            self.counter += 10
-            counter_in_radians = self.counter*math.pi/180
+            self.__counter += 10
+            counter_in_radians = self.__counter*math.pi/180
             wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
             self.rect.x += 40 * wave_factor
             self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
-            if self.counter >= FPS*1.5*10:
+            if self.__counter >= FPS*1.5*10:
                 self.state = 'idle'
-                self.counter = 0
+                self.__counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
- 
-    def take_damage(self, amount):
-        self.__life = self.__life - amount*amount/(amount+self.__defense)
-        SoundManager.play_sound('damage.wav')
-        if self.__life <= 0:
-            self.__life = 0
-            self.dead = True
-        self.state = 'shaking'
-        self.counter = 0
+
+    @property
+    def counter(self):
+        return self.__counter
+
+    @property
+    def state(self):
+        return self.__state
 
     @property
     def life(self):
@@ -186,6 +181,46 @@ class Yuri(Boss):
     @property
     def music(self):
         return self.__music
+    
+    @property
+    def dead(self):
+        return self.__dead
+    
+    @life.setter
+    def life(self, value):
+        self.__life = value
+    
+    @max_life.setter
+    def max_life(self, value):
+        self.__max_life = value
+
+    @damage.setter
+    def damage(self, value):
+        self.__damage = value
+    
+    @defense.setter
+    def defense(self, value):
+        self.__defense = value
+    
+    @voice.setter
+    def voice(self, value):
+        self.__voice = value
+
+    @music.setter
+    def music(self, value):
+        self.__music = value
+    
+    @dead.setter
+    def dead(self, value):
+        self.__dead = value
+    
+    @state.setter
+    def state(self, value):
+        self.__state = value
+    
+    @counter.setter
+    def counter(self, value):
+        self.__counter = value
 
 
 class VectorAttack(Attack):
