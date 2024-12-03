@@ -103,7 +103,7 @@ class Combat(State):
         CombatManager.turn = 'player'
         BattleMenuManager.active_menu = 'MainMenu'
 
-        # SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
 
         self.starter_text.restart(self.__variables['enemy']['starter_text'])
 
@@ -222,9 +222,6 @@ class Combat(State):
         elif CombatManager.turn == 'boss':  # Se não for o turno do player
             for btn in self.main_menu.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False
-            
-            if keys[pygame.K_u]:
-                self.player.apply_effect('prisioned')
         
             if not CombatManager.enemy.dead:
                 self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
@@ -258,7 +255,6 @@ class Combat(State):
                     GameStateManager.set_state('show_day')
         
         CombatManager.execute_global_draws(display=self.__display)
-        # pygame.draw.rect(self.__display, (0,0,255), self.player.rect)
 
     def on_last_execution(self):
         self.__execution_counter = 0
