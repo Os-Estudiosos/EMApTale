@@ -66,6 +66,27 @@ class IntroCutscene(State):
         self.sub_alpha = 0
 
     def on_first_execution(self):
+
+        self.initial_time = 0 # tempo global, inicial da cutscenes
+        self.current_time_local = 0 # tempo local da cutscene, como se 0 inicia-se no mesmo momento
+        self.wait_a_second = 2000 # tempo do intervalo em si, tempo do intervalo entre
+        self.last_time_define = 0 # contador interno para verificar se o intervalo foi passado ou não
+        
+        # Variáveis para alterar a opacidade das imagens no decorrer do tempo
+        self.alpha = 0
+        self.sub_alpha = 0
+
+        self.stage = 0
+        self.current_text = DynamicText(
+            text=self.texts[self.stage],
+            font=FontManager.fonts['Pixel'],
+            letters_per_second=self.letters_per_second,
+            text_size=40,
+            max_length=self.__display.get_width() - 40,
+            position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
+            color=(255, 255, 255),
+            sound="text_2.wav"  
+        )
         SoundManager.stop_music()
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "intro_history.mp3"))
        
@@ -200,7 +221,12 @@ class IntroCutscene(State):
                             self.current_image = self.images[self.stage]
                     
         else:
+            
             self.__game_state_manager.set_state('emap')
+
+
+
+
             
         
     def on_last_execution(self):    

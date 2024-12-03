@@ -34,7 +34,7 @@ class GameoverCutscene(State):
         self.current_text = DynamicText(
             text=self.random_messages[randint(0,len(self.random_messages)-1)],
             font=FontManager.fonts['Pixel'], 
-            letters_per_second=13,
+            letters_per_second=8,
             text_size=30,
             max_length=self.__display.get_width() - 70,
             position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
