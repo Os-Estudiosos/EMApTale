@@ -1,10 +1,10 @@
 {
     "name": "Yuri Saporito",
-    "life": 30,
+    "life": 40,
     "defense": 3,
-    "damage": 1,
+    "damage": 400,
     "voice": "yuri_txt.wav",
-    "starter_text": "O Coordenador do curso se aproxima, você sente as horas de procrastinação rastejando em suas costas",
+    "starter_text": "O Coordenador do curso se aproxima, você sente as horas de procrastinação rastejando em suas costas!",
     "attacks_dialogues": [
         "Se prepare para o ataque do R²",
         "Acha a decomposição QR disso aqui",
