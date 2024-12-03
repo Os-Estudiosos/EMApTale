@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1323">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1326">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -583,6 +583,27 @@
    <properties>
     <property name="day" type="int" value="1"/>
     <property name="item_id" value="coffe"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1323" name="Lápis" type="Item" x="188.727" y="190.182">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="pencil"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1324" name="Bolo de cenoura" type="Item" x="220" y="188.727">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="carrot-cake"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1325" name="Simulado" type="Item" x="247.636" y="188.364">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="test"/>
    </properties>
    <point/>
   </object>
