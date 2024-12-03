@@ -34,7 +34,7 @@ class PauseMenu(State):
             },
             {
                 'label': Text('SALVAR O JOGO', FontManager.fonts['Gamer'], 50),
-                'func': lambda: SaveManager.save()
+                'func': self.save_game
             },
             {
                 'label': Text('CONFIGURAÇÕES', FontManager.fonts['Gamer'], 50),
@@ -72,7 +72,21 @@ class PauseMenu(State):
         # de confirmação selecionado (Enter ou Z), assim eu posso evitar que ele entre
         # na tela ja selecionando a opção por acidente
         self.entered_holding_confirm_button = False
+
+        self.save_response_text = None
+        self.save_response_text_maximum_time = FPS*5
+        self.save_response_text_time_counter = 0
     
+    def save_game(self):
+        try:
+            SaveManager.save()
+        except:
+            self.save_response_text = Text('NÃO FOI POSSÍVEL SALVAR O JOGO', FontManager.fonts['Gamer'], 70)
+        else:
+            self.save_response_text = Text('JOGO SALVO COM SUCESSO', FontManager.fonts['Gamer'], 70, (252, 219, 3))
+        finally:
+            self.save_response_text_time_counter = 0
+
     def on_first_execution(self):
         pass
 
@@ -108,6 +122,10 @@ class PauseMenu(State):
             self.menu_options[self.selected_option]['label'].rect.center[0] + 300,  # Matemática para mexer o cursor
             self.menu_options[self.selected_option]['label'].rect.center[1]  # Centralizando o cursor
         )
+
+        if self.save_response_text and self.save_response_text_time_counter <= self.save_response_text_maximum_time:
+            self.save_response_text_time_counter += 1
+            self.save_response_text.draw(self.__display)
 
         # Desenho cada uma das opções
         for i, option in enumerate(self.menu_options):
