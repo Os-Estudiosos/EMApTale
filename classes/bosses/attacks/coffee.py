@@ -23,18 +23,18 @@ class Coffee(pygame.sprite.Sprite):
 
         # Carregando o sprite da xícara
         self.cup_path = os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'cup_coffee.png')
-        self.image = pygame.transform.scale(pygame.image.load(self.cup_path), (100,100)).convert_alpha()  # Define `self.image` esperado pelo Pygame
+        self.cup_image = pygame.transform.scale(pygame.image.load(self.cup_path), (100,100)).convert_alpha()  # Define `self.image` esperado pelo Pygame
         self.cup_bottom = CombatManager.get_variable('battle_container').inner_rect.bottom
-        self.rect = self.image.get_rect(center=(x, y))  # Define `self.rect` com a posição inicial
+        self.rect = self.cup_image.get_rect(center=(x, y))  # Define `self.cup_rect` com a posição inicial
         self.rect.bottom = self.cup_bottom
         self.player = CombatManager.get_variable('player')
-        self.boss = CombatManager.enemy
-        
 
         # Inicializando o efeito de fumaça
-        self.smoke = Smoke()
+        self.smoke_group = pygame.sprite.Group()
+        self.smoke = Smoke(self.smoke_group)
         self.smoke.rect.midbottom = self.rect.midtop  # Alinha a fumaça com o topo da xícara
-        self.smoke_group = pygame.sprite.Group(self.smoke)
+        CombatManager.global_groups.append(self.smoke_group)
+
 
     def update(self, *args, **kwargs):
         """
@@ -46,6 +46,4 @@ class Coffee(pygame.sprite.Sprite):
         # Atualiza a fumaça
         self.smoke_group.update()
         if pygame.sprite.spritecollide(self.player, self.smoke_group, True, pygame.sprite.collide_mask):
-            self.player.take_damage(self.boss.damage)
-    
-
+            self.player.take_damage(CombatManager.enemy.damage)

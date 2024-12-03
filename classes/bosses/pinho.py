@@ -25,7 +25,7 @@ from classes.effects.explosion import Explosion
 
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
-
+'''DIVIDIR EM EVENTOS PARA FAZER A XÍCARA DE CAFÉ'''
 class Pinho(Boss):
     name = 'Rafael Pinho'
 
@@ -52,7 +52,7 @@ class Pinho(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            PythonAtatack(),
+            #PythonAtatack(),
             CoffeeAttack()
         ]
         self.attack_to_execute = -1
@@ -70,6 +70,7 @@ class Pinho(Boss):
         self.__death_animation_counter = 0
         self.__death_explosions: list[Explosion] = []
         self.death_loops_counter = 255
+        self.moment = 0
 
     def speak(self):
         if not self.dead:
@@ -192,30 +193,37 @@ class CoffeeAttack(Attack):
         self._player: Heart = CombatManager.get_variable('player')
         self._duration = FPS * 10  # O ataque dura 10 segundos
         self._duration_counter = 0
+        self.limiter = 3
 
         # Configurações das xícaras
-        screen_width = pygame.display.get_surface().get_width()
-        screen_height = pygame.display.get_surface().get_height()
-        cup_positions = [
+        screen_width = CombatManager.get_variable('battle_container').inner_rect.width
+        screen_height = CombatManager.get_variable('battle_container').inner_rect.height
+        self.cup_positions = [
             (screen_width // 4, screen_height - 100),
             (screen_width // 2, screen_height - 100),
             (3 * screen_width // 4, screen_height - 100)
         ]
 
-        # Criando xícaras
-        self._cups = pygame.sprite.Group()
-        for pos in cup_positions:
-            Coffee(*pos, self._cups)
-
     def run(self):
         """
         Executa o ataque, atualizando as xícaras e verificando colisões.
         """
+        # Criando xícaras
+        self._cups = pygame.sprite.Group()
+        if len(self._cups) <= self.limiter:
+            self.limiter = 0
+            for pos in self.cup_positions:
+                Coffee(*pos, self._cups)
+
+
         self._duration_counter += 1
         self._cups.update()
 
         # Retorna `False` se o ataque terminou
         return self._duration_counter < self._duration
+
+    def change_moment(self):
+        pass
 
     def restart(self):
         """
