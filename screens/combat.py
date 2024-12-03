@@ -258,6 +258,7 @@ class Combat(State):
                     GameStateManager.set_state('show_day')
         
         CombatManager.execute_global_draws(display=self.__display)
+        # pygame.draw.rect(self.__display, (0,0,255), self.player.rect)
 
     def on_last_execution(self):
         self.__execution_counter = 0
