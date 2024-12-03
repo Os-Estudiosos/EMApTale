@@ -22,7 +22,7 @@ class Boss(pygame.sprite.Sprite, ABC):
     
     def take_damage(self, amount):
         self.life = self.life - amount*amount/(amount+self.defense)
-        SoundManager.play_sound('damage.wav')
+        SoundManager.play_sound('damage.wav', 0)
         if self.life <= 0:
             self.life = 0
             self.dead = True

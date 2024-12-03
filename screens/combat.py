@@ -48,7 +48,8 @@ class Combat(State):
         self.player_group = pygame.sprite.Group()  # Grupo do player
         CombatManager.set_variable('player_group', self.player_group)
 
-        # Adiciono um canal específico
+        # Adiciono dois canais específicos
+        SoundManager.add_chanel()
         SoundManager.add_chanel()
 
         # ============ VARIÁVEIS DO HUD ============
@@ -115,8 +116,11 @@ class Combat(State):
 
         self.transition_rate = FPS
 
+        self.transition_counter = 0
+
         self.white_transition_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
         self.transition_alpha = 0
+        self.transition_counter = 0
         self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
         self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())
 
@@ -233,14 +237,14 @@ class Combat(State):
                 self.player_group.update(display=self.__display)
         
         if CombatManager.enemy.dead:
-            if self.__execution_counter == 1:
+            if self.transition_counter == 0:
                 SoundManager.stop_music()
-                SoundManager.play_sound('cymbal.ogg', 0)
+                SoundManager.play_sound('cymbal.ogg', 1)
                 self.go_to_next_screen_transition_measurer = pygame.time.get_ticks()
             
-            self.__execution_counter += 1
-
-            if self.__execution_counter%self.transition_rate == 0 and self.transition_alpha + 1 <= 255:
+            self.transition_counter += 1
+            
+            if self.transition_counter%self.transition_rate == 0 and self.transition_alpha + 1 <= 255:
                 self.transition_alpha += 1
 
             self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
@@ -249,7 +253,7 @@ class Combat(State):
 
             self.__display.blit(self.opacity_helper_surface, self.opacity_helper_surface.get_rect())
 
-            if not SoundManager.is_chanel_playing(0):
+            if not SoundManager.is_chanel_playing(1):
                 actual_ticks = pygame.time.get_ticks()
                 if actual_ticks - self.go_to_next_screen_transition_measurer >= 2000:
                     GameStateManager.set_state('show_day')
