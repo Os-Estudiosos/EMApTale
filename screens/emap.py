@@ -77,6 +77,8 @@ class EMAp(State):
         self.player.reset_position()
         SaveManager.load()
         GlobalManager.load_infos()
+        self.camera.empty()
+        self.items_group.empty()
         self.player.load_infos()
         self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loader.load_items()
