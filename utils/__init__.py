@@ -30,6 +30,17 @@ def radians_to_degrees(angle: float|int):
     return angle * (180/math.pi)
 
 
+def degrees_to_radians(angle: float|int):
+    """Função que recebe um angulo em graus e retorna em radianos
+
+    Args:
+        angle (float | int): O ângulo a ser convertido
+    """
+    if not isinstance(angle, int) and not isinstance(angle, float):
+        raise TypeError("Você não forneceu um tipo de ângulo válido")
+    return (angle * math.pi)/180
+
+
 def reduce_angle(angle: float|int):
     """Função que reduz o quadrante de um angulo em graus
 

@@ -1,4 +1,5 @@
 import pygame
+from typing import Callable
 
 
 class CombatManager:
@@ -11,6 +12,7 @@ class CombatManager:
     }
 
     global_groups: list[pygame.sprite.Group] = []  # Alguns objetos tem que ser desenhados em cima de todo o resto, pra isso criei essa variável
+    global_draw_functions: list[Callable] = []
 
     @classmethod
     def set_player_turn(cls):
@@ -66,3 +68,8 @@ class CombatManager:
     def draw_global_groups(cls, screen):
         for group in cls.global_groups:
             group.draw(screen)
+    
+    @classmethod
+    def execute_global_draws(cls, *args, **kwargs):
+        for callable_func in cls.global_draw_functions:
+            callable_func(*args, **kwargs)

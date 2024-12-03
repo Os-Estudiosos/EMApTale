@@ -256,6 +256,8 @@ class Combat(State):
                 actual_ticks = pygame.time.get_ticks()
                 if actual_ticks - self.go_to_next_screen_transition_measurer >= 2000:
                     GameStateManager.set_state('show_day')
+        
+        CombatManager.execute_global_draws(display=self.__display)
 
     def on_last_execution(self):
         self.__execution_counter = 0
