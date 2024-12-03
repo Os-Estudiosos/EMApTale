@@ -193,15 +193,16 @@ class CoffeeAttack(Attack):
         self._player: Heart = CombatManager.get_variable('player')
         self._duration = FPS * 10  # O ataque dura 10 segundos
         self._duration_counter = 0
-        self.limiter = 3
+        self.limiter = 0
+        self.moment = 0
 
         # Configurações das xícaras
-        screen_width = CombatManager.get_variable('battle_container').inner_rect.width
-        screen_height = CombatManager.get_variable('battle_container').inner_rect.height
+        self.screen_width = CombatManager.get_variable('battle_container').inner_rect.width
+        self.screen_height = CombatManager.get_variable('battle_container').inner_rect.height
         self.cup_positions = [
-            (screen_width // 4, screen_height - 100),
-            (screen_width // 2, screen_height - 100),
-            (3 * screen_width // 4, screen_height - 100)
+            (self.screen_width // 3, self.screen_height),
+            (self.screen_width // 6, self.screen_height),
+            (self.screen_width, self.screen_height)
         ]
 
     def run(self):
@@ -210,11 +211,10 @@ class CoffeeAttack(Attack):
         """
         # Criando xícaras
         self._cups = pygame.sprite.Group()
-        if len(self._cups) <= self.limiter:
-            self.limiter = 0
+        if self.limiter == 0:
             for pos in self.cup_positions:
                 Coffee(*pos, self._cups)
-
+            self.limiter += 1
 
         self._duration_counter += 1
         self._cups.update()
@@ -265,8 +265,6 @@ class PythonAtatack(Attack):
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
-
-        # self.snakes.append(Vector(self.vectors_group))
 
     def run(self):
         self.__duration_counter += 1
