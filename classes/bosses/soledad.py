@@ -13,6 +13,7 @@ from config.fontmanager import FontManager
 from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
+from classes.bosses.attacks.closing_graph import ClosingGraph
 
 from classes.bosses.attacks.empty_attack import EmptyAttack
 
@@ -237,7 +238,7 @@ class GraphClosingAttack(Attack):
         self.graph_creation_counter = 0
         self.graph_creation_rate = FPS*1.5
 
-        self.graphs_list: list[nx.Graph] = []
+        self.graphs_list: list[ClosingGraph] = []
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
@@ -245,45 +246,29 @@ class GraphClosingAttack(Attack):
         CombatManager.global_draw_functions.append(self.draw_graphs)
     
     def create_graph(self):
-        graph = nx.Graph()
-        vertices_amount = 10
-        vertices = [(i, degrees_to_radians((360/vertices_amount)*i)) for i in range(vertices_amount)]
-        edges = [(vertices[i], vertices[i+1]) for i in range(vertices_amount-1)]
-        
-        graph.add_nodes_from(vertices)
-        graph.add_edges_from(edges)
-
+        graph = ClosingGraph()
         return graph
 
     def draw_graphs(self, *args, **kwargs):
-        ray = 100
         for graph in self.graphs_list:
-            for edge in graph.edges:
-                pygame.draw.line(
-                    self.display,
-                    (255,255,255),
-                    (
-                        ray*math.cos(edge[0][1])+self.container.inner_rect.centerx,
-                        ray*math.sin(edge[0][1])+self.container.inner_rect.centery
-                    ),
-                    (
-                        ray*math.cos(edge[1][1])+self.container.inner_rect.centerx,
-                        ray*math.sin(edge[1][1])+self.container.inner_rect.centery
-                    ),
-                    2
-                )
+            graph.draw(self.display)
 
     def run(self):
         self.__duration_counter += 1
         self.graph_creation_counter += 1
 
+        for i, graph in enumerate(self.graphs_list):
+            if graph.dead:
+                self.graphs_list.pop(i)
+            else:
+                graph.update()
+
         if self.graph_creation_counter >= self.graph_creation_rate:
             self.graphs_list.append(self.create_graph())
             self.graph_creation_counter = 0
         
-        self.draw_graphs(self.display)
-        
         if self.__duration_counter >= self.__duration:
+            self.graphs_list.clear()
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
     
     def restart(self):
