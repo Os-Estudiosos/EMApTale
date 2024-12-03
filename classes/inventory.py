@@ -78,7 +78,8 @@ class Inventory:
         inventory_list = []
         for item in self.items:
             item_json = item.json_item.copy()
-            del item_json['id']
+            if 'id' in item_json:
+                del item_json['id']
             inventory_list.append(item_json)
         
         return inventory_list

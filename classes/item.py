@@ -15,14 +15,20 @@ class Item(pygame.sprite.Sprite):
         self.description = properties['description']
         self.type = properties['type']
         self.item_id = properties['item_id']
-        self.json_item = properties
         self.__dict__ = {
             **self.__dict__,
             **properties
         }
 
-        if self.type == 'weapon' and 'equiped' not in self.__dict__:
+        print(properties)
+        print('equiped' not in properties)
+        print('equiped' in properties)
+
+        if self.type == 'weapon' and ('equiped' not in properties):
             self.equiped = False
+            properties['equiped'] = False
+        
+        self.json_item = properties
 
         self.func = self.define_action()
 
