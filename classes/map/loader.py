@@ -49,6 +49,7 @@ class MapLoader:
         for layer in self.tmx_data.layers:
             if layer.name == "Objs":
                 for obj in layer:
+                    
                     if obj.properties.get('day') == GlobalManager.day:
                         Item(
                             GlobalManager.get_item(obj.properties.get('item_id')),
