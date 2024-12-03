@@ -103,7 +103,7 @@ class Combat(State):
         CombatManager.turn = 'player'
         BattleMenuManager.active_menu = 'MainMenu'
 
-        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
+        # SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
 
         self.starter_text.restart(self.__variables['enemy']['starter_text'])
 

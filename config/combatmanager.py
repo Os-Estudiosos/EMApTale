@@ -31,11 +31,14 @@ class CombatManager:
         """
         from classes.bosses.yuri import Yuri
         from classes.bosses.branco import Branco
+        from classes.bosses.soledad import Soledad
 
         if infos['name'] == 'Yuri Saporito':
             cls.enemy = Yuri(infos)
         if infos['name'] == 'Branco Saraiva':
             cls.enemy = Branco(infos)
+        if infos['name'] == 'Maria Soledad':
+            cls.enemy = Soledad(infos)
     
     @classmethod
     def set_variable(cls, key: str, value):
