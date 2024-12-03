@@ -194,8 +194,6 @@ class VectorAttack(Attack):
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
 
-        # self.vectors.append(Vector(self.vectors_group))
-
     def run(self):
         self.__duration_counter += 1
 

@@ -16,7 +16,7 @@ from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.snake import Snake
-from classes.bosses.attacks.coffee import Coffee
+from classes.bosses.attacks.coffee import *
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -216,73 +216,112 @@ class Pinho(Boss):
 
 class CoffeeAttack(Attack):
     def __init__(self):
-        """
-        Inicializa o ataque de café com xícaras e gotas sincronizados.
-        """
         super().__init__()
         self._player: Heart = CombatManager.get_variable('player')
         self._duration = FPS * 10  # O ataque dura 10 segundos
         self._duration_counter = 0
+        self.drops_creation_rate = FPS // 5
         self.cups_created = False
-
-        # Configurações das xícaras
-        battle_container = CombatManager.get_variable('battle_container')
-        self.screen_width = battle_container.inner_rect.width
-        self.screen_height = battle_container.inner_rect.height
 
         self._cup = pygame.sprite.Group()
         self._drops = pygame.sprite.Group()
+        self.drops_group = pygame.sprite.Group()
+
+
+        battle_container = CombatManager.get_variable('battle_container')
+        
+        self.new_rect =  pygame.Rect(
+                battle_container.inner_rect.left,
+                battle_container.inner_rect.bottom,
+                battle_container.inner_rect.width,
+                0
+        )
+
+        self.new_rect.bottom = battle_container.inner_rect.bottom
+
+        # Adicionando os grupos aos grupos globais
+        CombatManager.global_groups.append(self._cup)
+        CombatManager.global_groups.append(self._drops)
+
+    def create_cups(self):
+        coffee_cup1 = Coffee(CombatManager.enemy.rect.midleft[0], CombatManager.enemy.rect.midleft[1], self.drops_group, self._cup)
+        coffee_cup2 = Coffee(CombatManager.enemy.rect.center[0], CombatManager.enemy.rect.center[1], self.drops_group, self._cup)
+        coffee_cup3 = Coffee(CombatManager.enemy.rect.midright[0], CombatManager.enemy.rect.midright[1], self.drops_group, self._cup)
+
+        coffee_cup1.start_flip()
+        coffee_cup2.start_flip()
+        coffee_cup3.start_flip()
+
+        self.cups_created = True
+
+    def fill_container(self, fill:int):
+        """Aumenta a altura do café no container."""
+        self.new_rect.height += fill
+        pygame.draw.rect(
+            pygame.display.get_surface(),
+            (133,77,67),
+            self.new_rect
+        )
 
     def run(self):
-        """
-        Executa o ataque, atualizando as xícaras e verificando colisões.
-        """
-        # Criando xícaras
-        if not self.cups_created:
-            coffee_cup = Coffee(x=CombatManager.enemy.rect.midleft[0], y=CombatManager.enemy.rect.midleft[1], *self._cup)
-            coffee_cup.start_flip()  # Inicia a animação
-            self.cups_created = True
-
         self._duration_counter += 1
 
-        # Atualiza xícaras e gotas
+        # Criando xícaras se ainda não foram criadas
+        if not self.cups_created:
+            self.create_cups()
+
+        # Atualiza as xícaras e as gotas
         self._cup.update()
-        self._drops.update()
+        self._drops.update(coffee_rect=self)
 
-        # Criando gotas aleatoriamente
-        if random.random() < 0.1:  # Chance de 10% por frame
-            for cup in self._cup:
-                if cup.flipping:  # Gera gotas apenas se a xícara está virando
-                    drop = CoffeeDrop(cup.rect.centerx, cup.rect.bottom, self._drops)
+        # Gera gotas regularmente enquanto as xícaras estão girando
+        for cup in self._cup:
+            if cup.flipping and self._duration_counter % int(self.drops_creation_rate) == 0:
+                drop = CoffeeDrop(self._drops)
+                drop.rect.center = cup.rect.midbottom
 
-        # Verificando colisões com o jogador
+        # Verifica colisões com o jogador
         collisions = pygame.sprite.spritecollide(
             self._player, self._drops, dokill=True, collided=pygame.sprite.collide_mask
         )
         if collisions:
+            SoundManager.play_sound("arrow.wav")
             self._player.take_damage(CombatManager.enemy.damage)
 
-        # Retorna `False` se o ataque terminou
-        return self._duration_counter < self._duration
+        for drop in self._drops:
+            if drop.rect.bottom >= CombatManager.get_variable('battle_container').inner_rect.bottom:
+                self.fill_container(1)
+                drop.kill()
+
+        # Finaliza o ataque apenas quando o tempo terminar e as gotas desaparecerem
+        if self._duration_counter >= self._duration and not self._drops:
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+            self._cup.empty()
+            self._drops.empty()
+            self.drops_group.empty()
+
+            return False
 
     def restart(self):
-        """
-        Reinicia o ataque, zerando o contador de duração e recriando as xícaras.
-        """
         self._duration_counter = 0
         self.cups_created = False
         self._cup.empty()
         self._drops.empty()
+        self.drops_group.empty()
+        CombatManager.global_groups.remove(self._cup)
+        CombatManager.global_groups.remove(self._drops)
+        self._cup = pygame.sprite.Group()
+        self._drops = pygame.sprite.Group()
+        CombatManager.global_groups.append(self._cup)
+        CombatManager.global_groups.append(self._drops)
+        self.new_rect.height = 0  # Reinicia o preenchimento
 
     def draw(self, surface):
-        """
-        Desenha as xícaras e as gotas na superfície fornecida.
-
-        Args:
-            surface (pygame.Surface): Superfície onde os elementos serão desenhados.
-        """
+        pygame.draw.rect(surface, (133, 77, 67), self.new_rect)
         self._cup.draw(surface)
         self._drops.draw(surface)
+
+    
 
     @property
     def player(self):
