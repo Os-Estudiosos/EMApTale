@@ -58,7 +58,7 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            VectorAttack(self.__damage),
+            # VectorAttack(self.__damage),
             EliminationAttack(self.__damage)
         ]
         self.attack_to_execute = -1
@@ -298,9 +298,9 @@ class EliminationAttack(Attack):
 
         CombatManager.global_groups.append(self.horizontal_beans_group)
 
-        self.rows = 4  # Escolhendo qual linha o raio vai aparecer
+        self.rows = 6  # Escolhendo qual linha o raio vai aparecer
         self.horizontal_beams: list[HorizontalBeam] = []
-        self.horizontal_beam_creation_rate = FPS/2.4
+        self.horizontal_beam_creation_rate = FPS/4
         self.horizontal_beam_counter = 0
         self.row = 0
 
@@ -325,18 +325,18 @@ class EliminationAttack(Attack):
             and
         (self.horizontal_beam_counter >= self.horizontal_beam_creation_rate)
         ):
-            beam1 = HorizontalBeam(self.horizontal_beans_group)
-            row = random.choice([i for i in range(self.rows+1)])
-            beam1.max_rect_height = self.container.inner_rect.height//self.rows
-            beam1.correct_center_position = (
+            # Segundo raio que segue o player
+            beam2 = HorizontalBeam(self.horizontal_beans_group)
+            beam2.max_rect_height = self.container.inner_rect.height//self.rows
+            beam2.correct_center_position = (
                 self.container.inner_rect.centerx,
-                self.container.inner_rect.y + (self.container.inner_rect.height//self.rows)*row - beam1.rect.height//2
+                self.player.rect.centery
             )
-            self.horizontal_beams.append(beam1)
+            self.horizontal_beams.append(beam2)
             self.elimiation_matrices.append(ElimiationMatrix(
                 'E',
                 FontManager.fonts['Gamer'],
-                beam1,
+                beam2,
                 200
             ))
             
