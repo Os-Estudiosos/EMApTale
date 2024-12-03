@@ -35,7 +35,7 @@ class GameoverCutscene(State):
             text=self.random_messages[randint(0,len(self.random_messages)-1)],
             font=FontManager.fonts['Pixel'], 
             letters_per_second=8,
-            text_size=30,
+            text_size=self.get_resolution_display(),
             max_length=self.__display.get_width() - 70,
             position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
             color=(255, 255, 255),
@@ -43,6 +43,24 @@ class GameoverCutscene(State):
         )
 
         self.gameover_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "gameover.jpg"))
+
+
+    def get_resolution_display(self):
+            """Algo como a responsividade em CSS
+            """
+
+            # Pega as dimensões da tela
+            info = pygame.display.Info()
+            screen_width = info.current_w
+            screen_height = info.current_h
+
+            # Verifica a resolução e define valores mutáveis
+            if screen_width == 1280 and screen_height == 720:  # HD
+                return 30
+            elif screen_width == 1920 and screen_height == 1080:  # FHD
+                return 40
+            else:  
+                return 30
 
 
     def on_first_execution(self):

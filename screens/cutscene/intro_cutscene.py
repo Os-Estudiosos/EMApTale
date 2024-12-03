@@ -46,7 +46,7 @@ class IntroCutscene(State):
             text=self.texts[self.stage],
             font=FontManager.fonts['Pixel'],
             letters_per_second=self.letters_per_second,
-            text_size=40,
+            text_size=self.get_resolution_display(),
             max_length=self.__display.get_width() - 40,
             position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
             color=(255, 255, 255),
@@ -81,7 +81,7 @@ class IntroCutscene(State):
             text=self.texts[self.stage],
             font=FontManager.fonts['Pixel'],
             letters_per_second=self.letters_per_second,
-            text_size=40,
+            text_size=self.get_resolution_display(),
             max_length=self.__display.get_width() - 40,
             position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
             color=(255, 255, 255),
@@ -94,11 +94,31 @@ class IntroCutscene(State):
         self.initial_time = pygame.time.get_ticks()
 
 
+    def get_resolution_display(self):
+        """Algo como a responsividade em CSS
+        """
+        
+        # Pega as dimensões da tela
+        info = pygame.display.Info()
+        screen_width = info.current_w
+        screen_height = info.current_h
+
+        # Verifica a resolução e define valores mutáveis
+        if screen_width == 1280 and screen_height == 720:  # HD
+            return 30
+        elif screen_width == 1920 and screen_height == 1080:  # FHD
+            return 40
+        else:  
+            return 30
+
+
     def run(self):
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
 
+
+        # ============== DEFINE PRINCIPALMENTE OS CONTROLES DO TEMPO ===============
         # Define as variáveis de tempo atuais, global=currenti_time e local=self.current_time_local
         current_time = pygame.time.get_ticks()
         self.current_time_local = current_time - self.initial_time
@@ -125,7 +145,7 @@ class IntroCutscene(State):
                     text=self.texts[self.stage],
                     font=FontManager.fonts['Pixel'],  
                     letters_per_second=self.letters_per_second,
-                    text_size=40,
+                    text_size=self.get_resolution_display(),
                     max_length=self.__display.get_width() - 40,
                     position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
                     color=(255, 255, 255),
@@ -134,6 +154,8 @@ class IntroCutscene(State):
 
                 self.current_image = self.images[self.stage]
 
+
+        # ============== CONFIGURA IAMGEM, TEMPOS E SONS ===============
         # Desenho da imagem e texto
         if self.stage < len(self.texts):  
             
@@ -169,8 +191,10 @@ class IntroCutscene(State):
             resized_image = pygame.transform.scale(self.current_image, (int(new_width), int(new_height)))
             image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
         
-      
+
+            # =============== CONTROLE DE OPACIDADE =================
             if self.stage < len(self.images) -3:
+
                 # Define para esclarecer a imagem | Fade In
                 if current_time - self.last_time_define >= self.wait_a_second:
                     self.alpha += 2
@@ -184,13 +208,13 @@ class IntroCutscene(State):
             else:
                 self.sub_alpha = 0
                 self.alpha = 255
-
             # Deixa na escala dentro do alpha permitido, apenas por redundância
             self.alpha = min(max(self.alpha, 0), 255)
-
             # Valeu Spaniol pela Nice Dick!
             resized_image.set_alpha(self.alpha)
 
+            
+            # =============== PLOTA IMAGEM, CONFIGURA TEXTO, PLOTA TEXTO =================
             # Plota a imagem
             self.__display.blit(resized_image, image_rect)
 
@@ -198,9 +222,9 @@ class IntroCutscene(State):
             text_max_width = new_width  
             self.current_text.max_length = int(text_max_width - 40) 
             self.current_text.update()
-
             # Plota o texto
             self.current_text.draw(self.__display)  
+
 
             # Pula a cutscene
             for event in EventManager.events:
@@ -212,7 +236,7 @@ class IntroCutscene(State):
                                 text=self.texts[self.stage],
                                 font=FontManager.fonts['Pixel'],  
                                 letters_per_second=self.letters_per_second,
-                                text_size=40,
+                                text_size=self.get_resolution_display(),
                                 max_length=self.__display.get_width() - 40,
                                 position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
                                 color=(255, 255, 255),
@@ -221,13 +245,8 @@ class IntroCutscene(State):
                             self.current_image = self.images[self.stage]
                     
         else:
-            
             self.__game_state_manager.set_state('emap')
 
-
-
-
-            
         
     def on_last_execution(self):    
         self.__execution_counter = 0
