@@ -17,10 +17,12 @@ from classes.battle.menus.mercy_menu import MercyMenu
 from classes.text.dynamic_text import DynamicText
 from classes.text.text import Text
 
+from config.globalmanager import GlobalManager
 from config.soundmanager import SoundManager
 from config.fontmanager import FontManager
 from config.combatmanager import CombatManager
 from config.eventmanager import EventManager
+from config.gamestatemanager import GameStateManager
 
 from classes.battle.heart import Heart
 from classes.player import Player
@@ -101,6 +103,9 @@ class Combat(State):
         self.transition_alpha = 0
         self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
         self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())
+
+        self.go_to_next_screen_transition_time = FPS  # Demora 1 segundo para sair do combate e ir pro próximo dia
+        self.go_to_next_screen_transition_measurer = 0
 
     def on_first_execution(self):
         # Limpando os sons
@@ -230,6 +235,7 @@ class Combat(State):
         if CombatManager.enemy.dead:
             if self.__execution_counter == 1:
                 SoundManager.play_sound('cymbal.ogg', 0)
+                self.go_to_next_screen_transition_measurer = pygame.time.get_ticks()
             
             self.__execution_counter += 1
 
@@ -243,8 +249,10 @@ class Combat(State):
             self.__display.blit(self.opacity_helper_surface, self.opacity_helper_surface.get_rect())
 
             if not SoundManager.is_chanel_playing(0):
-                print("Teste")
-        
+                actual_ticks = pygame.time.get_ticks()
+                if actual_ticks - self.go_to_next_screen_transition_measurer >= 2000:
+                    GameStateManager.set_state('show_day')
+
     def on_last_execution(self):
         self.__execution_counter = 0
 

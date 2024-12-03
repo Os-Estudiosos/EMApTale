@@ -20,6 +20,7 @@ from screens.menu.new_name import NewName
 from screens.combat import Combat
 from screens.emap import EMAp
 from screens.cutscene.intro_cutscene import IntroCutscene # Teste Brunão
+from screens.show_day import ShowDay
 
 from classes.text.text import Text
 
@@ -60,6 +61,9 @@ class Game:
         self.Combat = Combat('combat', self.display)
         self.EMAp = EMAp('emap', self.display)
 
+        # Cena que mostra qual dia o player está
+        self.ShowDay = ShowDay('show_day', self.display)
+
         # Cenas das Cutscenes
         self.IntroCutscene = IntroCutscene('intro_cutscene', self.display)
 
@@ -77,7 +81,7 @@ class Game:
             # Cenas genéricas
             'combat': self.Combat,
             'emap': self.EMAp,
-
+            'show_day': self.ShowDay
         }
 
         pygame.mouse.set_visible(False)
