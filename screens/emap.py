@@ -91,6 +91,7 @@ class EMAp(State):
             self.player.reset_position(Player.previous_map_position)
         elif GameStateManager.previous_state == 'show_day':
             self.player.reset_position()
+            GlobalManager.pass_day()
             SaveManager.save()
 
         GlobalManager.paused = False

@@ -38,8 +38,7 @@ class GlobalManager:
     def load_infos(cls):
         from config.savemanager import SaveManager
 
-        if not cls.day:
-            cls.day = SaveManager.loaded_save['day']  # Carregando o dia atual
+        cls.day = SaveManager.loaded_save['day']  # Carregando o dia atual
 
         with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'items.json')) as file:
             cls.items = json.load(file)
