@@ -66,15 +66,14 @@ class IntroCutscene(State):
         self.sub_alpha = 0
 
     def on_first_execution(self):
-        # Define uma única vez, o tempo incial da cena    BIRA BRUNAO
         SoundManager.stop_music()
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "intro_history.mp3"))
+       
+       # Define uma única vez
         self.initial_time = pygame.time.get_ticks()
 
 
     def run(self):
-
-        # Chama o que será executado apenas na primeira vez
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
@@ -89,7 +88,7 @@ class IntroCutscene(State):
             
             # Da útlima image history para o título do jogo, dar um intervalo maior (gerar suspense)
             if  self.stage == len(self.images) -1:
-                self.wait_a_second += 1200
+                self.wait_a_second += 1000
             else:
                 self.wait_a_second = 1600   
 
@@ -133,7 +132,7 @@ class IntroCutscene(State):
                 SoundManager.play_sound("intro_noise.ogg")
 
             else:
-                # Redimensionar a imagem proporcionalmente 
+                # Ajusta as variáveis da dimensão da iamgem e texto
                 new_width = screen_width * 0.5  
                 aspect_ratio = image_height / image_width  
                 new_height = new_width * aspect_ratio  
@@ -149,22 +148,21 @@ class IntroCutscene(State):
             resized_image = pygame.transform.scale(self.current_image, (int(new_width), int(new_height)))
             image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
         
-            its_final_true = not all([
-                self.stage == len(self.images) -1,
-                self.stage == len(self.images) -2,
-                self.stage == len(self.images) -3
-            ])
-
-            # Define para esclarecer a imagem | Fade In
-            if current_time - self.last_time_define >= self.wait_a_second and its_final_true:
-                self.alpha += 2
-            
-            # Define para escurecer a imagem | Fade On 
-            if self.last_time_define != 0 and its_final_true:
-                self.sub_alpha += 3.15
-                self.alpha = 255 - self.sub_alpha
-            elif its_final_true:
+      
+            if self.stage < len(self.images) -3:
+                # Define para esclarecer a imagem | Fade In
+                if current_time - self.last_time_define >= self.wait_a_second:
+                    self.alpha += 2
+                
+                # Define para escurecer a imagem | Fade On 
+                if self.last_time_define != 0:
+                    self.sub_alpha += 3.15
+                    self.alpha = 255 - self.sub_alpha
+                else:
+                    self.sub_alpha = 0
+            else:
                 self.sub_alpha = 0
+                self.alpha = 255
 
             # Deixa na escala dentro do alpha permitido, apenas por redundância
             self.alpha = min(max(self.alpha, 0), 255)
@@ -175,7 +173,7 @@ class IntroCutscene(State):
             # Plota a imagem
             self.__display.blit(resized_image, image_rect)
 
-            # Ajustar o texto para que não ultrapasse a largura da imagem
+            # Ajusta o texto para que não ultrapasse a largura da imagem
             text_max_width = new_width  
             self.current_text.max_length = int(text_max_width - 40) 
             self.current_text.update()
@@ -197,7 +195,7 @@ class IntroCutscene(State):
                                 max_length=self.__display.get_width() - 40,
                                 position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
                                 color=(255, 255, 255),
-                                sound=None  # Adicione um som se for necessário
+                                sound="text_2.wav"
                             )
                             self.current_image = self.images[self.stage]
                     
