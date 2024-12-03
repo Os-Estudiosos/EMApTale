@@ -17,7 +17,6 @@ from classes.bosses.hp import BossHP
 
 from classes.bosses.attacks.snake import Snake
 from classes.bosses.attacks.coffee import Coffee
-from classes.effects.smoke import Smoke
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -73,11 +72,17 @@ class Pinho(Boss):
         self.moment = 0
 
     def speak(self):
+        """
+        Função que faz a fala do boss
+        """
         if not self.dead:
             self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
             self.speaking = True
     
     def death_animation(self):
+        """
+        Função que faz a animação de morte do boss
+        """
         self.__death_animation_counter += 1
         if self.__death_animation_counter >= FPS*0.3:
             self.death_loops_counter += 1
@@ -93,10 +98,19 @@ class Pinho(Boss):
                 del self.__death_explosions[i]
     
     def choose_attack(self):
+        """
+        Função que deixa os ataques em ordem aleatória
+        """
         self.attack_to_execute = random.randint(0, len(self.__attacks)-1)
         self.__attacks[self.attack_to_execute].restart()
     
-    def draw(self, screen):
+    def draw(self, screen:pygame.surface):
+        """
+        Função que desenha tudo na tela
+
+        Args:
+            screen (pygame.surface): Superfícei da tela que receberá o desenho
+        """
         screen.blit(self.image, self.rect)
         if self.state == 'shaking':
             self.hp_container.draw(screen)
@@ -106,11 +120,20 @@ class Pinho(Boss):
         for explosion in self.__death_explosions:
             screen.blit(explosion.img, explosion.rect)
 
-    def apply_effect(self, effect):
+    def apply_effect(self, effect:str):
+        """
+        Função que aplica o efeito no boss
+
+        Args:
+            effect (str): Efeito específico do boss
+        """
         if effect == '-defense':
             self.__defense = 0
     
     def update(self, *args, **kwargs):
+        """
+        Função que atualiza os eventos e os turnos
+        """
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
         if not self.dead:
@@ -150,7 +173,14 @@ class Pinho(Boss):
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
 
     
-    def take_damage(self, amount):
+    def take_damage(self, amount:float):
+        """
+        Função que computa o dano no boss
+
+        Args:
+            amount (float): Valor do dano numa distribuição 
+        """
+
         self.__life = self.__life - amount*amount/(amount+self.__defense)
         SoundManager.play_sound('damage.wav')
         if self.__life <= 0:
@@ -187,58 +217,72 @@ class Pinho(Boss):
 class CoffeeAttack(Attack):
     def __init__(self):
         """
-        Inicializa o ataque de café com xícaras e vapor sincronizado.
+        Inicializa o ataque de café com xícaras e gotas sincronizados.
         """
         super().__init__()
         self._player: Heart = CombatManager.get_variable('player')
         self._duration = FPS * 10  # O ataque dura 10 segundos
         self._duration_counter = 0
-        self.limiter = 0
-        self.moment = 0
+        self.cups_created = False
 
         # Configurações das xícaras
-        self.screen_width = CombatManager.get_variable('battle_container').inner_rect.width
-        self.screen_height = CombatManager.get_variable('battle_container').inner_rect.height
-        self.cup_positions = [
-            (self.screen_width // 3, self.screen_height),
-            (self.screen_width // 6, self.screen_height),
-            (self.screen_width, self.screen_height)
-        ]
+        battle_container = CombatManager.get_variable('battle_container')
+        self.screen_width = battle_container.inner_rect.width
+        self.screen_height = battle_container.inner_rect.height
+
+        self._cup = pygame.sprite.Group()
+        self._drops = pygame.sprite.Group()
 
     def run(self):
         """
         Executa o ataque, atualizando as xícaras e verificando colisões.
         """
         # Criando xícaras
-        self._cups = pygame.sprite.Group()
-        if self.limiter == 0:
-            for pos in self.cup_positions:
-                Coffee(*pos, self._cups)
-            self.limiter += 1
+        if not self.cups_created:
+            coffee_cup = Coffee(x=CombatManager.enemy.rect.midleft[0], y=CombatManager.enemy.rect.midleft[1], *self._cup)
+            coffee_cup.start_flip()  # Inicia a animação
+            self.cups_created = True
 
         self._duration_counter += 1
-        self._cups.update()
+
+        # Atualiza xícaras e gotas
+        self._cup.update()
+        self._drops.update()
+
+        # Criando gotas aleatoriamente
+        if random.random() < 0.1:  # Chance de 10% por frame
+            for cup in self._cup:
+                if cup.flipping:  # Gera gotas apenas se a xícara está virando
+                    drop = CoffeeDrop(cup.rect.centerx, cup.rect.bottom, self._drops)
+
+        # Verificando colisões com o jogador
+        collisions = pygame.sprite.spritecollide(
+            self._player, self._drops, dokill=True, collided=pygame.sprite.collide_mask
+        )
+        if collisions:
+            self._player.take_damage(CombatManager.enemy.damage)
 
         # Retorna `False` se o ataque terminou
         return self._duration_counter < self._duration
 
-    def change_moment(self):
-        pass
-
     def restart(self):
         """
-        Reinicia o ataque, zerando o contador de duração.
+        Reinicia o ataque, zerando o contador de duração e recriando as xícaras.
         """
         self._duration_counter = 0
+        self.cups_created = False
+        self._cup.empty()
+        self._drops.empty()
 
     def draw(self, surface):
         """
-        Desenha as xícaras e o vapor na tela.
+        Desenha as xícaras e as gotas na superfície fornecida.
 
         Args:
             surface (pygame.Surface): Superfície onde os elementos serão desenhados.
         """
-        self._cups.draw(surface)
+        self._cup.draw(surface)
+        self._drops.draw(surface)
 
     @property
     def player(self):

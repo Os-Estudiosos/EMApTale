@@ -54,9 +54,6 @@ class Snake(pygame.sprite.Sprite):
         self.speed = 7
         SoundManager.play_sound('snake.wav')
     
-    def point_to_center(self):
-        pass
-
     def fade_image(self):
         if self.counter <= 255:
             self.image.set_alpha(self.counter*(255/FPS))
@@ -113,7 +110,6 @@ class Snake(pygame.sprite.Sprite):
             self.rect.y += self.vector_pointing_to_player[1]*self.speed
         
         self.rotate()
-        # self.fade_image()
     
     def change_image_color(self):
         if self.type == 'Vanished':
