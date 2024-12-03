@@ -18,6 +18,7 @@ class Player(pygame.sprite.Sprite):
     name = ''
     last_hit = 0
     map_position = [0, 0]
+    previous_map_position = None
 
     # Carregando sa informações do Player
     @classmethod
@@ -33,6 +34,9 @@ class Player(pygame.sprite.Sprite):
         Player.xp = SaveManager.loaded_save['player']['actual_xp']
         Player.max_xp = SaveManager.loaded_save['player']['max_xp']
         Player.inventory = Inventory(SaveManager.loaded_save['inventory'])
+
+        if SaveManager.loaded_save['player']['map_position']:
+            Player.previous_map_position = SaveManager.loaded_save['player']['map_position']
 
     @classmethod
     def take_damage(cls, value: int):

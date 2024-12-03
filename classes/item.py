@@ -20,10 +20,6 @@ class Item(pygame.sprite.Sprite):
             **properties
         }
 
-        print(properties)
-        print('equiped' not in properties)
-        print('equiped' in properties)
-
         if self.type == 'weapon' and ('equiped' not in properties):
             self.equiped = False
             properties['equiped'] = False

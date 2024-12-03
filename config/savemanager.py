@@ -16,7 +16,7 @@ class SaveManager:
         "day": 1,
         "inventory": [
             {
-                "id": "pencil",
+                "item_id": "pencil",
                 "scale": 1,
                 "sprite": "pencil.png",
                 "name": "Lápis",

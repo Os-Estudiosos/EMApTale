@@ -7,11 +7,13 @@ from config import *
 from config.savemanager import SaveManager
 from config.globalmanager import GlobalManager
 from config.eventmanager import EventManager
+from config.gamestatemanager import GameStateManager
 
 from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
 from classes.map.camera import Camera
 from classes.frisk import Frisk
+from classes.player import Player
 from classes.map.infos_hud import InfosHud
 
 from screens.subscreen.pause_menu import PauseMenu
@@ -82,6 +84,12 @@ class EMAp(State):
         self.map_loader.load_interactions()
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
+
+        if Player.previous_map_position and GameStateManager.previous_state == 'start':
+            self.player.reset_position(Player.previous_map_position)
+        else:
+            self.player.reset_position()
+
         GlobalManager.paused = False
 
     def run(self):
@@ -113,7 +121,6 @@ class EMAp(State):
                 image.draw(self.__display)
     
         self.camera.draw(self.__display)
-
 
         # Captura eventos e gerencia interações
         self.interaction_manager.handle_interaction()
