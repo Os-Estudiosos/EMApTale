@@ -19,7 +19,7 @@ Execute o comando para realizar o download das bibliotecas utilizadas no projeto
 
 ## Como jogar
 
-Para jogar, após dar o git clone e baixar as bibliotecas necessárias no requierements, basta rodar o arquivo **main.py** que localiza-se no fim dos arquivos:
+Para jogar, após dar o git clone e baixar as bibliotecas necessárias no requirements, basta rodar o arquivo **main.py** que localiza-se no fim dos arquivos:
 
 ```
 $ python main.py
@@ -109,3 +109,10 @@ Colocar vídeo/foto
 - **Tests:** Aqui estão os testes unitários das funções mais gerais utilizadas, de classes referentes aos ataques dos chefes, classes do inventário e sobre a movimentação do personagem.
 - **Tileset:** Aqui estão os sprites de tudo que é usado para criar o mapa, além do arquivo do mapa (.tmx) que é usado para que o pygame leia e entenda a organização dos tiles, colisões, interações, etc.
 - **Utils:** Na pasta utils estão algumas funções reutilizáveis em certas partes do código.
+- **Report:** Pasta que armazena o relatório do código.
+
+## Relatório
+
+Para melhor entendimento do projeto e andamento do mesmo, foi feito também um relatório de todo o projeto, que está localizado na pasta _Report_ nos arquivos do código.
+
+As **referências** utilizadas(como sprites e aúdios utilizados na criação dos jogos serão devidamente creditados nas referências do relatório).
