@@ -30,8 +30,8 @@ class CoffeeCup(pygame.sprite.Sprite):
         self.counter = 0
         self.counter_rate = FPS*0.5
         self.drops_group = pygame.sprite.Group()
-        CombatManager.global_groups.append(self.drops_group)
 
+        CombatManager.global_groups.append(self.drops_group)
 
     def start_flip(self):
         """Inicia a animação de virar a xícara."""
@@ -63,23 +63,16 @@ class CoffeeCup(pygame.sprite.Sprite):
             self.drop_timer += 1
             if self.drop_timer >= self.drop_interval:
                 self.drop_timer = 0
-                if random.random() < 0.3:  # 30% de chance
-                    drop = CoffeeDrop(self.drops_group)
         
 class CoffeeDrop(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
 
-        # Colocando uma chance de colocar o efeito
-        self.type = 'Normal'
-        if random.randint(0, 100) <= 15:
-            self.type = 'Vanished'
-
         # Criando os sprites para gotas
         self.image_path = pygame.image.load(
             os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'drop_coffee.png')
         ).convert_alpha()
-        self.image = pygame.transform.scale(self.image_path, (50, 50))
+        self.image = pygame.transform.scale(self.image_path, (40, 40))
         self.rect = self.image.get_rect()
         self.coffee_mask = pygame.mask.from_surface(self.image)
         
@@ -89,23 +82,17 @@ class CoffeeDrop(pygame.sprite.Sprite):
 
         self.randomize_position()
 
-
     def randomize_position(self):
         """Define uma posição aleatória para as gotas."""
 
         battle_container = CombatManager.get_variable('battle_container')
         display_rect = battle_container.inner_rect
-        self.rect.top = display_rect.top-50
-        self.rect.x = random.randint(display_rect.width-8, 2*display_rect.width-35)
+        # Garante que a gota seja gerada dentro dos limites do container
+        self.rect.top = display_rect.top - 50  # Começa logo acima do container
 
+        # Reduzindo a chance de uma gota ser criada
+        self.rect.x = random.randint(display_rect.left, display_rect.right)
         self.rect.y += self.gravity
-
-    def vanished(self):
-        """
-        Muda o sprite da gota quando aplicamos ela tem o efeito
-        """
-        if self.type == 'Vanished':
-            self.image_path = os.path.join(GET_PROJECT_PATH(), 'sprites', 'effects', 'water_drop.png')
 
     def draw_drops(self, surface):
         """

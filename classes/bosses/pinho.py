@@ -223,31 +223,34 @@ class CoffeeAttack(Attack):
         self.drops_creation_rate = FPS // 5
         self.cups_created = False
 
-        self._cup = pygame.sprite.Group()
-        self._drops = pygame.sprite.Group()
+        # Criando os grupos
+        self.cup_group = pygame.sprite.Group()
         self.drops_group = pygame.sprite.Group()
 
-
+        # Criando o retângulo do café
         battle_container = CombatManager.get_variable('battle_container')
-        
         self.new_rect =  pygame.Rect(
                 battle_container.inner_rect.left,
                 battle_container.inner_rect.bottom,
                 battle_container.inner_rect.width,
                 0
         )
-
         self.new_rect.bottom = battle_container.inner_rect.bottom
+
         self.fill_speed = 0.9
 
+        self.max_drops = 60
+
         # Adicionando os grupos aos grupos globais
-        CombatManager.global_groups.append(self._cup)
-        CombatManager.global_groups.append(self._drops)
+        CombatManager.global_groups.append(self.cup_group)
+        CombatManager.global_groups.append(self.drops_group)
 
     def create_cups(self):
-        coffee_cup1 = CoffeeCup(CombatManager.enemy.rect.midleft[0], CombatManager.enemy.rect.midleft[1]-50, self.drops_group, self._cup)
-        coffee_cup2 = CoffeeCup(CombatManager.enemy.rect.center[0], CombatManager.enemy.rect.center[1]-50, self.drops_group, self._cup)
-        coffee_cup3 = CoffeeCup(CombatManager.enemy.rect.midright[0], CombatManager.enemy.rect.midright[1]-50, self.drops_group, self._cup)
+
+        # Criando as animações das xícaras
+        coffee_cup1 = CoffeeCup(CombatManager.enemy.rect.midleft[0], CombatManager.enemy.rect.midleft[1]-50, self.drops_group, self.cup_group)
+        coffee_cup2 = CoffeeCup(CombatManager.enemy.rect.center[0], CombatManager.enemy.rect.center[1]-50, self.drops_group, self.cup_group)
+        coffee_cup3 = CoffeeCup(CombatManager.enemy.rect.midright[0], CombatManager.enemy.rect.midright[1]-50, self.drops_group, self.cup_group)
 
         coffee_cup1.start_flip()
         coffee_cup2.start_flip()
@@ -257,37 +260,38 @@ class CoffeeAttack(Attack):
 
     def run(self):
         self._duration_counter += 1
-
         # Criando xícaras se ainda não foram criadas
         if not self.cups_created:
             self.create_cups()
 
-        # Atualiza as xícaras e as gotas
-        self._cup.update()
-        self._drops.update(coffee_rect=self)
+        # Atualiza os grupos
+        self.cup_group.update()
+        self.drops_group.update()
 
-        # Gera gotas regularmente enquanto as xícaras estão girando
-        for cup in self._cup:
+        for cup in self.cup_group:
+
+            # Gera gotas regularmente enquanto as xícaras estão girando
             if cup.flipping and self._duration_counter % int(self.drops_creation_rate) == 0:
-                drop = CoffeeDrop(self._drops)
-            if self._duration_counter % int(self.drops_creation_rate) == 0:
-                drop = CoffeeDrop(self._drops)
+                drop = CoffeeDrop(self.drops_group)
 
+            # Gera gotas regularmente para o resto do ataque
+            if self._duration_counter % int(self.drops_creation_rate) == 0 and random.random()<0.4:
+                drop = CoffeeDrop(self.drops_group)
 
         # Verifica colisões com o jogador
         collisions = pygame.sprite.spritecollide(
-            self._player, self._drops, dokill=True, collided=pygame.sprite.collide_mask
+            self._player, self.drops_group, dokill=True, collided=pygame.sprite.collide_mask
         )
         if collisions:
             SoundManager.play_sound("arrow.wav")
             self._player.take_damage(CombatManager.enemy.damage)
 
+        # Atualizando o retângulo
         self.new_rect.height += self.fill_speed * len(collisions)
-        if self.new_rect.height >= 300:
-            self.new_rect.height = 300
-
-
-        for drop in self._drops:
+        if self.new_rect.height >= 250:
+            self.new_rect.height = 250
+        
+        for drop in self.drops_group:
             if drop.rect.y >= CombatManager.get_variable('battle_container').inner_rect.bottom:
                 # Incrementa a altura do retângulo de acordo com a quantidade de gotas
                 self.new_rect.height += self.fill_speed
@@ -300,48 +304,43 @@ class CoffeeAttack(Attack):
                     self.new_rect.height = 250
                     self.new_rect.top = CombatManager.get_variable('battle_container').inner_rect.bottom - 250
                 
+                # Ajusta a colisão
                 if self.new_rect.colliderect(self._player.rect):
                     SoundManager.play_sound("arrow.wav")
                     self._player.take_damage(CombatManager.enemy.damage)
-
-                # Aplicando o efeito
-                if drop.type == 'Vanished':
-                    CoffeeDrop(self.drops_group).vanished()
-                    self._player.apply_effect('vanished')
                 
                 # Matando os sprites
                 drop.kill()
 
-        # Desenhando o retângulo 
-        pygame.draw.rect(pygame.display.get_surface(), 
-                            (133,77,67), 
-                            self.new_rect,
-                            CombatManager.get_variable('battle_container').inner_rect.width)
+        # Desenhando tudo
+        self.draw(pygame.display.get_surface())
         
         # Finaliza o ataque apenas quando o tempo terminar e as gotas desaparecerem
         if self._duration_counter >= self._duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-            self._cup.empty()
-            self._drops.empty()
+            self.cup_group.empty()
             self.drops_group.empty()
-           
+            self.drops_group.empty()
+
+    # Reinicia o ataque quando necessário   
     def restart(self):
         self._duration_counter = 0
         self.cups_created = False
-        self._cup.empty()
-        self._drops.empty()
+        self.cup_group.empty()
         self.drops_group.empty()
-        CombatManager.global_groups.remove(self._cup)
-        CombatManager.global_groups.remove(self._drops)
-        self._cup = pygame.sprite.Group()
-        self._drops = pygame.sprite.Group()
-        CombatManager.global_groups.append(self._cup)
-        CombatManager.global_groups.append(self._drops)
+        self.drops_group.empty()
+        CombatManager.global_groups.remove(self.cup_group)
+        CombatManager.global_groups.remove(self.drops_group)
+        self.cup_group = pygame.sprite.Group()
+        self.drops_group = pygame.sprite.Group()
+        CombatManager.global_groups.append(self.cup_group)
+        CombatManager.global_groups.append(self.drops_group)
         self.new_rect.height = 0  # Reinicia o preenchimento
 
+    # Desenha tudo na tela
     def draw(self, surface):
-        self._cup.draw(surface)
-        self._drops.draw(surface)
+        self.cup_group.draw(surface)
+        self.drops_group.draw(surface)
         pygame.draw.rect(surface, (133, 77, 67), self.new_rect)
 
     @property
@@ -358,16 +357,22 @@ class CoffeeAttack(Attack):
 
 class PythonAtatack(Attack):
     def __init__(self):
+
+        # Pegando o personagem
         self.__player: Heart = CombatManager.get_variable('player')
 
+        # Criando o grupo 
         self.snakes_group = pygame.sprite.Group()
 
+        # Adicionando no grupo global
         CombatManager.global_groups.append(self.snakes_group)
 
+        # 3 cobras a cada segundo serão criadas
         self.snakes: list[Snake] = []
-        self.snakes_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
+        self.snakes_creation_rate = FPS/5 
 
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        # O Ataque dura 10 segundos
+        self.__duration = FPS * 10 
         self.__duration_counter = 0
 
     def run(self):
@@ -376,23 +381,27 @@ class PythonAtatack(Attack):
         if self.__duration_counter % self.snakes_creation_rate == 0:
             self.snakes.append(Snake(self.snakes_group))
         
+        # Verifica o turno com base na duração do ataque
         if self.__duration_counter >= self.__duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
             self.snakes_group.empty()
         
+        # Atualiza as cobras
         for snake in self.snakes:
             snake.update(player_center=self.player.rect.center)
         
+        # Verifica colisões e aplica o efeito
         for snake in self.snakes_group:
             if self.__player != snake:
                 if self.__player.rect.colliderect(snake.rect):
                     offset = (snake.rect.x - self.__player.rect.x, snake.rect.y - self.__player.rect.y)
                     if self.__player.mask.overlap(snake.mask, offset):
                         self.__player.take_damage(CombatManager.enemy.damage)
-                        if snake.type == 'Vanished':
-                            self.__player.apply_effect('vanished')
+                        if snake.type == 'Inverse':
+                            self.__player.apply_effect('inverse')
                         snake.kill()
         
+    # Reinicia o aqtaque quando necessário
     def restart(self):
         self.__duration_counter = 0
 
