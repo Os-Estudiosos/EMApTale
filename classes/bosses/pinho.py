@@ -238,6 +238,7 @@ class CoffeeAttack(Attack):
         )
 
         self.new_rect.bottom = battle_container.inner_rect.bottom
+        self.fill_speed = 0.9
 
         # Adicionando os grupos aos grupos globais
         CombatManager.global_groups.append(self._cup)
@@ -253,15 +254,6 @@ class CoffeeAttack(Attack):
         coffee_cup3.start_flip()
 
         self.cups_created = True
-
-    def fill_container(self, fill:int):
-        """Aumenta a altura do café no container."""
-        self.new_rect.height += fill
-        pygame.draw.rect(
-            pygame.display.get_surface(),
-            (133,77,67),
-            self.new_rect
-        )
 
     def run(self):
         self._duration_counter += 1
@@ -290,20 +282,49 @@ class CoffeeAttack(Attack):
             SoundManager.play_sound("arrow.wav")
             self._player.take_damage(CombatManager.enemy.damage)
 
+        self.new_rect.height += self.fill_speed * len(collisions)
+        if self.new_rect.height >= 300:
+            self.new_rect.height = 300
+
+
         for drop in self._drops:
-            if drop.rect.bottom >= CombatManager.get_variable('battle_container').inner_rect.bottom:
-                self.fill_container(1)
+            if drop.rect.y >= CombatManager.get_variable('battle_container').inner_rect.bottom:
+                # Incrementa a altura do retângulo de acordo com a quantidade de gotas
+                self.new_rect.height += self.fill_speed
+
+                # Ajusta a posição vertical para crescer de baixo para cima
+                self.new_rect.top = CombatManager.get_variable('battle_container').inner_rect.bottom - self.new_rect.height
+
+                # Garante que a altura não ultrapasse o limite
+                if self.new_rect.height >= 250:
+                    self.new_rect.height = 250
+                    self.new_rect.top = CombatManager.get_variable('battle_container').inner_rect.bottom - 250
+                
+                if self.new_rect.colliderect(self._player.rect):
+                    SoundManager.play_sound("arrow.wav")
+                    self._player.take_damage(CombatManager.enemy.damage)
+
+                # Aplicando o efeito
+                if drop.type == 'Vanished':
+                    CoffeeDrop(self.drops_group).vanished()
+                    self._player.apply_effect('vanished')
+                
+                # Matando os sprites
                 drop.kill()
 
+        # Desenhando o retângulo 
+        pygame.draw.rect(pygame.display.get_surface(), 
+                            (133,77,67), 
+                            self.new_rect,
+                            CombatManager.get_variable('battle_container').inner_rect.width)
+        
         # Finaliza o ataque apenas quando o tempo terminar e as gotas desaparecerem
         if self._duration_counter >= self._duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
             self._cup.empty()
             self._drops.empty()
             self.drops_group.empty()
-        
-
-                
+           
     def restart(self):
         self._duration_counter = 0
         self.cups_created = False
@@ -319,11 +340,9 @@ class CoffeeAttack(Attack):
         self.new_rect.height = 0  # Reinicia o preenchimento
 
     def draw(self, surface):
-        pygame.draw.rect(surface, (133, 77, 67), self.new_rect)
         self._cup.draw(surface)
         self._drops.draw(surface)
-
-    
+        pygame.draw.rect(surface, (133, 77, 67), self.new_rect)
 
     @property
     def player(self):

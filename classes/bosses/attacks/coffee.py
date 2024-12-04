@@ -25,7 +25,7 @@ class CoffeeCup(pygame.sprite.Sprite):
         self.flip_speed = 2  # Velocidade de giro
         self.flipping = False  # Flag para iniciar o giro
         self.drop_timer = 0  # Controle de tempo para criar gotas
-        self.drop_interval = 300  # Intervalo entre gotas
+        self.drop_interval = 5000  # Intervalo entre gotas
         self.gravity = 0.3
         self.counter = 0
         self.counter_rate = FPS*0.5
@@ -63,6 +63,8 @@ class CoffeeCup(pygame.sprite.Sprite):
             self.drop_timer += 1
             if self.drop_timer >= self.drop_interval:
                 self.drop_timer = 0
+                if random.random() < 0.3:  # 30% de chance
+                    drop = CoffeeDrop(self.drops_group)
         
 class CoffeeDrop(pygame.sprite.Sprite):
     def __init__(self, *groups):
@@ -83,7 +85,7 @@ class CoffeeDrop(pygame.sprite.Sprite):
         
         # Velocidade da gota
         self.flip_speed = 0.5  # Velocidade aleatória para variação
-        self.gravity = 0.5  # Aceleração para queda
+        self.gravity = 0.05  # Aceleração para queda
 
         self.randomize_position()
 
@@ -96,8 +98,7 @@ class CoffeeDrop(pygame.sprite.Sprite):
         self.rect.top = display_rect.top-50
         self.rect.x = random.randint(display_rect.width-8, 2*display_rect.width-35)
 
-        if self.rect.colliderect(battle_container.out_rect):
-            self.rect.y += self.gravity
+        self.rect.y += self.gravity
 
     def vanished(self):
         """
@@ -119,6 +120,3 @@ class CoffeeDrop(pygame.sprite.Sprite):
         # Atualizar posição
         self.rect.y += self.flip_speed
         self.flip_speed += self.gravity  # Aplicar gravidade
-    
-        if self.rect.bottom >= CombatManager.get_variable('battle_container').inner_rect.bottom:
-            kwargs['coffee_rect'].fill_container(10)
