@@ -38,7 +38,7 @@ class FinalCutscene(State):
 
     def on_first_execution(self):
         SoundManager.stop_music()
-        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "final.mp3"))
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "finale.mp3"))
         self.initial_time = pygame.time.get_ticks()
 
 
