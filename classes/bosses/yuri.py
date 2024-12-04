@@ -40,7 +40,7 @@ class Yuri(Boss):
         # Carregando o sprite do Yuri
         self.image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'yuri.png'))
         self.rect = self.image.get_rect()
-        self.state = 'idle'
+        self.__state = 'idle'
         self.__counter = 0
 
         # Definindo os atributos
@@ -103,7 +103,7 @@ class Yuri(Boss):
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        if self.state == 'shaking':
+        if self.__state == 'shaking':
             self.hp_container.draw(screen)
         if self.speaking:
             self.dialogue.draw(screen)
@@ -139,14 +139,14 @@ class Yuri(Boss):
             if event.type == BOSS_ACT_EFFECT:
                 self.apply_effect(event.effect)
         
-        if self.state == 'shaking':
+        if self.__state == 'shaking':
             self.__counter += 10
             counter_in_radians = self.__counter*math.pi/180
             wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
             self.rect.x += 40 * wave_factor
             self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
             if self.__counter >= FPS*1.5*10:
-                self.state = 'idle'
+                self.__state = 'idle'
                 self.__counter = 0
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
 
@@ -237,8 +237,6 @@ class VectorAttack(Attack):
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
-
-        # self.vectors.append(Vector(self.vectors_group))
 
     def run(self):
         self.__duration_counter += 1

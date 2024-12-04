@@ -92,6 +92,10 @@ class Boss(pygame.sprite.Sprite, ABC):
     @damage.setter
     @abstractmethod
     def damage(self, value):...
+    
+    @property
+    @abstractmethod
+    def music(self):...
 
 
 class Attack(ABC):
