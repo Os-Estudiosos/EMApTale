@@ -104,7 +104,7 @@ class GameoverCutscene(State):
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
-                    self.__game_state_manager.set_state('final_cutscene')
+                    self.__game_state_manager.set_state('start')
                     SoundManager.stop_music()
 
         pygame.display.flip()
