@@ -18,11 +18,6 @@ class State(ABC):
 
     @property
     @abstractmethod
-    def game_state_manager(self):
-        """Toda cena deve ter o gerenciador de cenas caso queiram mudar dinamicamente"""
-
-    @property
-    @abstractmethod
     def name(self):
         """Toda cena deve seu nome"""
     

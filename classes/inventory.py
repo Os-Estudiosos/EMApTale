@@ -4,7 +4,7 @@ from uuid import uuid4, UUID
 class Inventory:
     def __init__(self, items: list = []):
         self.items = []
-        self.equiped_weapon = []
+        self.equiped_weapon = None
         for item in items:
             self.add_item(item)
             if item['type'] == 'weapon' and item['equiped']:
@@ -67,7 +67,25 @@ class Inventory:
         if not isinstance(id, UUID):
             raise TypeError("Passe um UUID parâmetro")
         
+        if self.equiped_weapon:
+            self.equiped_weapon.equiped = False
+        
         self.equiped_weapon = self.get_item(id)
+
+        self.equiped_weapon.equiped = True
+    
+    def get_dict(self):
+        inventory_list = []
+        for item in self.items:
+            item_json = item.json_item.copy()
+            if 'id' in item_json:
+                del item_json['id']
+            inventory_list.append(item_json)
+        
+        return inventory_list
+
+    def __len__(self):
+        return len(self.items)
 
     def __eq__(self, value: list):
         return self.items == value
@@ -77,3 +95,6 @@ class Inventory:
 
     def __next__(self):
         return next(iter(self.items))
+
+    def __getitem__(self, index):
+        return self.items[index]

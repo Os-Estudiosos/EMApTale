@@ -1,12 +1,10 @@
 import pygame
-
 from classes.polygon.polygon import Polygon
 
-
-class Camera:
+class Camera(pygame.sprite.Group):
     """Controla a área visível do mapa em relação ao jogador
     """
-    def __init__(self, map_width, map_height, screen_width, screen_height):
+    def __init__(self, map_width, map_height, screen_width, screen_height, *sprites):
         """Inicializa a câmera com as dimensões do mapa e da tela
 
         Args:
@@ -15,48 +13,47 @@ class Camera:
             screen_width (int): Largura da tela de exibição
             screen_height (int): Altura da tela de exibição
         """
-        self.map_width = map_width  #Largura total do mapa
-        self.map_height = map_height  #Altura total do mapa
-        self.screen_width = screen_width  #Largura da tela de exibição
-        self.screen_height = screen_height  #Altura da tela de exibição
-        self.camera_rect = pygame.Rect(0, 0, screen_width, screen_height)  #Define a área da câmera
+        super().__init__(*sprites)
+        self.map_width = map_width
+        self.map_height = map_height
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.camera_rect = pygame.Rect(0, 0, screen_width, screen_height)
 
     def apply(self, entity: pygame.Rect | pygame.sprite.Sprite):
-        """Método para aplicar a posição da câmera a uma entidade, ajustando sua posição
-
-        Args:
-            entity (pygame.Rect | pygame.sprite.Sprite): A entidade que a câmera vai focar
-
-        Returns:
-            pygame.Rect: O retângulo que representa a entidade movida para a câmera
-        """
-        #Verifica se a entidade é um retângulo (pygame.Rect)
+        """Aplica a posição da câmera a uma entidade, ajustando sua posição"""
         if isinstance(entity, pygame.Rect):
-            #Move a entidade com base na posição da câmera, retornando a posição ajustada
             return entity.move(-self.camera_rect.x, -self.camera_rect.y)
         if isinstance(entity, Polygon):
             return entity.move(-self.camera_rect.x, -self.camera_rect.y)
-        if isinstance(entity, list) or isinstance(entity, tuple):
-            return [
-                entity[0] - self.camera_rect.x,
-                entity[1] - self.camera_rect.y
-            ]
-        #Se a entidade não for pygame.Rect, usa a propriedade rect para mover
+        if isinstance(entity, (list, tuple)):
+            return [entity[0] - self.camera_rect.x, entity[1] - self.camera_rect.y]
         return entity.rect.move(-self.camera_rect.x, -self.camera_rect.y)
 
-    def update(self, target_rect: pygame.Rect):
-        """Método para atualizar a posição da câmera em relação ao jogador
-
-        Args:
-            target_rect (pygame.Rect): O retângulo que eu quero que a câmera acompanhe
+    def apply_ysort(self, renderables: list):
         """
-        #Centraliza a câmera no centro do jogador (target_rect)
+        Ordena e ajusta os itens para renderização com base na profundidade (Y-Sort).
+        """
+        renderables.sort(key=lambda item: item[0])
+        return [
+            (y, image, self.apply(rect)) for y, image, rect in renderables
+        ]
+
+    def update(self, target_rect: pygame.Rect, *args, **kwargs):
+        """Atualiza a posição da câmera em relação ao jogador, otimizando os cálculos."""
+        super().update(*args, **kwargs)
+
         x = target_rect.centerx - self.screen_width // 2
         y = target_rect.centery - self.screen_height // 2
 
-        #Limita a câmera para que ela não saia dos limites do mapa
+        # Limita a câmera para que ela não saia dos limites do mapa
         x = max(0, min(x, self.map_width - self.screen_width))
         y = max(0, min(y, self.map_height - self.screen_height))
 
-        #Atualiza a posição da câmera com a nova posição calculada
-        self.camera_rect = pygame.Rect(x, y, self.screen_width, self.screen_height)
+        # Atualiza a posição da câmera com base no jogador
+        self.camera_rect.x = x
+        self.camera_rect.y = y
+    
+    def draw(self, surface, bgsurf = None, special_flags = 0):
+        for sprite in self.sprites():
+            surface.blit(sprite.image, self.apply(sprite.rect))

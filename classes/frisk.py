@@ -2,6 +2,7 @@ import pygame
 import os
 
 from config import *
+from config.globalmanager import GlobalManager
 
 from classes.player import Player
 from classes.sprites.spritesheet import SpriteSheet
@@ -36,7 +37,6 @@ class Frisk(Player):
         self.frame_counter = 0  # Contador para controlar o atraso
 
         self.walls = walls  # Lista de retângulos de colisão
-        self.mask = None  # Máscara para colisão precisa
 
         self.frames = SpriteSheet(
             self.rows,
@@ -48,7 +48,17 @@ class Frisk(Player):
             self.scale_factor
         )
 
-        self.speed = 10
+        self.mask = pygame.mask.from_surface(self.frames[self.direction][self.frame_index])  # Máscara para colisão precisa
+
+        self.speed = 7
+    
+    def reset_position(self, new_pos = None):
+        if new_pos:
+            self.rect.centerx = new_pos[0]
+            self.rect.centery = new_pos[1]
+        else:
+            self.rect.centerx = GlobalManager.spawnpoint[0]*MAP_SCALE_FACTOR
+            self.rect.centery = GlobalManager.spawnpoint[1]*MAP_SCALE_FACTOR
 
     def update_animation(self):
         if self.direction < len(self.frames):
@@ -76,9 +86,7 @@ class Frisk(Player):
         elif direction.y < 0:
             self.direction = 2  # Cima
 
-    def move(self, camera, keys):
-        old_rect = self.rect.copy()
-
+    def move(self, keys):
         direction = pygame.math.Vector2(
             sign((keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) or (keys[pygame.K_d] - keys[pygame.K_a])),
             sign((keys[pygame.K_DOWN] - keys[pygame.K_UP]) or (keys[pygame.K_s] - keys[pygame.K_w]))
@@ -96,7 +104,7 @@ class Frisk(Player):
         # Movimenta o jogador
         self.rect.x += self.speed * direction.x
 
-        wall = self.check_wall_collisions(camera, direction)
+        wall = self.check_wall_collisions()
         if isinstance(wall, pygame.Rect):
             if direction.x > 0:
                 self.rect.right = wall.left
@@ -107,7 +115,7 @@ class Frisk(Player):
 
         self.rect.y += self.speed * direction.y
 
-        wall = self.check_wall_collisions(camera, direction)
+        wall = self.check_wall_collisions()
         if isinstance(wall, pygame.Rect):
             if direction.y < 0:
                 self.rect.top = wall.bottom
@@ -115,8 +123,11 @@ class Frisk(Player):
                 self.rect.bottom = wall.top
         if isinstance(wall, Polygon):
             self.rect.y -= self.speed * direction.y
+        
+        # self.rect = GlobalManager.camera.apply(self.original_rect)
+        self.update_position(self.rect.centerx, self.rect.centery)
 
-    def check_wall_collisions(self, camera, direction):
+    def check_wall_collisions(self):
         """
         Verifica colisão de máscara entre o jogador e as paredes.
         """
@@ -127,6 +138,6 @@ class Frisk(Player):
             
         return collided_wall
 
-    def draw(self, surface, camera):
+    def draw(self, surface):
         frame_image = self.frames[self.direction][self.frame_index]
-        surface.blit(frame_image, camera.apply(self.rect))
+        surface.blit(frame_image, GlobalManager.camera.apply(self.rect))

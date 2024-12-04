@@ -11,10 +11,9 @@ from config.eventmanager import EventManager
 from classes.text.cuts_dynamic_text import CDynamicText
 
 class IntroCutscene(State):
-    def __init__(self, name: str, display: pygame.Surface, game_state_manager: GameStateManager):
+    def __init__(self, name: str, display: pygame.Surface):
         self.__name = name
         self.__display = display
-        self.__game_state_manager = game_state_manager
         self.__execution_counter = 0
 
         self.__variables = {}
@@ -211,7 +210,7 @@ class IntroCutscene(State):
                             self.current_image = self.images[self.stage]
                     
         else:
-            self.__game_state_manager.set_state('emap')
+            GameStateManager.set_state('emap')
             
         
     def on_last_execution(self):    
@@ -235,10 +234,6 @@ class IntroCutscene(State):
     @property
     def name(self):
         return self.__name    
-    
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
     
     @property
     def variables(self):

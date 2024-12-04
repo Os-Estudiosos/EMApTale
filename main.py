@@ -20,6 +20,10 @@ from screens.menu.new_name import NewName
 from screens.combat import Combat
 from screens.emap import EMAp
 from screens.cutscene.intro_cutscene import IntroCutscene # Teste Brunão
+from screens.show_day import ShowDay
+
+from classes.text.text import Text
+
 
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
@@ -43,34 +47,34 @@ class Game:
         # Criando o objeto do relógio
         self.clock = pygame.time.Clock()
 
-        # Iniciando os Gerenciadores
-        self.game_state_manager = GameStateManager('start')
-
         # Inicializando outras coisas
         SoundManager.load_all_sounds()  # Carregando todos os efeitos sonoros do jogo
 
         # === Definindo as cenas do jogo ===
         # Cenas do Menu
-        self.Menu = Start('start', self.display, self.game_state_manager)
-        self.NewGameConfirmation = NewGameConfirmation('new_game_confirmation', self.display, self.game_state_manager)
-        self.NewName = NewName('new_name', self.display, self.game_state_manager)
-        # self.Options = Options('options', self.display, self.game_state_manager)
+        self.Menu = Start('start', self.display)
+        self.NewGameConfirmation = NewGameConfirmation('new_game_confirmation', self.display)
+        self.NewName = NewName('new_name', self.display)
+        self.Options = Options('options', self.display)
         # Considereando em tirar o menu de opções (Não há muitas opções, só volume)
 
         # Cenas mais genéricas
-        self.Combat = Combat('combat', self.display, self.game_state_manager)
-        self.EMAp = EMAp('emap', self.display, self.game_state_manager)
+        self.Combat = Combat('combat', self.display)
+        self.EMAp = EMAp('emap', self.display)
+
+        # Cena que mostra qual dia o player está
+        self.ShowDay = ShowDay('show_day', self.display)
 
         # Cenas das Cutscenes
-        self.IntroCutscene = IntroCutscene('intro_cutscene', self.display, self.game_state_manager)
+        self.IntroCutscene = IntroCutscene('intro_cutscene', self.display)
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
-        self.game_state_manager.states = {
+        GameStateManager.states = {
             # Cenas do menu
             'start': self.Menu,
             'new_game_confirmation': self.NewGameConfirmation,
             'new_name': self.NewName,
-            # 'options': self.Options,
+            'options': self.Options,
 
             # Cenas das Cutscenes
             'intro_cutscene': self.IntroCutscene,
@@ -78,7 +82,7 @@ class Game:
             # Cenas genéricas
             'combat': self.Combat,
             'emap': self.EMAp,
-
+            'show_day': self.ShowDay
         }
 
         pygame.mouse.set_visible(False)
@@ -89,15 +93,6 @@ class Game:
         for event in EventManager.events:
             if event.type == pygame.QUIT:
                 self.running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    self.game_state_manager.set_state('start')
-                if event.key == pygame.K_2:
-                    with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json')) as file:
-                        yuri = json.load(file)
-                        self.game_state_manager.set_state('combat', {
-                            "enemy": yuri
-                        })
 
     def run(self):
         while self.running:
@@ -106,7 +101,7 @@ class Game:
             game.display.fill((0, 0, 0))
 
             # Trocando de Cena
-            self.game_state_manager.get_current_state().run()
+            GameStateManager.get_current_state().run()
 
             # Atualizando
             pygame.display.flip()
