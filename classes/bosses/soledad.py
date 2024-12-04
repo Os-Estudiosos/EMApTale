@@ -13,7 +13,9 @@ from config.fontmanager import FontManager
 from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
+
 from classes.bosses.attacks.closing_graph import ClosingGraph
+from classes.bosses.attacks.node_explosion import NodeExplosion
 
 from classes.bosses.attacks.empty_attack import EmptyAttack
 
@@ -62,7 +64,8 @@ class Soledad(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            GraphClosingAttack(self.__damage)
+            GraphClosingAttack(self.__damage),
+            # AttachedToGraph(self.__damage)
         ]
         self.attack_to_execute = -1
 
@@ -228,12 +231,10 @@ class Soledad(Boss):
 
 class GraphClosingAttack(Attack):
     def __init__(self, damage):
-        self.__player = CombatManager.get_variable('player')
+        self.__player: Heart = CombatManager.get_variable('player')
         self.damage = damage
 
         self.display = pygame.display.get_surface()
-
-        self.container = CombatManager.get_variable('battle_container')
 
         self.graph_creation_counter = 0
         self.graph_creation_rate = FPS*1.5
@@ -286,3 +287,70 @@ class GraphClosingAttack(Attack):
     def duration_counter(self):
         return self.__duration_counter
 
+
+class AttachedToGraph(Attack):
+    def __init__(self, damage):
+        self.__player: Heart = CombatManager.get_variable('player')
+        self.damage = damage
+
+        self.display = pygame.display.get_surface()
+        self.container = CombatManager.get_variable('battle_container')
+
+        self.helper_surface = pygame.Surface(pygame.display.get_surface().get_size(), pygame.SRCALPHA)
+
+        self.explosion_creation_counter = 0
+        self.explosion_creation_rate = FPS
+
+        self.player_graph = self.__player.graph
+
+        self.explosions: list[NodeExplosion] = []
+
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
+
+        CombatManager.global_draw_functions.append(self.draw)
+    
+    def draw(self, *args, **kwargs):
+        self.display.blit(self.helper_surface, self.helper_surface.get_rect())
+
+        for node_explosion in self.explosions:
+            node_explosion.draw(self.helper_surface)
+
+    def run(self):
+        if self.__duration_counter == 0:
+            self.__player.apply_effect('prisioned')
+
+        self.explosion_creation_counter += 1
+
+        if self.explosion_creation_counter >= self.explosion_creation_rate:
+            self.explosion_creation_counter = 0
+            random_node = random.choice([
+                'A','B','C','D','E','F','G','H','I'
+            ])
+            self.explosions.append(NodeExplosion(
+                self.player_graph[random_node]['pos']
+            ))
+        
+        for node_explosion in self.explosions:
+            node_explosion.update()
+
+        self.__duration_counter += 1
+        
+        if self.__duration_counter >= self.__duration:
+            self.explosions.clear()
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+    
+    def restart(self):
+        self.__duration_counter = 0
+    
+    @property
+    def player(self):
+        return self.__player
+
+    @property
+    def duration(self):
+        return self.__duration
+    
+    @property
+    def duration_counter(self):
+        return self.__duration_counter
