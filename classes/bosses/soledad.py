@@ -64,8 +64,8 @@ class Soledad(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            GraphClosingAttack(self.__damage),
-            # AttachedToGraph(self.__damage)
+            # GraphClosingAttack(self.__damage),
+            AttachedToGraph(self.__damage)
         ]
         self.attack_to_execute = -1
 
@@ -299,7 +299,7 @@ class AttachedToGraph(Attack):
         self.helper_surface = pygame.Surface(pygame.display.get_surface().get_size(), pygame.SRCALPHA)
 
         self.explosion_creation_counter = 0
-        self.explosion_creation_rate = FPS
+        self.explosion_creation_rate = FPS/2
 
         self.player_graph = self.__player.graph
 
