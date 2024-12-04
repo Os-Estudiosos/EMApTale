@@ -244,9 +244,9 @@ class CoffeeAttack(Attack):
         CombatManager.global_groups.append(self._drops)
 
     def create_cups(self):
-        coffee_cup1 = Coffee(CombatManager.enemy.rect.midleft[0], CombatManager.enemy.rect.midleft[1], self.drops_group, self._cup)
-        coffee_cup2 = Coffee(CombatManager.enemy.rect.center[0], CombatManager.enemy.rect.center[1], self.drops_group, self._cup)
-        coffee_cup3 = Coffee(CombatManager.enemy.rect.midright[0], CombatManager.enemy.rect.midright[1], self.drops_group, self._cup)
+        coffee_cup1 = CoffeeCup(CombatManager.enemy.rect.midleft[0], CombatManager.enemy.rect.midleft[1]-50, self.drops_group, self._cup)
+        coffee_cup2 = CoffeeCup(CombatManager.enemy.rect.center[0], CombatManager.enemy.rect.center[1]-50, self.drops_group, self._cup)
+        coffee_cup3 = CoffeeCup(CombatManager.enemy.rect.midright[0], CombatManager.enemy.rect.midright[1]-50, self.drops_group, self._cup)
 
         coffee_cup1.start_flip()
         coffee_cup2.start_flip()
@@ -278,7 +278,9 @@ class CoffeeAttack(Attack):
         for cup in self._cup:
             if cup.flipping and self._duration_counter % int(self.drops_creation_rate) == 0:
                 drop = CoffeeDrop(self._drops)
-                drop.rect.center = cup.rect.midbottom
+            if self._duration_counter % int(self.drops_creation_rate) == 0:
+                drop = CoffeeDrop(self._drops)
+
 
         # Verifica colisões com o jogador
         collisions = pygame.sprite.spritecollide(
@@ -294,14 +296,14 @@ class CoffeeAttack(Attack):
                 drop.kill()
 
         # Finaliza o ataque apenas quando o tempo terminar e as gotas desaparecerem
-        if self._duration_counter >= self._duration and not self._drops:
+        if self._duration_counter >= self._duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
             self._cup.empty()
             self._drops.empty()
             self.drops_group.empty()
+        
 
-            return False
-
+                
     def restart(self):
         self._duration_counter = 0
         self.cups_created = False
