@@ -81,11 +81,9 @@ class GameoverCutscene(State):
         aspect_ratio = image_height / image_width  
         new_height = new_width * aspect_ratio 
 
-
         # Calcular a posição centralizada e levemente para cima
         x_pos = screen_width * 0.5 - new_width * 0.5 
         y_pos = screen_height * 0.5 - new_height * 0.5 - screen_height * 0.2
-
 
         resized_image = pygame.transform.scale(self.gameover_image, (int(new_width), int(new_height)))
         image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))

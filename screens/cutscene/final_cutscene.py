@@ -19,7 +19,7 @@ class FinalCutscene(State):
         self.__variables = {}
 
         self.cabra_macho = pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "cabra-macho-ofc.png"))
-        self.cabra_macho_text = 'Felicitaciones, apostamos que no lo lograrás, estamos contentos con tu desempeño. ¡Pero estad atentos, porque el próximo semestre el CR aumentará! Buen fin de año'
+        self.cabra_macho_text = 'Felicitaciones, apostamos que no lo lograrás, estamos contentos con tu desempeño. ¡Pero estad atentos, porque el próximo semestre el CR aumentará a 9,5! ¡Sigue estudiando!'
         self.black_screen = pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c18.jpeg"))
 
         self.current_text = DynamicText(
@@ -100,27 +100,24 @@ class FinalCutscene(State):
         self.current_text.position=(xt,yt)
 
         # Atualiza e desenha o texto dinâmico na tela
-        if (255 - self.current_time_local//10) < -15:
+        if (255 - self.current_time_local//10) < -7:    
             self.current_text.update()
             self.current_text.draw(self.__display)
-
 
         self.black_screen = pygame.transform.scale(self.black_screen, (screen_width, screen_height))
         self.__display.blit(self.black_screen, (0,0))
         self.black_screen.set_alpha(255 - self.current_time_local//10)
 
-
-
         # Pula a cutscene
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
-                    self.__game_state_manager.set_state('emap')
-                    SoundManager.stop_music()
-      
+                    if (255 - self.current_time_local//10) < -7:
+                        if self.current_text.finished:
+                            self.__game_state_manager.set_state('start')
+                            SoundManager.stop_music()
 
 
-        
     def on_last_execution(self):    
         SoundManager.stop_music()
 

@@ -57,6 +57,13 @@ class NewGameConfirmation(State):
             self.selected_option += increment
 
     def run(self):
+        # =================== REMOVER DEPOIS, TESTE PARA PULAR DIRETO PARA O CONGRATULATIONS ====================
+        for event in EventManager.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_DELETE:
+                    self.__game_state_manager.set_state('final_cutscene')
+
+
         if not self.__execution_counter > 0:
             self.on_first_execution()
             self.__execution_counter += 1
