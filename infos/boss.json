@@ -1,7 +1,7 @@
 {
     "Walter": {
         "name": "Walter Sande",
-        "sound":"",
+        "sound":"Pinho_theme.wav",
         "life": 15,
         "defense": 1,
         "damage": 2,

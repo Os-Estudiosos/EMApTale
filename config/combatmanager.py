@@ -35,6 +35,7 @@ class CombatManager:
         from classes.bosses.branco import Branco
         from classes.bosses.soledad import Soledad
         from classes.bosses.pinho import Pinho
+        from classes.bosses.walter import Walter
 
 
         if infos['name'] == 'Yuri Saporito':
@@ -47,8 +48,8 @@ class CombatManager:
             cls.enemy = Yuri(infos)
         if infos['name'] == 'Rafael Pinho':
             cls.enemy = Pinho(infos)
-        # if infos['name'] == 'Walter Sande':
-        #     cls.enemy = Walter(infos)
+        if infos['name'] == 'Walter Sande':
+            cls.enemy = Walter(infos)
     
     @classmethod
     def set_variable(cls, key: str, value):
