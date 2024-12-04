@@ -159,7 +159,7 @@ class Heart(Player):
         for node, data in graph.items():
             pygame.draw.circle(
                 surface=pygame.display.get_surface(),
-                color=(128,0,128),
+                color=(233, 153, 247),
                 center=data["pos"],
                 radius=7
             )

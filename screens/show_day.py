@@ -38,9 +38,8 @@ class ShowDay(State):
     def on_first_execution(self):
         SoundManager.play_sound('intro_noise.ogg')
         self.__execution_counter += 1
-        GlobalManager.pass_day()
         self.state_id = 0
-        self.day_text = Text(f'DIA {GlobalManager.day}', FontManager.fonts['Gamer'], int(self.__display.get_height() * 0.4))
+        self.day_text = Text(f'DIA {GlobalManager.day+1}', FontManager.fonts['Gamer'], int(self.__display.get_height() * 0.4))
         self.day_text.rect.center = self.__display.get_rect().center
         self.transition_from_text_to_black_screen_ticks = time.time()
 
@@ -56,7 +55,7 @@ class ShowDay(State):
             self.transition_from_black_screen_to_game_ticks = time.time()
         
         if actual_tick - self.transition_from_black_screen_to_game_ticks > 2 and self.state_id == 1:
-            GameStateManager.set_state('emap', { 'another_day': True })
+            GameStateManager.set_state('emap')
 
         if self.state_id != 1:
             self.day_text.draw(self.__display)
