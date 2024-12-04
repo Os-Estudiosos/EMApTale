@@ -1,7 +1,6 @@
 import pygame
 from time import time
 
-from config.savemanager import SaveManager
 from config.soundmanager import SoundManager
 
 from classes.inventory import Inventory
@@ -19,12 +18,15 @@ class Player(pygame.sprite.Sprite):
     name = ''
     last_hit = 0
     map_position = [0, 0]
+    previous_map_position = None
 
     # Carregando sa informações do Player
     @classmethod
     def load_infos(cls):
         """Classe responsável por carregar as informações do personagem
         """
+        from config.savemanager import SaveManager
+
         Player.name = SaveManager.loaded_save['name']
         Player.life = SaveManager.loaded_save['player']['life']
         Player.max_life = SaveManager.loaded_save['player']['max_life']
@@ -32,6 +34,9 @@ class Player(pygame.sprite.Sprite):
         Player.xp = SaveManager.loaded_save['player']['actual_xp']
         Player.max_xp = SaveManager.loaded_save['player']['max_xp']
         Player.inventory = Inventory(SaveManager.loaded_save['inventory'])
+
+        if SaveManager.loaded_save['player']['map_position']:
+            Player.previous_map_position = SaveManager.loaded_save['player']['map_position']
 
     @classmethod
     def take_damage(cls, value: int):

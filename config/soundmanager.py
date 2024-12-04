@@ -9,7 +9,18 @@ class SoundManager:
     audios: dict[str, pygame.mixer.Sound] = {
     }  # Dicionários dos sons carregados
 
+    chanels: list[pygame.mixer.Channel] = [
+    ]
+
     volume = 1  # Volume geral (Todo som vai ter o mesmo volume)
+
+    @classmethod
+    def add_chanel(cls):
+        cls.chanels.append(pygame.mixer.Channel(len(cls.chanels)))
+
+    @classmethod
+    def is_chanel_playing(cls, id: int):
+        return cls.chanels[id].get_busy()
     
     @classmethod
     def play_music(cls, file: str, loop: int = 0, start: float = 0, fade_ms: int = 0):
@@ -60,13 +71,16 @@ class SoundManager:
         pygame.mixer.Sound(os.path.join(GET_PROJECT_PATH(), 'sounds', sound)).play()
     
     @classmethod
-    def play_sound(cls, sound_name: str, loops: int = 0):
+    def play_sound(cls, sound_name: str, channel: int = None, loops: int = 0):
         """Tocar um son pelo nome passado
 
         Args:
             sound_name (str): Nome do arquivo que deve ser tocado
         """
-        cls.audios[sound_name].play(loops=loops)
+        if channel != None:
+            cls.chanels[channel].play(cls.audios[sound_name])
+        else:
+            cls.audios[sound_name].play(loops=loops)
 
     @classmethod
     def stop_sound(cls, sound_name: str):

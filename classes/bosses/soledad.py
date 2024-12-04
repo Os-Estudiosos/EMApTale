@@ -2,6 +2,7 @@ import pygame
 import os
 import random
 import math
+import networkx as nx
 
 from config import *
 from config.eventmanager import EventManager
@@ -13,10 +14,10 @@ from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
-from classes.bosses.attacks.vector import Vector
-from classes.bosses.attacks.square_brackets import SquareBracket
-from classes.bosses.attacks.horizontal_beam import HorizontalBeam
-from classes.bosses.attacks.elimination_matrix import ElimiationMatrix
+from classes.bosses.attacks.closing_graph import ClosingGraph
+from classes.bosses.attacks.node_explosion import NodeExplosion
+
+from classes.bosses.attacks.empty_attack import EmptyAttack
 
 from classes.text.dialogue_box import DialogueBox
 
@@ -24,9 +25,11 @@ from classes.effects.explosion import Explosion
 
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
+from utils import degrees_to_radians
 
-class Yuri(Boss):
-    name = 'Yuri Saporito'
+
+class Soledad(Boss):
+    name = 'Soledad'
 
     def __init__(self, infos: dict, *groups):
         """Inicialização da classe Yuri
@@ -38,9 +41,12 @@ class Yuri(Boss):
         super().__init__(*groups)
         
         # Carregando o sprite do Yuri
-        self.image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'yuri.png'))
+        self.image = pygame.transform.scale_by(
+            pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'bosses', 'soledad.png')),
+            0.5
+        )
         self.rect = self.image.get_rect()
-        self.state = 'idle'
+        self.__state = 'idle'
         self.__counter = 0
 
         # Definindo os atributos
@@ -58,8 +64,8 @@ class Yuri(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            VectorAttack(self.__damage),
-            EliminationAttack(self.__damage)
+            GraphClosingAttack(self.__damage),
+            AttachedToGraph(self.__damage)
         ]
         self.attack_to_execute = -1
 
@@ -76,7 +82,7 @@ class Yuri(Boss):
         self.__death_animation_counter = 0
         self.__death_explosions: list[Explosion] = []
         self.death_loops_counter = 255
-    
+
     def speak(self):
         if not self.__dead:
             self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
@@ -87,7 +93,7 @@ class Yuri(Boss):
         if self.__death_animation_counter >= FPS*0.3:
             self.death_loops_counter += 1
             self.__death_animation_counter = 0
-            self.__death_explosions.append(Explosion('yellow', position=(
+            self.__death_explosions.append(Explosion('blue', position=(
                 random.randint(self.rect.x, self.rect.x+self.rect.width),
                 random.randint(self.rect.y, self.rect.y+self.rect.height)
             )))
@@ -103,7 +109,7 @@ class Yuri(Boss):
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        if self.state == 'shaking':
+        if self.__state == 'shaking':
             self.hp_container.draw(screen)
         if self.speaking:
             self.dialogue.draw(screen)
@@ -114,6 +120,17 @@ class Yuri(Boss):
     def update(self, *args, **kwargs):
         self.rect.centerx = pygame.display.get_surface().get_width()/2
 
+        if self.__state == 'shaking':
+            self.__counter += 10
+            counter_in_radians = self.__counter*math.pi/180
+            wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
+            self.rect.x += 40 * wave_factor
+            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
+            if self.__counter >= FPS*1.5*10:
+                self.__state = 'idle'
+                self.__counter = 0
+                pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
+        
         if not self.__dead:
             if self.speaking:
                 self.dialogue.update()
@@ -138,17 +155,6 @@ class Yuri(Boss):
         for event in EventManager.events:
             if event.type == BOSS_ACT_EFFECT:
                 self.apply_effect(event.effect)
-        
-        if self.state == 'shaking':
-            self.__counter += 10
-            counter_in_radians = self.__counter*math.pi/180
-            wave_factor = (math.cos(counter_in_radians)-1)/counter_in_radians
-            self.rect.x += 40 * wave_factor
-            self.hp_container.update(actual_life=self.__life, max_life=self.__max_life)
-            if self.__counter >= FPS*1.5*10:
-                self.state = 'idle'
-                self.__counter = 0
-                pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
 
     @property
     def counter(self):
@@ -223,45 +229,48 @@ class Yuri(Boss):
         self.__counter = value
 
 
-class VectorAttack(Attack):
+class GraphClosingAttack(Attack):
     def __init__(self, damage):
         self.__player: Heart = CombatManager.get_variable('player')
         self.damage = damage
 
-        self.vectors_group = pygame.sprite.Group()
+        self.display = pygame.display.get_surface()
 
-        CombatManager.global_groups.append(self.vectors_group)
+        self.graph_creation_counter = 0
+        self.graph_creation_rate = FPS*1.5
 
-        self.vectors: list[Vector] = []
-        self.vectors_creation_rate = FPS/5  # 3 Vetores a cada segundo serão criados
+        self.graphs_list: list[ClosingGraph] = []
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
 
-        # self.vectors.append(Vector(self.vectors_group))
+        CombatManager.global_draw_functions.append(self.draw_graphs)
+    
+    def create_graph(self):
+        graph = ClosingGraph()
+        return graph
+
+    def draw_graphs(self, *args, **kwargs):
+        for graph in self.graphs_list:
+            graph.draw(self.display)
 
     def run(self):
         self.__duration_counter += 1
+        self.graph_creation_counter += 1
 
-        if self.__duration_counter % self.vectors_creation_rate == 0:
-            self.vectors.append(Vector(self.vectors_group))
+        for i, graph in enumerate(self.graphs_list):
+            if graph.dead:
+                self.graphs_list.pop(i)
+            else:
+                graph.update()
+
+        if self.graph_creation_counter >= self.graph_creation_rate:
+            self.graphs_list.append(self.create_graph())
+            self.graph_creation_counter = 0
         
         if self.__duration_counter >= self.__duration:
+            self.graphs_list.clear()
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-            self.vectors_group.empty()
-        
-        for vector in self.vectors:
-            vector.update(player_center=self.player.rect.center)
-        
-        for vector in self.vectors_group:
-            if self.__player != vector:
-                if self.__player.rect.colliderect(vector.rect):
-                    offset = (vector.rect.x - self.__player.rect.x, vector.rect.y - self.__player.rect.y)
-                    if self.__player.mask.overlap(vector.mask, offset):
-                        self.__player.take_damage(self.damage)
-                        if vector.type == 'Inverted':
-                            self.__player.apply_effect('inverse')
-                        vector.kill()
     
     def restart(self):
         self.__duration_counter = 0
@@ -279,99 +288,70 @@ class VectorAttack(Attack):
         return self.__duration_counter
 
 
-class EliminationAttack(Attack):
+class AttachedToGraph(Attack):
     def __init__(self, damage):
         self.__player: Heart = CombatManager.get_variable('player')
-
-        self.container = CombatManager.get_variable('battle_container')
-
         self.damage = damage
 
-        self.brackets_group = pygame.sprite.Group()
+        self.display = pygame.display.get_surface()
+        self.container = CombatManager.get_variable('battle_container')
 
-        CombatManager.global_groups.append(self.brackets_group)
+        self.helper_surface = pygame.Surface(pygame.display.get_surface().get_size(), pygame.SRCALPHA)
 
-        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
-        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
+        self.explosion_creation_counter = 0
+        self.explosion_creation_rate = FPS/2
 
-        self.horizontal_beans_group = pygame.sprite.Group()
+        self.player_graph = self.__player.graph
 
-        CombatManager.global_groups.append(self.horizontal_beans_group)
-
-        self.rows = 6  # Escolhendo qual linha o raio vai aparecer
-        self.horizontal_beams: list[HorizontalBeam] = []
-        self.horizontal_beam_creation_rate = FPS/4
-        self.horizontal_beam_counter = 0
-        self.row = 0
+        self.explosions: list[NodeExplosion] = []
 
         self.__duration = FPS * 10  # O Ataque dura 10 segundos
         self.__duration_counter = 0
 
-        self.elimiation_matrices: list[ElimiationMatrix] = []
+        CombatManager.global_draw_functions.append(self.draw)
+    
+    def draw(self, *args, **kwargs):
+        self.display.blit(self.helper_surface, self.helper_surface.get_rect())
+        self.helper_surface.fill((0,0,0,0))
+
+        for node_explosion in self.explosions:
+            node_explosion.draw(self.helper_surface)
 
     def run(self):
-        self.__duration_counter += 1
-        self.horizontal_beam_counter += 1
+        if self.__duration_counter == 0:
+            self.__player.apply_effect('prisioned')
 
-        # Atualizando os colchetes
-        self.squared_bracked_to_right.update()
-        self.squared_bracked_to_left.update()
+        self.explosion_creation_counter += 1
 
-        # Condições para criar um novo raio
-        if (
-        (not self.squared_bracked_to_left.animating)
-            and
-        (not self.squared_bracked_to_right.animating)
-            and
-        (self.horizontal_beam_counter >= self.horizontal_beam_creation_rate)
-        ):
-            # Segundo raio que segue o player
-            beam2 = HorizontalBeam(self.horizontal_beans_group)
-            beam2.max_rect_height = self.container.inner_rect.height//self.rows
-            beam2.correct_center_position = (
-                self.container.inner_rect.centerx,
-                self.player.rect.centery
-            )
-            self.horizontal_beams.append(beam2)
-            self.elimiation_matrices.append(ElimiationMatrix(
-                'E',
-                FontManager.fonts['Gamer'],
-                beam2,
-                200
+        if self.explosion_creation_counter >= self.explosion_creation_rate:
+            self.explosion_creation_counter = 0
+            random_node = random.choice([
+                'A','B','C','D','E','F','G','H','I'
+            ])
+            self.explosions.append(NodeExplosion(
+                self.player_graph[random_node]['pos'],
+                self.damage
             ))
-            
-            self.horizontal_beam_counter = 0
 
-        # Atualizando todos os raios
-        for i, beam in enumerate(self.horizontal_beams):
-            beam.update()
-            offset = (beam.rect.x - self.player.rect.x, beam.rect.y - self.player.rect.y)
+            random_node = random.choice([
+                'A','B','C','D','E','F','G','H','I'
+            ])
+            self.explosions.append(NodeExplosion(
+                self.player_graph[random_node]['pos'],
+                self.damage
+            ))
+        
+        for node_explosion in self.explosions:
+            node_explosion.update()
 
-            if self.player.mask.overlap(beam.mask, offset) and beam.animating:
-                self.player.take_damage(self.damage)
-
-            if beam.animating and beam.alpha <= 0:
-                beam.kill()
-
-        # Desenhando o E da matriz de eliminação
-        for i, matrix_text in enumerate(self.elimiation_matrices):
-            matrix_text.update(self.squared_bracked_to_right)
-            matrix_text.draw(pygame.display.get_surface())
-            if matrix_text.finished:
-                self.elimiation_matrices.pop(i)
-
-        # Condição para quando o ataque acabar
+        self.__duration_counter += 1
+        
         if self.__duration_counter >= self.__duration:
-            self.brackets_group.empty()
-            self.horizontal_beans_group.empty()
-            self.elimiation_matrices.clear()
-            self.horizontal_beams.clear()
+            self.explosions.clear()
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-
+    
     def restart(self):
         self.__duration_counter = 0
-        self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
-        self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
     
     @property
     def player(self):

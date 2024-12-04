@@ -14,13 +14,17 @@ class Item(pygame.sprite.Sprite):
         self.name = properties['name']
         self.description = properties['description']
         self.type = properties['type']
+        self.item_id = properties['item_id']
         self.__dict__ = {
             **self.__dict__,
             **properties
         }
 
-        if self.type == 'weapon' and 'equiped' not in self.__dict__:
+        if self.type == 'weapon' and ('equiped' not in properties):
             self.equiped = False
+            properties['equiped'] = False
+        
+        self.json_item = properties
 
         self.func = self.define_action()
 
@@ -30,8 +34,8 @@ class Item(pygame.sprite.Sprite):
         )
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
-        self.rect.x = position[0]*MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x
-        self.rect.y = position[1]*MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y
+        self.rect.x = position[0]*MAP_SCALE_FACTOR
+        self.rect.y = position[1]*MAP_SCALE_FACTOR
         self.original_rect: pygame.Rect = self.rect.copy()
 
     def define_action(self):

@@ -67,7 +67,22 @@ class Inventory:
         if not isinstance(id, UUID):
             raise TypeError("Passe um UUID parâmetro")
         
+        if self.equiped_weapon:
+            self.equiped_weapon.equiped = False
+        
         self.equiped_weapon = self.get_item(id)
+
+        self.equiped_weapon.equiped = True
+    
+    def get_dict(self):
+        inventory_list = []
+        for item in self.items:
+            item_json = item.json_item.copy()
+            if 'id' in item_json:
+                del item_json['id']
+            inventory_list.append(item_json)
+        
+        return inventory_list
 
     def __len__(self):
         return len(self.items)

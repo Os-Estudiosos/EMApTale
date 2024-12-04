@@ -51,6 +51,14 @@ class Frisk(Player):
         self.mask = pygame.mask.from_surface(self.frames[self.direction][self.frame_index])  # Máscara para colisão precisa
 
         self.speed = 7
+    
+    def reset_position(self, new_pos = None):
+        if new_pos:
+            self.rect.centerx = new_pos[0]
+            self.rect.centery = new_pos[1]
+        else:
+            self.rect.centerx = GlobalManager.spawnpoint[0]*MAP_SCALE_FACTOR
+            self.rect.centery = GlobalManager.spawnpoint[1]*MAP_SCALE_FACTOR
 
     def update_animation(self):
         if self.direction < len(self.frames):

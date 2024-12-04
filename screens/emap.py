@@ -7,11 +7,13 @@ from config import *
 from config.savemanager import SaveManager
 from config.globalmanager import GlobalManager
 from config.eventmanager import EventManager
+from config.gamestatemanager import GameStateManager
 
 from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
 from classes.map.camera import Camera
 from classes.frisk import Frisk
+from classes.player import Player
 from classes.map.infos_hud import InfosHud
 
 from screens.subscreen.pause_menu import PauseMenu
@@ -30,14 +32,15 @@ class EMAp(State):
         self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loaded = False
 
+        self.map_loader.load_items()
+        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
+        self.map_loader.load_interactions()
+
         # Configura a câmera com as dimensões do mapa e da tela
         map_width, map_height = self.map_loader.get_size()
         screen_width, screen_height = self.__display.get_size()
         self.camera = Camera(map_width, map_height, screen_width, screen_height)
         GlobalManager.set_camera(self.camera)
-
-        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
-        self.map_loader.load_interactions()
 
         # Inicializa o jogador
         self.player = Frisk(self.map_loader.walls)
@@ -71,12 +74,26 @@ class EMAp(State):
         self.infos_hud: InfosHud = None
 
     def on_first_execution(self):
+        self.player.reset_position()
         SaveManager.load()
         GlobalManager.load_infos()
+        self.camera.empty()
+        self.items_group.empty()
         self.player.load_infos()
+        self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loader.load_items()
+        self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
+        self.map_loader.load_interactions()
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
+
+        if Player.previous_map_position and GameStateManager.previous_state == 'start':
+            self.player.reset_position(Player.previous_map_position)
+        elif GameStateManager.previous_state == 'show_day':
+            self.player.reset_position()
+            GlobalManager.pass_day()
+            SaveManager.save()
+
         GlobalManager.paused = False
 
     def run(self):
@@ -93,7 +110,7 @@ class EMAp(State):
         self.camera.update(self.player.rect)
 
         # Renderiza os tiles do mapa
-        self.map_loader.render_with_vector(self.__display, self.camera, MAP_OFFSET_VECTOR)
+        self.map_loader.render_with_vector(self.__display, self.camera)
 
         # Coleta e ordena os objetos renderizáveis (incluindo o jogador)
         renderables = self.map_loader.get_renderables(self.player)
@@ -108,7 +125,6 @@ class EMAp(State):
                 image.draw(self.__display)
     
         self.camera.draw(self.__display)
-
 
         # Captura eventos e gerencia interações
         self.interaction_manager.handle_interaction()
@@ -153,6 +169,7 @@ class EMAp(State):
 
     def on_last_execution(self):
         self.__execution_counter = 0
+        self.map_loaded = False
     
     @property
     def execution_counter(self):

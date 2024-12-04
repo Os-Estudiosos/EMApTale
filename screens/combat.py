@@ -17,11 +17,12 @@ from classes.battle.menus.mercy_menu import MercyMenu
 from classes.text.dynamic_text import DynamicText
 from classes.text.text import Text
 
+from config.globalmanager import GlobalManager
 from config.soundmanager import SoundManager
-from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.combatmanager import CombatManager
 from config.eventmanager import EventManager
+from config.gamestatemanager import GameStateManager
 
 from classes.battle.heart import Heart
 from classes.player import Player
@@ -46,6 +47,10 @@ class Combat(State):
         self.text_groups = pygame.sprite.Group()  # Grupo dos textos
         self.player_group = pygame.sprite.Group()  # Grupo do player
         CombatManager.set_variable('player_group', self.player_group)
+
+        # Adiciono dois canais específicos
+        SoundManager.add_chanel()
+        SoundManager.add_chanel()
 
         # ============ VARIÁVEIS DO HUD ============
         # Carregando o background da batalha
@@ -96,11 +101,31 @@ class Combat(State):
         self.act_menu.options.clear()
         self.act_menu.options = self.__variables['enemy']['act']
 
+        CombatManager.turn = 'player'
+        BattleMenuManager.active_menu = 'MainMenu'
+
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
 
         self.starter_text.restart(self.__variables['enemy']['starter_text'])
 
         Player.load_infos()
+
+        # Variáveis para quando o Boss morrer
+        self.opacity_helper_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
+        self.opacity_helper_surface.fill(pygame.Color(0,0,0,0))
+
+        self.transition_rate = FPS
+
+        self.transition_counter = 0
+
+        self.white_transition_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
+        self.transition_alpha = 0
+        self.transition_counter = 0
+        self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
+        self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())
+
+        self.go_to_next_screen_transition_time = FPS  # Demora 1 segundo para sair do combate e ir pro próximo dia
+        self.go_to_next_screen_transition_measurer = 0
 
     def handle_events(self):
         for event in EventManager.events:
@@ -201,19 +226,40 @@ class Combat(State):
         elif CombatManager.turn == 'boss':  # Se não for o turno do player
             for btn in self.main_menu.options:  # Ajustando para nenhum botão ficar selecionado
                 btn.activated = False
-            
-            if keys[pygame.K_u]:
-                self.player.apply_effect('prisioned')
         
             if not CombatManager.enemy.dead:
                 self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
                 
-                # Draws que são apenas no turno do boss
-                self.player_group.draw(self.__display)
-                
                 # Updates que são apenas do turno do boss
                 self.player_group.update(display=self.__display)
+
+                # Draws que são apenas no turno do boss
+                self.__display.blit(self.player.image, self.player.rect)
         
+        if CombatManager.enemy.dead:
+            if self.transition_counter == 0:
+                SoundManager.stop_music()
+                SoundManager.play_sound('cymbal.ogg', 1)
+                self.go_to_next_screen_transition_measurer = pygame.time.get_ticks()
+            
+            self.transition_counter += 1
+            
+            if self.transition_counter%self.transition_rate == 0 and self.transition_alpha + 1 <= 255:
+                self.transition_alpha += 1
+
+            self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
+
+            self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())    
+
+            self.__display.blit(self.opacity_helper_surface, self.opacity_helper_surface.get_rect())
+
+            if not SoundManager.is_chanel_playing(1):
+                actual_ticks = pygame.time.get_ticks()
+                if actual_ticks - self.go_to_next_screen_transition_measurer >= 2000:
+                    GameStateManager.set_state('show_day')
+        
+        CombatManager.execute_global_draws(display=self.__display)
+
     def on_last_execution(self):
         self.__execution_counter = 0
 

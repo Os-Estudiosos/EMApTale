@@ -13,8 +13,13 @@ from classes.item import Item
 class MapLoader:
     def __init__(self, map_file):
         self.tmx_data = load_pygame(map_file)  # Carrega o mapa usando pytmx
-        GlobalManager.offset_vector = MAP_OFFSET_VECTOR
+        self.load_global_spawnpoint()
         self.walls = []
+    
+    def load_global_spawnpoint(self):
+        spawnpoint = self.tmx_data.get_layer_by_name('Spawnpoint')
+        for obj in spawnpoint:
+            GlobalManager.spawnpoint = [obj.x, obj.y]
 
     def load_interactions(self):
         """
@@ -26,8 +31,8 @@ class MapLoader:
                     GlobalManager.interactions.append(Interaction(
                         interaction_name=obj.properties.get('interaction_name', 'Unknown'),
                         value=obj.properties.get('value', 'Sem mensagem'),
-                        x=obj.x * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x,
-                        y=obj.y * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y,
+                        x=obj.x * MAP_SCALE_FACTOR,
+                        y=obj.y * MAP_SCALE_FACTOR,
                         width=obj.width * MAP_SCALE_FACTOR,
                         height=obj.height * MAP_SCALE_FACTOR,
                         day=obj.properties.get('day', None)
@@ -37,8 +42,8 @@ class MapLoader:
                     GlobalManager.interactions.append(BossIntercation(
                         interaction_name=obj.properties.get('interaction_name', 'Unknown'),
                         value=obj.properties.get('value', 'Sem mensagem'),
-                        x=obj.x * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x,
-                        y=obj.y * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y,
+                        x=obj.x * MAP_SCALE_FACTOR,
+                        y=obj.y * MAP_SCALE_FACTOR,
                         width=obj.width * MAP_SCALE_FACTOR,
                         height=obj.height * MAP_SCALE_FACTOR,
                         day=obj.properties.get('day', None),
@@ -61,16 +66,7 @@ class MapLoader:
                             GlobalManager.camera
                         )
 
-    def render_map(self, surface, camera):
-        """
-        Renderiza o mapa completo (tiles e objetos).
-        :param surface: Superfície onde o mapa será renderizado.
-        :param camera: Câmera para ajustar o deslocamento.
-        """
-        self.render_with_vector(surface, camera, MAP_OFFSET_VECTOR)
-        self.render_objects_with_gid(surface, camera, MAP_OFFSET_VECTOR)
-
-    def render_with_vector(self, surface, camera, vector):
+    def render_with_vector(self, surface, camera):
         # Calcula os limites visíveis da tela com base na posição da câmera
         screen_rect = pygame.Rect(camera.camera_rect.x, camera.camera_rect.y, camera.screen_width, camera.screen_height)
         
@@ -81,8 +77,8 @@ class MapLoader:
                     if tile:
                         # Calcula a posição do tile no mapa
                         pos = (
-                            x * self.tmx_data.tilewidth * MAP_SCALE_FACTOR + vector.x,
-                            y * self.tmx_data.tileheight * MAP_SCALE_FACTOR + vector.y
+                            x * self.tmx_data.tilewidth * MAP_SCALE_FACTOR,
+                            y * self.tmx_data.tileheight * MAP_SCALE_FACTOR
                         )
                         # Cria um retângulo para o tile
                         rect = pygame.Rect(
@@ -99,7 +95,7 @@ class MapLoader:
                             )
 
 
-    def render_objects_with_gid(self, surface, camera, vector):
+    def render_objects_with_gid(self, surface, camera):
         """
         Renderiza objetos com gid definido no mapa.
         """
@@ -109,8 +105,8 @@ class MapLoader:
                     tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
                     if tile_image:
                         pos = (
-                            obj.x * MAP_SCALE_FACTOR + vector.x,
-                            obj.y * MAP_SCALE_FACTOR + vector.y
+                            obj.x * MAP_SCALE_FACTOR,
+                            obj.y * MAP_SCALE_FACTOR
                         )
                         scaled_image = pygame.transform.scale_by(tile_image, MAP_SCALE_FACTOR)
                         surface.blit(scaled_image, camera.apply(
@@ -126,8 +122,8 @@ class MapLoader:
             if layer.name == "WallsColider":
                 for obj in layer:
                     rect = pygame.Rect(
-                        obj.x * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x,
-                        obj.y * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y,
+                        obj.x * MAP_SCALE_FACTOR,
+                        obj.y * MAP_SCALE_FACTOR,
                         obj.width * MAP_SCALE_FACTOR,
                         obj.height * MAP_SCALE_FACTOR
                     )
@@ -137,7 +133,7 @@ class MapLoader:
                     if hasattr(obj, "points"):
                         # Processar polígonos
                         adjusted_points = [
-                            [p[0] * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x, p[1] * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y]
+                            [p[0] * MAP_SCALE_FACTOR, p[1] * MAP_SCALE_FACTOR]
                             for p in obj.points
                         ]
                         pol = Polygon(adjusted_points)
@@ -159,8 +155,8 @@ class MapLoader:
                         tile_image = self.tmx_data.get_tile_image_by_gid(obj.gid)
                         if tile_image:
                             pos = (
-                                obj.x * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.x,
-                                obj.y * MAP_SCALE_FACTOR + MAP_OFFSET_VECTOR.y
+                                obj.x * MAP_SCALE_FACTOR,
+                                obj.y * MAP_SCALE_FACTOR
                             )
                             scaled_image = pygame.transform.scale_by(tile_image, MAP_SCALE_FACTOR)
                             rect = pygame.Rect(*pos, scaled_image.get_width(), scaled_image.get_height())
