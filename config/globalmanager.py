@@ -40,10 +40,10 @@ class GlobalManager:
 
         cls.day = SaveManager.loaded_save['day']  # Carregando o dia atual
 
-        with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'items.json')) as file:
+        with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'items.json'), encoding="utf-8") as file:
             cls.items = json.load(file)
         
-        with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json')) as file:
+        with open(os.path.join(GET_PROJECT_PATH(), 'infos', 'boss.json'), encoding="utf-8") as file:
             cls.bosses = json.load(file)
     
     @classmethod
