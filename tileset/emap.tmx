@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1326">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1331">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -544,31 +544,24 @@
   </object>
  </objectgroup>
  <objectgroup id="16" name="Objs">
-  <object id="1278" name="Caneta" type="Item" x="388.513" y="210.028">
+  <object id="1278" name="Caneta" type="Item" x="1087.05" y="222.903">
    <properties>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="2"/>
     <property name="item_id" value="pen"/>
    </properties>
    <point/>
   </object>
-  <object id="1279" name="Livro" type="Item" x="864.41" y="217.41">
+  <object id="1279" name="Livro" type="Item" x="859.046" y="221.592">
    <properties>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="4"/>
     <property name="item_id" value="book"/>
    </properties>
    <point/>
   </object>
   <object id="1311" name="Pão de Queijo" type="Item" x="1238.92" y="217.417">
    <properties>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="2"/>
     <property name="item_id" value="cheese-bread"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="1313" name="Barra de Chocolate" type="Item" x="1021.58" y="224">
-   <properties>
-    <property name="day" type="int" value="1"/>
-    <property name="item_id" value="chocolate-bar"/>
    </properties>
    <point/>
   </object>
@@ -586,24 +579,45 @@
    </properties>
    <point/>
   </object>
-  <object id="1323" name="Lápis" type="Item" x="188.727" y="190.182">
+  <object id="1325" name="Simulado" type="Item" x="1323.64" y="226.527">
    <properties>
-    <property name="day" type="int" value="1"/>
-    <property name="item_id" value="pencil"/>
+    <property name="day" type="int" value="3"/>
+    <property name="item_id" value="test"/>
    </properties>
    <point/>
   </object>
-  <object id="1324" name="Bolo de cenoura" type="Item" x="220" y="188.727">
+  <object id="1326" name="Barra de Chocolate" type="Item" x="1025.71" y="223.889">
    <properties>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="4"/>
+    <property name="item_id" value="chocolate-bar"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1327" name="Bolo de cenoura" type="Item" x="781.636" y="223.273">
+   <properties>
+    <property name="day" type="int" value="2"/>
     <property name="item_id" value="carrot-cake"/>
    </properties>
    <point/>
   </object>
-  <object id="1325" name="Simulado" type="Item" x="247.636" y="188.364">
+  <object id="1328" name="Chá de Limão" type="Item" x="1991.24" y="248.788">
+   <properties>
+    <property name="day" type="int" value="3"/>
+    <property name="item_id" value="lemon-tea"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1329" name="Pão de Queijo" type="Item" x="1135.75" y="242.25">
    <properties>
     <property name="day" type="int" value="1"/>
-    <property name="item_id" value="test"/>
+    <property name="item_id" value="cheese-bread"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1330" name="Café" type="Item" x="40.5455" y="220.273">
+   <properties>
+    <property name="day" type="int" value="1"/>
+    <property name="item_id" value="coffe"/>
    </properties>
    <point/>
   </object>
