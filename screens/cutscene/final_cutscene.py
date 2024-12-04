@@ -19,23 +19,27 @@ class FinalCutscene(State):
         self.__variables = {}
 
         self.cabra_macho = pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "cabra-macho-ofc.png"))
-        self.cabra_macho_text = 'Parabéns, fez valer a sua bolsa, estamos considerando aumentar o CR mínimo do próximo semestre para 8, então será um pouco mais difícil! Estude e até breve!'
-       
+        self.cabra_macho_text = 'Felicitaciones, apostamos que no lo lograrás, estamos contentos con tu desempeño. ¡Pero estad atentos, porque el próximo semestre el CR aumentará! Buen fin de año'
+        self.black_screen = pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "c18.jpeg"))
+
         self.current_text = DynamicText(
             text=self.cabra_macho_text,
             font=FontManager.fonts['Pixel'], 
             letters_per_second=15,
             text_size=self.get_resolution_display(),
-            max_length=self.__display.get_width() - 70,
-            position=(self.__display.get_width() // 4, self.__display.get_height() // 1.6),
+            max_length=self.__display.get_width()/1.9,
             color=(255, 255, 255),
             sound=None
         )
+
+        self.initial_time = 0 # tempo global estático, inicial da cutscenes
+        self.current_time_local = 0
 
 
     def on_first_execution(self):
         SoundManager.stop_music()
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "final.mp3"))
+        self.initial_time = pygame.time.get_ticks()
 
 
     def get_resolution_display(self):
@@ -61,6 +65,10 @@ class FinalCutscene(State):
             self.on_first_execution()
             self.__execution_counter += 1
 
+        current_time = pygame.time.get_ticks()
+        self.current_time_local = current_time - self.initial_time
+
+
         # ============== CONFIG IMAGEM ==============
         # Define as dimensões da tela e da imagem
         screen_width, screen_height = self.__display.get_size()
@@ -72,38 +80,35 @@ class FinalCutscene(State):
         resized_image = pygame.transform.scale(self.cabra_macho, (int(new_width), int(new_height)))
 
         # Calcula a posição no canto inferior esquerdo
-        x_pos = 0 
-        y_pos = screen_height - new_height  # Inferior, considerando o tamanho da imagem
+        xi = 0 
+        yi = screen_height - new_height  # Inferior, considerando o tamanho da imagem
 
         # Desenha a imagem na tela
-        self.__display.blit(resized_image, (x_pos, y_pos))
+        self.__display.blit(resized_image, (xi, yi))
 
 
         # ============== CONFIG TEXTO ==============
-        image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
+    
+        # Atualiza o atributo de posição do texto
+        info = pygame.display.Info()
+        screen_width = info.current_w
+        screen_height = info.current_h
 
-        text_max_width = new_width  
-        self.current_text.max_length = int(text_max_width*1) 
-        self.current_text.update()
+        xt = screen_width*0.4
+        yt = screen_height*0.4
 
-        # Configurações para posicionar o texto no canto superior direito
-        top_margin = int(screen_height * 0.3)  
-        side_margin = int(screen_width * 0.3)  
-        
-        # Calcula o comprimento máximo do texto com base na largura disponível
-        text_max_width = screen_width - side_margin * 2
-        self.current_text.max_length = int(text_max_width)
-
-        # Define a posição do texto no canto superior direito
-        x_text = screen_width - side_margin - text_max_width  # Ajusta para alinhar à direita
-        y_text = top_margin
-
-        # Atualiza o atributo de posição do texto, caso exista
-        self.current_text.position = (x_text, y_text)
+        self.current_text.position=(xt,yt)
 
         # Atualiza e desenha o texto dinâmico na tela
-        self.current_text.update()
-        self.current_text.draw(self.__display)
+        if (255 - self.current_time_local//10) < -15:
+            self.current_text.update()
+            self.current_text.draw(self.__display)
+
+
+        self.black_screen = pygame.transform.scale(self.black_screen, (screen_width, screen_height))
+        self.__display.blit(self.black_screen, (0,0))
+        self.black_screen.set_alpha(255 - self.current_time_local//10)
+
 
 
         # Pula a cutscene
@@ -112,9 +117,7 @@ class FinalCutscene(State):
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
                     self.__game_state_manager.set_state('emap')
                     SoundManager.stop_music()
-
-
-        
+      
 
 
         

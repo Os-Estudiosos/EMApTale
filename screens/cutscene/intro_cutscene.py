@@ -56,9 +56,9 @@ class IntroCutscene(State):
         self.current_image = self.images[self.stage]
 
         # Variáveis que controlam o tempo dos elementos da cutscene
-        self.initial_time = 0 # tempo global, inicial da cutscenes
+        self.initial_time = 0 # tempo global estático, inicial da cutscenes
         self.current_time_local = 0 # tempo local da cutscene, como se 0 inicia-se no mesmo momento
-        self.wait_a_second = 2000 # tempo do intervalo em si, tempo do intervalo entre
+        self.wait_a_second = 2000 # tempo do intervalo em si, tempo do intervalo entre as imagens e textos
         self.last_time_define = 0 # contador interno para verificar se o intervalo foi passado ou não
        
         # Variáveis para alterar a opacidade das imagens no decorrer do tempo
@@ -67,7 +67,6 @@ class IntroCutscene(State):
 
     def on_first_execution(self):
 
-        self.initial_time = 0 # tempo global, inicial da cutscenes
         self.current_time_local = 0 # tempo local da cutscene, como se 0 inicia-se no mesmo momento
         self.wait_a_second = 2000 # tempo do intervalo em si, tempo do intervalo entre
         self.last_time_define = 0 # contador interno para verificar se o intervalo foi passado ou não
