@@ -81,14 +81,13 @@ class FinalCutscene(State):
 
         # Calcula a posição no canto inferior esquerdo
         xi = 0 
-        yi = screen_height - new_height  # Inferior, considerando o tamanho da imagem
+        yi = screen_height - new_height  # Inferior
 
         # Desenha a imagem na tela
         self.__display.blit(resized_image, (xi, yi))
 
 
         # ============== CONFIG TEXTO ==============
-    
         # Atualiza o atributo de posição do texto
         info = pygame.display.Info()
         screen_width = info.current_w
