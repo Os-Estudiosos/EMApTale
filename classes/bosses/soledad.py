@@ -64,7 +64,7 @@ class Soledad(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            # GraphClosingAttack(self.__damage),
+            GraphClosingAttack(self.__damage),
             AttachedToGraph(self.__damage)
         ]
         self.attack_to_execute = -1
@@ -312,6 +312,7 @@ class AttachedToGraph(Attack):
     
     def draw(self, *args, **kwargs):
         self.display.blit(self.helper_surface, self.helper_surface.get_rect())
+        self.helper_surface.fill((0,0,0,0))
 
         for node_explosion in self.explosions:
             node_explosion.draw(self.helper_surface)
@@ -328,7 +329,16 @@ class AttachedToGraph(Attack):
                 'A','B','C','D','E','F','G','H','I'
             ])
             self.explosions.append(NodeExplosion(
-                self.player_graph[random_node]['pos']
+                self.player_graph[random_node]['pos'],
+                self.damage
+            ))
+
+            random_node = random.choice([
+                'A','B','C','D','E','F','G','H','I'
+            ])
+            self.explosions.append(NodeExplosion(
+                self.player_graph[random_node]['pos'],
+                self.damage
             ))
         
         for node_explosion in self.explosions:

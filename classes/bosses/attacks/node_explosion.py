@@ -1,13 +1,18 @@
 import pygame
 
 from config import *
+from config.combatmanager import CombatManager
 
 
 class NodeExplosion:
-    def __init__(self, position: tuple[float]):
+    def __init__(self, position: tuple[float], damage: float):
         self.warning_color = pygame.Color(255,0,0,100)
         self.boom_color = pygame.Color(255,255,255)
         self.position = position
+
+        self.damage = damage
+
+        self.player = CombatManager.get_variable('player')
 
         self.radius = 0
         self.max_radius = 20
@@ -34,9 +39,13 @@ class NodeExplosion:
         elif self.state == 'boom':
             if self.radius >= 0:
                 self.radius -= 2
+            else:
+                self.state = 'dead'
+        
+            if self.player.rect.center == self.position:
+                self.player.take_damage(self.damage)
     
     def draw(self, screen: pygame.Surface):
-        screen.fill((0,0,0,0))
         if self.state == 'warning':
             pygame.draw.circle(
                 screen,
