@@ -24,6 +24,7 @@ from screens.show_day import ShowDay
 
 from classes.text.text import Text
 
+from screens.cutscene.gameover_cutscene import GameoverCutscene # Teste Brunão DOIS
 
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
@@ -36,7 +37,7 @@ class Game:
         
         # Colocando o tamanho da Tela
         self.display = pygame.display.set_mode((1280,720))
-        self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        #self.display = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 
         # Variável que indica se o jogo da rodando
         self.running = True
@@ -66,7 +67,9 @@ class Game:
         self.ShowDay = ShowDay('show_day', self.display)
 
         # Cenas das Cutscenes
-        self.IntroCutscene = IntroCutscene('intro_cutscene', self.display)
+        self.IntroCutscene = IntroCutscene('intro_cutscene', self.display, self.game_state_manager)
+        self.GameoverCutscene = GameoverCutscene('gameover_cutscene', self.display, self.game_state_manager)
+
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários
         GameStateManager.states = {
@@ -78,6 +81,7 @@ class Game:
 
             # Cenas das Cutscenes
             'intro_cutscene': self.IntroCutscene,
+            'gameover_cutscene': self.GameoverCutscene,
 
             # Cenas genéricas
             'combat': self.Combat,

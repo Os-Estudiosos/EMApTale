@@ -5,7 +5,7 @@ from config.fontmanager import FontManager
 from classes.player import Player
 from classes.text.text import Text
 
-class HPContainer:
+class HPContainer():
     def __init__(self):
         self.out_color = pygame.Color(255, 255, 0)
         self.inner_color = pygame.Color(255, 0, 0)
@@ -32,3 +32,9 @@ class HPContainer:
         pygame.draw.rect(screen, self.inner_color, self.inner_rect)
         pygame.draw.rect(screen, self.out_color, self.out_rect)
         self.life_text.draw(screen)
+
+
+    @property
+    def game_state_manager(self):
+        return self.__game_state_manager
+
