@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1332">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1333">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -514,13 +514,6 @@
     <property name="value" value="Será que se aplicar redes a nota sai máxima?"/>
    </properties>
   </object>
-  <object id="1275" x="1679.5" y="311.5" width="40" height="18">
-   <properties>
-    <property name="boss" value="Pinho"/>
-    <property name="day" type="int" value="1"/>
-    <property name="value" value="Trouxe café, vai que ele pega mais leve"/>
-   </properties>
-  </object>
   <object id="1311" x="412.25" y="324.5" width="40.5" height="16">
    <properties>
     <property name="boss" value="Yuri"/>
@@ -547,6 +540,13 @@
     <property name="boss" value="Walter"/>
     <property name="day" type="int" value="1"/>
     <property name="value" value="Talvez não usar grafico de pizza seja o suficiente pra passar"/>
+   </properties>
+  </object>
+  <object id="1332" x="487.5" y="335.5" width="40" height="18">
+   <properties>
+    <property name="boss" value="Pinho"/>
+    <property name="day" type="int" value="1"/>
+    <property name="value" value="Trouxe café, vai que ele pega mais leve"/>
    </properties>
   </object>
  </objectgroup>

@@ -51,7 +51,7 @@ class Pinho(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            #PythonAtatack(),
+            PythonAtatack(),
             CoffeeAttack()
         ]
         self.attack_to_execute = -1
@@ -240,16 +240,16 @@ class CoffeeAttack(Attack):
         self.drops_group = pygame.sprite.Group()
 
         # Criando o retângulo do café
-        battle_container = CombatManager.get_variable('battle_container')
+        self.battle_container = CombatManager.get_variable('battle_container')
         self.new_rect =  pygame.Rect(
-                battle_container.inner_rect.left,
-                battle_container.inner_rect.bottom,
-                battle_container.inner_rect.width,
+                self.battle_container.inner_rect.left,
+                self.battle_container.inner_rect.bottom,
+                self.battle_container.inner_rect.width,
                 0
         )
-        self.new_rect.bottom = battle_container.inner_rect.bottom
+        self.new_rect.bottom = self.battle_container.inner_rect.bottom
 
-        self.fill_speed = 0.9
+        self.fill_speed = 3
 
         self.max_drops = 60
 
@@ -280,6 +280,9 @@ class CoffeeAttack(Attack):
         self.cup_group.update()
         self.drops_group.update()
 
+        self.new_rect.width = self.battle_container.inner_rect.width
+        self.new_rect.left = self.battle_container.inner_rect.left
+
         for cup in self.cup_group:
 
             # Gera gotas regularmente enquanto as xícaras estão girando
@@ -304,17 +307,17 @@ class CoffeeAttack(Attack):
             self.new_rect.height = 250
         
         for drop in self.drops_group:
-            if drop.rect.y >= CombatManager.get_variable('battle_container').inner_rect.bottom:
+            if drop.rect.y >= self.battle_container.inner_rect.bottom:
                 # Incrementa a altura do retângulo de acordo com a quantidade de gotas
                 self.new_rect.height += self.fill_speed
 
                 # Ajusta a posição vertical para crescer de baixo para cima
-                self.new_rect.top = CombatManager.get_variable('battle_container').inner_rect.bottom - self.new_rect.height
+                self.new_rect.top = self.battle_container.inner_rect.bottom - self.new_rect.height
 
                 # Garante que a altura não ultrapasse o limite
                 if self.new_rect.height >= 250:
                     self.new_rect.height = 250
-                    self.new_rect.top = CombatManager.get_variable('battle_container').inner_rect.bottom - 250
+                    self.new_rect.top = self.battle_container.inner_rect.bottom - 250
                 
                 # Ajusta a colisão
                 if self.new_rect.colliderect(self._player.rect):
@@ -333,6 +336,7 @@ class CoffeeAttack(Attack):
             self.cup_group.empty()
             self.drops_group.empty()
             self.drops_group.empty()
+            CombatManager.global_draw_functions.remove(self.draw_puddle)
 
     # Reinicia o ataque quando necessário   
     def restart(self):
@@ -348,12 +352,21 @@ class CoffeeAttack(Attack):
         CombatManager.global_groups.append(self.cup_group)
         CombatManager.global_groups.append(self.drops_group)
         self.new_rect.height = 0  # Reinicia o preenchimento
+        CombatManager.global_draw_functions.append(self.draw_puddle)
+        self.new_rect =  pygame.Rect(
+                self.battle_container.inner_rect.left,
+                self.battle_container.inner_rect.bottom,
+                self.battle_container.inner_rect.width,
+                0
+        )
+
+    def draw_puddle(self, *args, **kwargs):
+        pygame.draw.rect(pygame.display.get_surface(), (133, 77, 67), self.new_rect)
 
     # Desenha tudo na tela
     def draw(self, surface):
         self.cup_group.draw(surface)
         self.drops_group.draw(surface)
-        pygame.draw.rect(surface, (133, 77, 67), self.new_rect)
 
     @property
     def player(self):
@@ -404,14 +417,13 @@ class PythonAtatack(Attack):
         
         # Verifica colisões e aplica o efeito
         for snake in self.snakes_group:
-            if self.__player != snake:
-                if self.__player.rect.colliderect(snake.rect):
-                    offset = (snake.rect.x - self.__player.rect.x, snake.rect.y - self.__player.rect.y)
-                    if self.__player.mask.overlap(snake.mask, offset):
-                        self.__player.take_damage(CombatManager.enemy.damage)
-                        if snake.type == 'Inverse':
-                            self.__player.apply_effect('inverse')
-                        snake.kill()
+            if self.__player.rect.colliderect(snake.rect):
+                offset = (snake.rect.x - self.__player.rect.x, snake.rect.y - self.__player.rect.y)
+                if self.__player.mask.overlap(snake.mask, offset):
+                    self.__player.take_damage(CombatManager.enemy.damage)
+                    if snake.type == 'Vanished':
+                        self.__player.apply_effect('vanished')
+                    snake.kill()
         
     # Reinicia o aqtaque quando necessário
     def restart(self):
