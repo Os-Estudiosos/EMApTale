@@ -414,6 +414,7 @@ class PythonAtatack(Attack):
         if self.__duration_counter >= self.__duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
             self.snakes_group.empty()
+            self.snakes.clear()
         
         # Atualiza as cobras
         for snake in self.snakes:
@@ -432,6 +433,8 @@ class PythonAtatack(Attack):
     # Reinicia o aqtaque quando necessário
     def restart(self):
         self.__duration_counter = 0
+        self.snakes_group.empty()
+        self.snakes.clear()
 
     @property
     def player(self):

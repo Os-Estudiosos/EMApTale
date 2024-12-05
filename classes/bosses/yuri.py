@@ -251,6 +251,7 @@ class VectorAttack(Attack):
         if self.__duration_counter >= self.__duration:
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
             self.vectors_group.empty()
+            self.vectors.clear()
         
         for vector in self.vectors:
             vector.update(player_center=self.player.rect.center)
@@ -267,6 +268,8 @@ class VectorAttack(Attack):
     
     def restart(self):
         self.__duration_counter = 0
+        self.vectors_group.empty()
+        self.vectors.clear()
     
     @property
     def player(self):
@@ -372,6 +375,10 @@ class EliminationAttack(Attack):
 
     def restart(self):
         self.__duration_counter = 0
+        self.brackets_group.empty()
+        self.horizontal_beans_group.empty()
+        self.elimiation_matrices.clear()
+        self.horizontal_beams.clear()
         self.squared_bracked_to_right = SquareBracket(1, self.brackets_group)
         self.squared_bracked_to_left = SquareBracket(-1, self.brackets_group)
     

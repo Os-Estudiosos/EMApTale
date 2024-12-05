@@ -107,6 +107,11 @@ class Branco(Boss):
         if not self.__dead:
             self.dialogue.text = self.__attacks_dialogues[random.randint(0, len(self.__attacks_dialogues)-1)]
             self.speaking = True
+
+    def restart_attacks(self):
+        super().restart_attacks()
+        self.laughs_list.clear()
+        self.laugh_group.empty()
     
     def death_animation(self):
         self.__death_animation_counter += 1
@@ -337,6 +342,8 @@ class IntegralsAttack(Attack):
             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
     
     def restart(self):
+        self.integral_list.clear()
+        self.integral_group.empty()
         self.__duration_counter = 0
     
     @property
@@ -388,6 +395,9 @@ class IntegralSwordAttack(Attack):
         CombatManager.global_groups.append(self.eye_flashes_group)
 
     def run(self):
+        if self.__duration_counter == 0:
+            self.boss.can_laugh = False
+
         self.__duration_counter += 1
         self.eye_flashes_counter += 1
 
@@ -445,12 +455,15 @@ class IntegralSwordAttack(Attack):
         self.boss.can_laugh = False
         self.cuts_types.clear()
         self.integral_sword.cuts_list.clear()
+        self.eye_flashes_group.empty()
         self.showing_attacks = True
         self.attacking = False
         self.transition_time = 0
         self.eye_flashes_counter = 0
         self.eye_flashes.clear()
         self.wich_cut = 0
+        self.boss.can_laugh = True
+        self.integral_sword.restart()
     
     @property
     def player(self):

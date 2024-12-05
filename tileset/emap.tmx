@@ -531,7 +531,7 @@
   <object id="1315" x="576" y="272.5" width="31" height="17">
    <properties>
     <property name="boss" value="Soledad"/>
-    <property name="day" type="int" value="3"/>
+    <property name="day" type="int" value="1"/>
     <property name="value" value="Nunca gostei de grafos... Ok, legal, vamos lá"/>
    </properties>
   </object>

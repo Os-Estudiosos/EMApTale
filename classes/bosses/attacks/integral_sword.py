@@ -99,6 +99,10 @@ class IntegralSword(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, angle)
         self.rect = self.image.get_rect(center=self.rect.center)
     
+    def restart(self):
+        self.cuts_list.clear()
+        self.slash_group.empty()
+    
     def update(self):
         for slash in self.cuts_list:
             slash.update()
