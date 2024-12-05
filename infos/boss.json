@@ -60,11 +60,11 @@
         "voice": "pinho_txt.wav",
         "starter_text": "Um homem nerd se aproxima. Você o reconhece: é o pai do Python",
         "attacks_dialogues": [
-            "Olá amiguinho, hoje tem teste surpresa. Como você vem na minha aula, você poderá entrar na sala",
+            "Olá amiguinho, hoje tem teste surpresa. Hoje estou bem humorado, você poderá entrar na sala",
             "Sempre agradeço as máquinas de café, apesar delas me decepcionarem a maioria das vezes",
-            "Dei uma aula muito boa ontem e todos lactaram de conhecimento. Pena que depois eu acordei do meu sono",
-            "Hoje à tarde irei assistir o filme 13º guerreiro. Pelas minhas contas, essa será a 13ª vez que assisto. Odeio coincidências",
-            "Você não sabe fazer teste unitário, docstring, doctype e doctest? Que decepção amiguinho, parece que você não está lactando o suficiente"
+            "Dei uma aula muito boa ontem e todos lactaram de conhecimento",
+            "Hoje à tarde irei assistir o filme 13º guerreiro. Pelas minhas contas, essa será a 13ª vez que assisto",
+            "Você não sabe fazer teste unitário, docstring, doctype e doctest? Que decepção, parece que você não está lactando o suficiente"
         ],
         "act": [
             {

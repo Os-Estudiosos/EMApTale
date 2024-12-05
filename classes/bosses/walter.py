@@ -231,42 +231,47 @@ class Walter(Boss):
     def counter(self, value):
         self.__counter = value
 
-
 class HistogramAttack(Attack):
     def __init__(self, damage):
+        super().__init__()  # Garantir inicialização da classe base, se necessário
+
         self.__player: Heart = CombatManager.get_variable('player')
         self.damage = damage
 
         self.display = pygame.display.get_surface()
 
-        # self.graph_creation_counter = 0
-        # self.graph_creation_rate = FPS*1.5
-
-        # self.graphs_list: list[Histogram] = []
-
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration = FPS * 10  # O ataque dura 10 segundos
         self.__duration_counter = 0
 
-        # CombatManager.global_draw_functions.append(self.draw_graphs)
-    
-    # def create_graph(self):
-    #     graph = ClosingGraph()
-    #     return graph
-
-    # def draw_graphs(self, *args, **kwargs):
-    #     for graph in self.graphs_list:
-    #         graph.draw(self.display)
+        # Configuração do histograma
+        self.histogram = Histogram()  # Instância da classe Histogram
+        self.histogram.randomize_bars()  # Inicializa as barras aleatoriamente
 
     def run(self):
+        """Executa o ataque com duração controlada e animação de histograma."""
+        if self.__duration_counter == 0:
+            self.histogram.on_attack = True
         self.__duration_counter += 1
-        
+
+        # Atualizar o histograma
+        self.histogram.update()
+
+        # Verificar colisões entre o jogador e as barras
+        for rect in self.histogram.rects:
+            if self.__player.rect.colliderect(rect):  # Colisão com a barra
+                SoundManager.play_sound("arrow.wav")
+                self.__player.take_damage(self.damage)  # Aplicar dano ao jogador
+
+        # Verificar se o tempo do ataque acabou
         if self.__duration_counter >= self.__duration:
-            # self.graphs_list.clear()
-            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-    
+            self.histogram.on_attack = False
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))  # Evento para mudar o turno do jogador
+
     def restart(self):
+        """Reinicia o ataque, resetando o contador de duração."""
         self.__duration_counter = 0
-    
+        self.histogram.restart()
+
     @property
     def player(self):
         return self.__player
@@ -278,81 +283,3 @@ class HistogramAttack(Attack):
     @property
     def duration_counter(self):
         return self.__duration_counter
-
-
-# class AttachedToGraph(Attack):
-#     def __init__(self, damage):
-#         self.__player: Heart = CombatManager.get_variable('player')
-#         self.damage = damage
-
-#         self.display = pygame.display.get_surface()
-#         self.container = CombatManager.get_variable('battle_container')
-
-#         self.helper_surface = pygame.Surface(pygame.display.get_surface().get_size(), pygame.SRCALPHA)
-
-#         self.explosion_creation_counter = 0
-#         self.explosion_creation_rate = FPS/2
-
-#         self.player_graph = self.__player.graph
-
-#         self.explosions: list[NodeExplosion] = []
-
-#         self.__duration = FPS * 10  # O Ataque dura 10 segundos
-#         self.__duration_counter = 0
-
-#         CombatManager.global_draw_functions.append(self.draw)
-    
-#     def draw(self, *args, **kwargs):
-#         self.display.blit(self.helper_surface, self.helper_surface.get_rect())
-#         self.helper_surface.fill((0,0,0,0))
-
-#         for node_explosion in self.explosions:
-#             node_explosion.draw(self.helper_surface)
-
-#     def run(self):
-#         if self.__duration_counter == 0:
-#             self.__player.apply_effect('prisioned')
-
-#         self.explosion_creation_counter += 1
-
-#         if self.explosion_creation_counter >= self.explosion_creation_rate:
-#             self.explosion_creation_counter = 0
-#             random_node = random.choice([
-#                 'A','B','C','D','E','F','G','H','I'
-#             ])
-#             self.explosions.append(NodeExplosion(
-#                 self.player_graph[random_node]['pos'],
-#                 self.damage
-#             ))
-
-#             random_node = random.choice([
-#                 'A','B','C','D','E','F','G','H','I'
-#             ])
-#             self.explosions.append(NodeExplosion(
-#                 self.player_graph[random_node]['pos'],
-#                 self.damage
-#             ))
-        
-#         for node_explosion in self.explosions:
-#             node_explosion.update()
-
-#         self.__duration_counter += 1
-        
-#         if self.__duration_counter >= self.__duration:
-#             self.explosions.clear()
-#             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-    
-#     def restart(self):
-#         self.__duration_counter = 0
-    
-#     @property
-#     def player(self):
-#         return self.__player
-
-#     @property
-#     def duration(self):
-#         return self.__duration
-    
-#     @property
-#     def duration_counter(self):
-#         return self.__duration_counter
