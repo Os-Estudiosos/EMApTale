@@ -84,12 +84,10 @@ class Heart(Player):
         }
         self.current_pos = self.graph[self.current_node]['pos']
         self.damage_taken = False
-        self.damage_taken_animation_surface = pygame.Surface(self.rect.size, pygame.SRCALPHA)
-        self.damage_taken_animation_surface_alpha = 100
-        self.damage_taken_animation_surface.fill(
-            (0,0,0,self.damage_taken_animation_surface_alpha)
-        )
         self.counter = 0
+        self.flick_counter = 0
+        self.damage_flickering_rate = FPS/6
+        self.flick = False
     
     def apply_effect(self, effect: str):
         # Aplicando o efeito no coração
@@ -224,20 +222,20 @@ class Heart(Player):
         # Obtendo as teclas pressionadas
         keys = pygame.key.get_pressed()
 
+        if self.damage_taken:
+            self.flick_counter += 1
+            self.counter += 1
+        else:
+            self.flick = False
+
         # Aplicando animação caso ele tome dano
         if self.counter >= FPS*self.damage_duration:
             self.counter = 0
             self.damage_taken = False
-
-        if self.damage_taken:
-            self.counter += 1
-            self.damage_taken_animation_surface_alpha = math.floor(math.sin(degrees_to_radians(30*self.counter))*100+100)
-        else:
-            self.damage_taken_animation_surface_alpha = 0
         
-        self.damage_taken_animation_surface.fill(
-            (0,0,0,self.damage_taken_animation_surface_alpha)
-        )
+        if self.flick_counter >= self.damage_flickering_rate:
+            self.flick_counter = 0
+            self.flick = not self.flick
 
         # Movimentação
         self.direction = pygame.math.Vector2(  # Faço um vetor que representa a direção que estou me movendo
@@ -274,9 +272,8 @@ class Heart(Player):
             self.rect.y += self.speed * self.direction.y
     
     def draw(self, screen: pygame.Surface):
-        screen.blit(self.image, self.rect)
-
-        screen.blit(self.damage_taken_animation_surface, self.damage_taken_animation_surface.get_rect(center=self.rect.center))
+        if not self.flick:
+            screen.blit(self.image, self.rect)
 
     def take_damage(self, amount):
         Player.take_damage(amount)
