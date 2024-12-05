@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
     last_hit = 0
     map_position = [0, 0]
     previous_map_position = None
+    damage_duration = 0.5  # Em segundos
 
     # Carregando sa informações do Player
     @classmethod
@@ -46,7 +47,7 @@ class Player(pygame.sprite.Sprite):
             value (int): Valor do dano
         """
         actual_hit = time()
-        if actual_hit - Player.last_hit >= 0.5:  # Aqui eu dou um delay de 1 segundo para dar dano
+        if actual_hit - Player.last_hit >= cls.damage_duration:  # Aqui eu dou um delay de 1 segundo para dar dano
             if Player.life - value >= 0:
                 Player.life -= value
             else:
