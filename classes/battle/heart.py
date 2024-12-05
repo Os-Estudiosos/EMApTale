@@ -1,15 +1,18 @@
 import pygame
 import os
+import math
 import numpy as np
 from utils import sign
 import random
 
-from config import GET_PROJECT_PATH
+from config import GET_PROJECT_PATH, FPS
 from config.eventmanager import EventManager
 from config.combatmanager import CombatManager
 
 from classes.battle.container import BattleContainer
 from classes.player import Player
+
+from utils import degrees_to_radians
 
 
 class Heart(Player):
@@ -27,27 +30,27 @@ class Heart(Player):
             'normal': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')),
                 1.3
-            ),
+            ).convert_alpha(),
             'laugh': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'branco-heart.png')),
                 1.3
-            ),
+            ).convert_alpha(),
             'inverse': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'yuri-heart.png')),
                 1.3
-            ),
+            ).convert_alpha(),
             'confused': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'walter-heart.png')),
                 1.3
-            ),
+            ).convert_alpha(),
             'prisioned': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'soledad-heart.png')),
                 1.3
-            ),
+            ).convert_alpha(),
             'vanished': pygame.transform.scale_by(
                 pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'pinho-heart.png')),
                 1.3
-            )
+            ).convert_alpha()
         }
         self.image = self.sprites['normal']
         self.rect = self.image.get_rect()
@@ -80,6 +83,11 @@ class Heart(Player):
             'I': {'pos': (1.25*w, 1.8*h), 'neighbors': ['F', 'H']}
         }
         self.current_pos = self.graph[self.current_node]['pos']
+        self.damage_taken = False
+        self.counter = 0
+        self.flick_counter = 0
+        self.damage_flickering_rate = FPS/6
+        self.flick = False
     
     def apply_effect(self, effect: str):
         # Aplicando o efeito no coração
@@ -211,9 +219,23 @@ class Heart(Player):
         self.draw_graph(graph=self.graph)
 
     def update(self, *args, **kwargs):
-
         # Obtendo as teclas pressionadas
         keys = pygame.key.get_pressed()
+
+        if self.damage_taken:
+            self.flick_counter += 1
+            self.counter += 1
+        else:
+            self.flick = False
+
+        # Aplicando animação caso ele tome dano
+        if self.counter >= FPS*self.damage_duration:
+            self.counter = 0
+            self.damage_taken = False
+        
+        if self.flick_counter >= self.damage_flickering_rate:
+            self.flick_counter = 0
+            self.flick = not self.flick
 
         # Movimentação
         self.direction = pygame.math.Vector2(  # Faço um vetor que representa a direção que estou me movendo
@@ -248,3 +270,11 @@ class Heart(Player):
         if self.effect != 'prisioned' and not CombatManager.enemy.speaking:
             self.rect.x += self.speed * self.direction.x
             self.rect.y += self.speed * self.direction.y
+    
+    def draw(self, screen: pygame.Surface):
+        if not self.flick:
+            screen.blit(self.image, self.rect)
+
+    def take_damage(self, amount):
+        Player.take_damage(amount)
+        self.damage_taken = True

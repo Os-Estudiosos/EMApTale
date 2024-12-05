@@ -231,10 +231,10 @@ class Combat(State):
                 self.battle_container.resize(self.__display.get_width()/3, self.__display.get_height()/2-30)  # Redimensiono o container da batalha
                 
                 # Updates que são apenas do turno do boss
-                self.player_group.update(display=self.__display)
+                self.player.update(display=self.__display)
 
                 # Draws que são apenas no turno do boss
-                self.__display.blit(self.player.image, self.player.rect)
+                self.player.draw(self.__display)
         
         if CombatManager.enemy.dead:
             if self.transition_counter == 0:
