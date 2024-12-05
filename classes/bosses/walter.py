@@ -58,7 +58,7 @@ class Walter(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            # HistogramAttack(self.__damage),
+            HistogramAttack(self.__damage),
             DicesAttack(self.__damage)
         ]
         self.attack_to_execute = -1
@@ -226,42 +226,47 @@ class Walter(Boss):
     def counter(self, value):
         self.__counter = value
 
-
 class HistogramAttack(Attack):
     def __init__(self, damage):
+        super().__init__()  # Garantir inicialização da classe base, se necessário
+
         self.__player: Heart = CombatManager.get_variable('player')
         self.damage = damage
 
         self.display = pygame.display.get_surface()
 
-        # self.graph_creation_counter = 0
-        # self.graph_creation_rate = FPS*1.5
-
-        # self.graphs_list: list[Histogram] = []
-
-        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration = FPS * 10  # O ataque dura 10 segundos
         self.__duration_counter = 0
 
-        # CombatManager.global_draw_functions.append(self.draw_graphs)
-    
-    # def create_graph(self):
-    #     graph = ClosingGraph()
-    #     return graph
-
-    # def draw_graphs(self, *args, **kwargs):
-    #     for graph in self.graphs_list:
-    #         graph.draw(self.display)
+        # Configuração do histograma
+        self.histogram = Histogram()  # Instância da classe Histogram
+        self.histogram.randomize_bars()  # Inicializa as barras aleatoriamente
 
     def run(self):
+        """Executa o ataque com duração controlada e animação de histograma."""
+        if self.__duration_counter == 0:
+            self.histogram.on_attack = True
         self.__duration_counter += 1
-        
+
+        # Atualizar o histograma
+        self.histogram.update()
+
+        # Verificar colisões entre o jogador e as barras
+        for rect in self.histogram.rects:
+            if self.__player.rect.colliderect(rect):  # Colisão com a barra
+                SoundManager.play_sound("arrow.wav")
+                self.__player.take_damage(self.damage)  # Aplicar dano ao jogador
+
+        # Verificar se o tempo do ataque acabou
         if self.__duration_counter >= self.__duration:
-            # self.graphs_list.clear()
-            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
-    
+            self.histogram.on_attack = False
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))  # Evento para mudar o turno do jogador
+
     def restart(self):
+        """Reinicia o ataque, resetando o contador de duração."""
         self.__duration_counter = 0
-    
+        self.histogram.restart()
+
     @property
     def player(self):
         return self.__player
