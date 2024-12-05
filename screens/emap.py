@@ -74,6 +74,10 @@ class EMAp(State):
         self.infos_hud: InfosHud = None
 
     def on_first_execution(self):
+        if GameStateManager.previous_state == 'show_day':
+            GlobalManager.pass_day()
+            SaveManager.save()
+
         self.player.reset_position()
         SaveManager.load()
         GlobalManager.load_infos()
@@ -89,10 +93,6 @@ class EMAp(State):
 
         if Player.previous_map_position and GameStateManager.previous_state == 'start':
             self.player.reset_position(Player.previous_map_position)
-        elif GameStateManager.previous_state == 'show_day':
-            self.player.reset_position()
-            GlobalManager.pass_day()
-            SaveManager.save()
 
         GlobalManager.paused = False
 
