@@ -3,7 +3,7 @@ import pygame
 
 from config import *
 from classes.polygon.polygon import Polygon
-from classes.map.interaction import Interaction, BossIntercation
+from classes.map.interaction import Interaction, BossIntercation, CamachoInteraction
 from config.globalmanager import GlobalManager
 
 from classes.item import Item
@@ -37,11 +37,22 @@ class MapLoader:
                         height=obj.height * MAP_SCALE_FACTOR,
                         day=obj.properties.get('day', None)
                     ))
+            if layer.name == "Camacho":
+                for obj in layer:
+                    GlobalManager.interactions.append(CamachoInteraction(
+                        interaction_name=obj.properties.get('interaction_name', 'Unknown'),
+                        value=obj.properties.get('value', 'Sem mensagem'),
+                        x=obj.x * MAP_SCALE_FACTOR,
+                        y=obj.y * MAP_SCALE_FACTOR,
+                        width=obj.width * MAP_SCALE_FACTOR,
+                        height=obj.height * MAP_SCALE_FACTOR,
+                        day=obj.properties.get('day', None)
+                    ))
             if layer.name == "Boss":
                 for obj in layer:
                     GlobalManager.interactions.append(BossIntercation(
                         interaction_name=obj.properties.get('interaction_name', 'Unknown'),
-                        value=obj.properties.get('value', 'Sem mensagem'),
+                        value=obj.properties.get('value', 'Parabéns!'),
                         x=obj.x * MAP_SCALE_FACTOR,
                         y=obj.y * MAP_SCALE_FACTOR,
                         width=obj.width * MAP_SCALE_FACTOR,

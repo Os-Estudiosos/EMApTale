@@ -28,6 +28,11 @@ class BossIntercation(Interaction):
         })
 
 
+class CamachoInteraction(Interaction):
+    def go_to_camacho(self):
+        GameStateManager.set_state('final_cutscene')
+
+
 class InteractionManager:
     def __init__(self, player, chatbox, tecla_z_image):
         """
@@ -90,6 +95,8 @@ class InteractionManager:
                             # Encerra a interação
                             if isinstance(self.active_interaction, BossIntercation):
                                 self.active_interaction.go_to_boss_fight()
+                            if isinstance(self.active_interaction, CamachoInteraction):
+                                self.active_interaction.go_to_camacho()
                             self.dynamic_text = None
                             self.active_interaction = None
                         else:

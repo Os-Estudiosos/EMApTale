@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1344">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="1345">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -549,6 +549,14 @@
     <property name="boss" value="Branco"/>
     <property name="day" type="int" value="3"/>
     <property name="value" value="Por favor que não caia lagrange"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="15" name="Camacho">
+  <object id="1344" x="1771.82" y="156.545" width="26.1818" height="66.3636">
+   <properties>
+    <property name="day" type="int" value="6"/>
+    <property name="value" value="Parabéns!"/>
    </properties>
   </object>
  </objectgroup>

@@ -8,6 +8,7 @@ from config.savemanager import SaveManager
 from config.globalmanager import GlobalManager
 from config.eventmanager import EventManager
 from config.gamestatemanager import GameStateManager
+from config.soundmanager import SoundManager
 
 from classes.map.interaction import InteractionManager
 from classes.map.loader import MapLoader
@@ -82,6 +83,8 @@ class EMAp(State):
         self.player.reset_position()
         SaveManager.load()
         GlobalManager.load_infos()
+        SoundManager.stop_music()
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "map_audio.wav"))
         self.camera.empty()
         self.items_group.empty()
         self.player.load_infos()
