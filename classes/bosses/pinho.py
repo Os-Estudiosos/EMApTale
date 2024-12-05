@@ -188,6 +188,10 @@ class Pinho(Boss):
             self.__dead = True
         self.__state = 'shaking'
         self.__counter = 0
+    
+    @property
+    def attacks(self):
+        return self.__attacks
 
     @property
     def dead(self):

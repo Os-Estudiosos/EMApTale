@@ -221,6 +221,10 @@ class Branco(Boss):
         if self.laugh_counter >= self.laugh_rate:
             self.laughs_list.append(Laugh(self, self.laugh_group))
             self.laugh_counter = 0
+    
+    @property
+    def attacks(self):
+        return self.__attacks
 
     @property
     def counter(self):

@@ -151,6 +151,10 @@ class Yuri(Boss):
                 pygame.event.post(pygame.event.Event(BOSS_TURN_EVENT))
 
     @property
+    def attacks(self):
+        return self.__attacks
+
+    @property
     def counter(self):
         return self.__counter
 

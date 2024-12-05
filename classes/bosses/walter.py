@@ -152,6 +152,10 @@ class Walter(Boss):
                 self.apply_effect(event.effect)
 
     @property
+    def attacks(self):
+        return self.__attacks
+
+    @property
     def counter(self):
         return self.__counter
 
@@ -266,6 +270,7 @@ class HistogramAttack(Attack):
     def restart(self):
         """Reinicia o ataque, resetando o contador de duração."""
         self.__duration_counter = 0
+        self.histogram.rects.clear()
         self.histogram.restart()
 
     @property
@@ -329,6 +334,8 @@ class DicesAttack(Attack):
     
     def restart(self):
         self.__duration_counter = 0
+        self.dices.clear()
+        self.dices_group.empty()
     
     @property
     def player(self):

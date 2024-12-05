@@ -5,6 +5,7 @@ from classes.text.dynamic_text import DynamicText
 from config.eventmanager import EventManager
 from config.globalmanager import GlobalManager
 from config.gamestatemanager import GameStateManager
+from config.savemanager import SaveManager
 
 
 class Interaction:
@@ -21,6 +22,7 @@ class BossIntercation(Interaction):
         self.boss = kwargs['boss']
     
     def go_to_boss_fight(self):
+        SaveManager.save()
         GameStateManager.set_state('combat', {
             "enemy": GlobalManager.bosses[self.boss]
         })

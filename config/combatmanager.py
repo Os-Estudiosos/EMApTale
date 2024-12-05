@@ -1,7 +1,6 @@
 import pygame
 from typing import Callable
 
-
 class CombatManager:
     turn = 'player'
     enemy = None

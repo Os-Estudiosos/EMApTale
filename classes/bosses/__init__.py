@@ -29,6 +29,14 @@ class Boss(pygame.sprite.Sprite, ABC):
         self.state = 'shaking'
         self.counter = 0
     
+    def restart_attacks(self):
+        for attack in self.attacks:
+            attack.restart()
+
+    @property
+    @abstractmethod
+    def attacks(self):...
+
     @property
     @abstractmethod
     def counter(self):...

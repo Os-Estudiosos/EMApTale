@@ -157,6 +157,10 @@ class Soledad(Boss):
                 self.apply_effect(event.effect)
 
     @property
+    def attacks(self):
+        return self.__attacks
+
+    @property
     def counter(self):
         return self.__counter
 
