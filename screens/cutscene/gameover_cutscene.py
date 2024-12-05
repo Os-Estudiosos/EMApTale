@@ -12,10 +12,9 @@ from random import randint
 from classes.text.dynamic_text import DynamicText
 
 class GameoverCutscene(State):
-    def __init__(self, name: str, display: pygame.Surface, game_state_manager: GameStateManager):
+    def __init__(self, name: str, display: pygame.Surface):
         self.__name = name
         self.__display = display
-        self.__game_state_manager = game_state_manager
         self.__variables = {}
 
         self.random_messages = [ 
@@ -106,7 +105,7 @@ class GameoverCutscene(State):
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
-                    self.__game_state_manager.set_state('emap')
+                    GameStateManager.set_state('emap')
                     SoundManager.stop_music()
 
         pygame.display.flip()
@@ -126,10 +125,6 @@ class GameoverCutscene(State):
     @property
     def name(self):
         return self.__name    
-
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
 
     def variables(self, value: dict):
         if not isinstance(value, dict):

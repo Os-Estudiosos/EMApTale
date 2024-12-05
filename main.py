@@ -67,8 +67,8 @@ class Game:
         self.ShowDay = ShowDay('show_day', self.display)
 
         # Cenas das Cutscenes
-        self.IntroCutscene = IntroCutscene('intro_cutscene', self.display, self.game_state_manager)
-        self.GameoverCutscene = GameoverCutscene('gameover_cutscene', self.display, self.game_state_manager)
+        self.IntroCutscene = IntroCutscene('intro_cutscene', self.display)
+        self.GameoverCutscene = GameoverCutscene('gameover_cutscene', self.display)
 
 
         # Passando um Dicionário com meus cenários para o Gerenciador de Cenários

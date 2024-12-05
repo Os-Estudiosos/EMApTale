@@ -176,7 +176,7 @@ class Combat(State):
         gravity = 0.1
 
         # Delay
-        delay_broken_to_sherds = 1500  
+        delay_broken_to_sherds = 2000  
         start_time = pygame.time.get_ticks() 
 
         stage = "broken"  
@@ -217,7 +217,7 @@ class Combat(State):
             clock.tick(60)
 
             if elapsed_time > 4500:
-                self.game_state_manager.set_state('gameover_cutscene')
+                GameStateManager.set_state('gameover_cutscene')
                 return
 
 
@@ -232,10 +232,11 @@ class Combat(State):
             pygame.time.set_timer(BOSS_TURN_EVENT, 0)
             pygame.time.set_timer(PLAYER_TURN_EVENT, 0)
             self.__display.fill((0, 0, 0))
+            SoundManager.stop_music()
 
             # Obter a posição do coração
             heart_position = self.player.rect.center
-
+    
             # Desenhar o coração na última posição
             self.player_group.draw(self.__display)
             SoundManager.play_sound('break_heart_1.wav')
