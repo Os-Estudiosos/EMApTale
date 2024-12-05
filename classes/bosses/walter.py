@@ -18,6 +18,7 @@ from classes.text.dialogue_box import DialogueBox
 
 from classes.effects.explosion import Explosion
 from classes.bosses.attacks.dices import Dice
+from classes.bosses.attacks.histogram import Histogram
 
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
 
