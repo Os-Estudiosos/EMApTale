@@ -80,11 +80,9 @@ class GameoverCutscene(State):
         aspect_ratio = image_height / image_width  
         new_height = new_width * aspect_ratio 
 
-
         # Calcular a posição centralizada e levemente para cima
         x_pos = screen_width * 0.5 - new_width * 0.5 
         y_pos = screen_height * 0.5 - new_height * 0.5 - screen_height * 0.2
-
 
         resized_image = pygame.transform.scale(self.gameover_image, (int(new_width), int(new_height)))
         image_rect = resized_image.get_rect(topleft=(x_pos, y_pos))
@@ -105,8 +103,8 @@ class GameoverCutscene(State):
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
-                    GameStateManager.set_state('emap')
                     SoundManager.stop_music()
+                    GameStateManager.set_state('start')
 
         pygame.display.flip()
 
