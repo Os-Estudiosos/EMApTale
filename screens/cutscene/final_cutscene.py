@@ -11,10 +11,9 @@ from config.eventmanager import EventManager
 from classes.text.dynamic_text import DynamicText
 
 class FinalCutscene(State):
-    def __init__(self, name: str, display: pygame.Surface, game_state_manager: GameStateManager):
+    def __init__(self, name: str, display: pygame.Surface):
         self.__name = name
         self.__display = display
-        self.__game_state_manager = game_state_manager
         self.__execution_counter = 0
         self.__variables = {}
 
@@ -113,7 +112,7 @@ class FinalCutscene(State):
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
                     if (255 - self.current_time_local//10) < -7:
                         if self.current_text.finished:
-                            self.__game_state_manager.set_state('start')
+                            GameStateManager.set_state('start')
                             SoundManager.stop_music()
 
 
@@ -134,11 +133,6 @@ class FinalCutscene(State):
     @property
     def name(self):
         return self.__name    
-    
-    
-    @property
-    def game_state_manager(self):
-        return self.__game_state_manager
     
     
     @property
