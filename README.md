@@ -72,38 +72,38 @@ Além disso, cada batalha é única e característica, com cada ataque sendo dir
 
 ```
 
-- **Classes:** CCC
-  - **battle:** CCC
-    - **menus:** CCC
-      - **hud:** CCC
-  - **bosses:** CCC
-    - **attacks:** CCC
-  - **effects:** CCC
-  - **map:** CCC
-  - **polygon:** CCC
-  - **sprites:** CCC
-  - **text:** CCC
+- **Classes:** Armazena todas as classes do jogo.
+  - **battle:** Armazena as classes da batalha, como a classe do player, container do hp, etc.
+    - **menus:** Armazena as classes do menu da batalha, como os botões "agir", "render", etc.
+      - **hud:** Aqui ficam o final do hud, como a barra de dano.
+  - **bosses:** Aqui ficam as classes de todos os chefes(bosses).
+    - **attacks:** Aqui ficam os ataques de cada boss.
+  - **effects:** Aqui ficam os efeitos individuais de alguns bosses.
+  - **map:** Aqui fica toda a estruturação do mapa, câmera, interação, etc.
+  - **polygon:** Aqui fica a colisão de um polígono, específicamente para cantos não retangulares.
+  - **sprites:** Aqui fica a classe que renderiza os sprites.
+  - **text:** Aqui ficam as classes de textos, utilzados tanto na batalha quanto no mapa.
 - **Config:** Nessa pasta estão os gerenciadores de combate, de eventos, de texto, de salvamento de progresso, de som e de cutscenes, além de definir o nome do jogo, o caminho base e a quantos frames por segundo o jogo deveria rodar.
 - **Constants:** Nesta pasta estão armazenados constantes relacionadas aos turnos dos chefes e do personagem, auxiliando na ordenação de cada turno.
 - **Fonts:** Aqui estão as fontes de texto utilizadas nas caixas de diálogo (interações no mapa, durante as batalhas, menu inicial, inventário, menu de pausa, entre outros) presentes no jogo.
 - **Infos:** Nesta pasta estão os arquivos .json utilizados para armazenar as informações dos chefes, dos coletáveis e do jogador.
-- **Screen:** Pasta com as configurações do game (Além de módulos relacionados a save, mexer nas configurações do jogo, etc.)
-  - **cutscene:** arquivos que controlam as cutscenes do jogo, sendo elas o começo, fim, e o gameover
-  - **menu:** arquivos de menu inicial, como arquivo que armazena nome, etc
+- **Screen:** Pasta com as configurações do game (Além de módulos relacionados a save, mexer nas configurações do jogo, etc).
+  - **cutscene:** arquivos que controlam as cutscenes do jogo, sendo elas o começo, fim, e o gameover.
+  - **menu:** arquivos de menu inicial, como arquivo que armazena nome, etc.
   - **subscreen:** pasta que contém o menu do meio do jogo, contendo salvar jogo, continuar jogo, opções, etc.
 - **Sounds:** Aqui estão todos os sons (trilha sonora e efeitos sonoros) utilizados no projeto.
-- **Sprites:** Nesta pasta estão os sprites utilizados nos chefes, nas cutscenes, nos efeitos e na inteface gráfica da batalha. Além disso, há também os sprites do personagem e do mapa
-  - **bosses:** imagens pixelada e em preto e branco dos bosses
-  - **cutscene:** imagens utilizadas na cutscene do início do jogo
-  - **effects:** todo tipo de efeito usado na nas lutas
-  - **hud:** imagens básicas do hud de batalha/coisas relacionadas a interação do mapa
+- **Sprites:** Nesta pasta estão os sprites utilizados nos chefes, nas cutscenes, nos efeitos e na inteface gráfica da batalha. Além disso, há também os sprites do personagem e do mapa.
+  - **bosses:** imagens pixelada e em preto e branco dos bosses.
+  - **cutscene:** imagens utilizadas na cutscene do início do jogo.
+  - **effects:** todo tipo de efeito usado na nas lutas.
+  - **hud:** imagens básicas do hud de batalha/coisas relacionadas a interação do mapa.
     - **combat:** imagens da parte de combate, como os botões de agir, lutar, etc.
-    - **dialogue:** imagens de caixa de diálogo usadas tanto na luta como em interações no mapa
-  - **items:** pasta com os itens coletáveis do mapa
-  - **npc:** imagem de um possível npc do mapa
-  - **player:** imagens usadas para desenhar o player no mapa
-    - **hearts:** imagens dos corações das batalhas
-  - **tiles:** imagens utilizadas no começo do desenvolvimento do jogo
+    - **dialogue:** imagens de caixa de diálogo usadas tanto na luta como em interações no mapa.
+  - **items:** pasta com os itens coletáveis do mapa.
+  - **npc:** imagem do npc do mapa.
+  - **player:** imagens usadas para desenhar o player no mapa.
+    - **hearts:** imagens dos corações das batalhas.
+  - **tiles:** imagens utilizadas no começo do desenvolvimento do jogo.
 - **Tests:** Aqui estão os testes unitários das funções mais gerais utilizadas, de classes referentes aos ataques dos chefes, classes do inventário e sobre a movimentação do personagem.
 - **Tileset:** Aqui estão os sprites de tudo que é usado para criar o mapa, além do arquivo do mapa (.tmx) que é usado para que o pygame leia e entenda a organização dos tiles, colisões, interações, etc.
 - **Utils:** Na pasta utils estão algumas funções reutilizáveis em certas partes do código.
