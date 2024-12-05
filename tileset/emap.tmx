@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1331">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="20" tileheight="20" infinite="0" nextlayerid="15" nextobjectid="1344">
  <tileset firstgid="1" source="Emaptale.tsx"/>
  <layer id="2" name="Ground" width="128" height="32">
   <data encoding="csv">
@@ -111,7 +111,7 @@
  </layer>
  <objectgroup id="4" name="WallsColider" opacity="0.9" offsetx="0" offsety="3">
   <object id="22" x="59.0522" y="144.5" width="401.191" height="30.9091"/>
-  <object id="23" x="440.055" y="198.307" width="19.3091" height="56.3092"/>
+  <object id="23" x="440.055" y="177.125" width="19.3091" height="77.491"/>
   <object id="24" x="459.017" y="239.039" width="160.841" height="15.5611"/>
   <object id="25" x="619.309" y="119.5" width="19.8817" height="135.094"/>
   <object id="28" x="639" y="123" width="764.727" height="31.5"/>
@@ -167,6 +167,7 @@
   <object id="1251" x="942.255" y="223.563" width="15.5897" height="0.4375"/>
   <object id="1252" x="1130.89" y="244.273" width="26.0469" height="14.9148"/>
   <object id="1310" x="1448.21" y="234.972" width="306.949" height="9.18178"/>
+  <object id="1342" x="640" y="199.818" width="17.2727" height="1.74747"/>
  </objectgroup>
  <objectgroup id="10" name="NotRectWallsColiders">
   <object id="488" x="60.1958" y="190.909">
@@ -422,6 +423,8 @@
   <object id="1307" gid="182" x="1740" y="267" width="20" height="20"/>
   <object id="1308" gid="152" x="1740" y="247" width="20" height="20"/>
   <object id="1309" gid="122" x="1740" y="227" width="20" height="20"/>
+  <object id="1340" gid="649" x="640" y="200" width="20" height="20"/>
+  <object id="1341" gid="679" x="640" y="220" width="20" height="20"/>
  </objectgroup>
  <objectgroup id="14" name="Interactions">
   <object id="1257" x="764" y="208.375" width="49.125" height="42.75">
@@ -502,51 +505,50 @@
     <property name="value" value="As salas dos professores estão na direita, é pra lá que eu vou"/>
    </properties>
   </object>
+  <object id="1343" x="640.563" y="188.438" width="18.9375" height="32.9375">
+   <properties>
+    <property name="interaction_name" value="npc"/>
+    <property name="value" value="Laranja - mova-se. Azul -pare"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="15" name="Boss">
   <properties>
    <property name="boss" value="Soledad"/>
   </properties>
-  <object id="1272" x="2081" y="312.5" width="39.5" height="16.5">
+  <object id="1272" x="2080.27" y="315.136" width="39.5" height="16.5">
    <properties>
     <property name="boss" value="Walter"/>
-    <property name="day" type="int" value="2"/>
+    <property name="day" type="int" value="1"/>
     <property name="value" value="Talvez não usar grafico de pizza seja o suficiente pra passar"/>
    </properties>
   </object>
   <object id="1274" x="1784.5" y="127" width="31" height="17">
    <properties>
     <property name="boss" value="Soledad"/>
-    <property name="day" type="int" value="3"/>
+    <property name="day" type="int" value="4"/>
     <property name="value" value="Será que se aplicar redes a nota sai máxima?"/>
    </properties>
   </object>
-  <object id="1275" x="1679.5" y="311.5" width="40" height="18">
+  <object id="1275" x="1980.13" y="315.125" width="40" height="18">
    <properties>
     <property name="boss" value="Pinho"/>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="2"/>
     <property name="value" value="Trouxe café, vai que ele pega mais leve"/>
    </properties>
   </object>
-  <object id="1311" x="412.25" y="324.5" width="40.5" height="16">
+  <object id="1311" x="1879.88" y="315.75" width="40.5" height="16">
    <properties>
     <property name="boss" value="Yuri"/>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="5"/>
     <property name="value" value="Melhor eu começar a rezar"/>
    </properties>
   </object>
-  <object id="1314" x="601.75" y="324.75" width="33.5" height="19.5">
+  <object id="1314" x="1944.11" y="147.174" width="33.5" height="19.5">
    <properties>
     <property name="boss" value="Branco"/>
-    <property name="day" type="int" value="2"/>
-    <property name="value" value="Por favor que não caia lagrange"/>
-   </properties>
-  </object>
-  <object id="1315" x="576" y="272.5" width="31" height="17">
-   <properties>
-    <property name="boss" value="Soledad"/>
     <property name="day" type="int" value="3"/>
-    <property name="value" value="Nunca gostei de grafos... Ok, legal, vamos lá"/>
+    <property name="value" value="Por favor que não caia lagrange"/>
    </properties>
   </object>
  </objectgroup>
@@ -565,7 +567,7 @@
    </properties>
    <point/>
   </object>
-  <object id="1311" name="Pão de Queijo" type="Item" x="1238.92" y="217.417">
+  <object id="1311" name="Pão de Queijo" type="Item" x="1236.55" y="217.542">
    <properties>
     <property name="day" type="int" value="2"/>
     <property name="item_id" value="cheese-bread"/>
@@ -623,14 +625,49 @@
   </object>
   <object id="1330" name="Café" type="Item" x="40.5455" y="220.273">
    <properties>
-    <property name="day" type="int" value="1"/>
+    <property name="day" type="int" value="3"/>
+    <property name="item_id" value="coffe"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1331" name="Pão de Queijo" type="Item" x="782.909" y="214.273">
+   <properties>
+    <property name="day" type="int" value="3"/>
+    <property name="item_id" value="cheese-bread"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1332" name="Bolo de cenoura" type="Item" x="41.9091" y="220.364">
+   <properties>
+    <property name="day" type="int" value="4"/>
+    <property name="item_id" value="carrot-cake"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1333" name="Pão de Queijo" type="Item" x="1901.88" y="242.313">
+   <properties>
+    <property name="day" type="int" value="5"/>
+    <property name="item_id" value="cheese-bread"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1334" name="Chá de Limão" type="Item" x="1901.88" y="246.172">
+   <properties>
+    <property name="day" type="int" value="5"/>
+    <property name="item_id" value="lemon-tea"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="1335" name="Café" type="Item" x="1146.75" y="242.25">
+   <properties>
+    <property name="day" type="int" value="5"/>
     <property name="item_id" value="coffe"/>
    </properties>
    <point/>
   </object>
  </objectgroup>
  <objectgroup id="15" name="Spawnpoint">
-  <object id="1312" name="Spawnpoint" x="538" y="325">
+  <object id="1312" name="Spawnpoint" x="538.068" y="337.182">
    <point/>
   </object>
  </objectgroup>

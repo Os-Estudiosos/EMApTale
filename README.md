@@ -31,8 +31,6 @@ Nesse jogo, você é um estudante do 2° período de Ciência de Dados e IA da F
 O mapa é baseado na vida real, por isso se passa no 5° andar do prédio da faculdade, onde os professores se localizam. Existem várias interações em todo o mapa, que remetem a vida cotidiana do estudante, desde o chão do mapa até os objetos e os coletáveis em todo o mapa que remetem a vivência frequente dos alunos.
 Além disso, cada batalha é única e característica, com cada ataque sendo diretamente relacionado a alguma característica do professor ou da matéria dada.
 
-Colocar vídeo/foto
-
 ## Estrutura das Pastas
 
 ```
@@ -90,9 +88,9 @@ Colocar vídeo/foto
 - **Fonts:** Aqui estão as fontes de texto utilizadas nas caixas de diálogo (interações no mapa, durante as batalhas, menu inicial, inventário, menu de pausa, entre outros) presentes no jogo.
 - **Infos:** Nesta pasta estão os arquivos .json utilizados para armazenar as informações dos chefes, dos coletáveis e do jogador.
 - **Screen:** Pasta com as configurações do game (Além de módulos relacionados a save, mexer nas configurações do jogo, etc.)
-  - **cutscene:** CCC
-  - **menu:** CCC
-  - **subscreen:** CCC
+  - **cutscene:** arquivos que controlam as cutscenes do jogo, sendo elas o começo, fim, e o gameover
+  - **menu:** arquivos de menu inicial, como arquivo que armazena nome, etc
+  - **subscreen:** pasta que contém o menu do meio do jogo, contendo salvar jogo, continuar jogo, opções, etc.
 - **Sounds:** Aqui estão todos os sons (trilha sonora e efeitos sonoros) utilizados no projeto.
 - **Sprites:** Nesta pasta estão os sprites utilizados nos chefes, nas cutscenes, nos efeitos e na inteface gráfica da batalha. Além disso, há também os sprites do personagem e do mapa
   - **bosses:** imagens pixelada e em preto e branco dos bosses
