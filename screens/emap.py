@@ -75,6 +75,7 @@ class EMAp(State):
 
     def on_first_execution(self):
         if GameStateManager.previous_state == 'show_day':
+            self.player.reset_position()
             GlobalManager.pass_day()
             SaveManager.save()
 
