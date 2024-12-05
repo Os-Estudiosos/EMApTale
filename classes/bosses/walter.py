@@ -14,17 +14,12 @@ from classes.bosses import Boss, Attack
 from classes.battle.heart import Heart
 from classes.bosses.hp import BossHP
 
-from classes.bosses.attacks.histogram import Histogram
-
-from classes.bosses.attacks.empty_attack import EmptyAttack
-
 from classes.text.dialogue_box import DialogueBox
 
 from classes.effects.explosion import Explosion
+from classes.bosses.attacks.dices import Dice
 
 from constants import PLAYER_TURN_EVENT, BOSS_TURN_EVENT, BOSS_ACT_EFFECT
-
-from utils import degrees_to_radians
 
 
 class Walter(Boss):
@@ -63,8 +58,8 @@ class Walter(Boss):
 
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
-            HistogramAttack(self.__damage),
-            #AttachedToGraph(self.__damage)
+            # HistogramAttack(self.__damage),
+            DicesAttack(self.__damage)
         ]
         self.attack_to_execute = -1
 
@@ -280,79 +275,63 @@ class HistogramAttack(Attack):
         return self.__duration_counter
 
 
-# class AttachedToGraph(Attack):
-#     def __init__(self, damage):
-#         self.__player: Heart = CombatManager.get_variable('player')
-#         self.damage = damage
+class DicesAttack(Attack):
+    def __init__(self, damage):
+        self.__player: Heart = CombatManager.get_variable('player')
+        self.damage = damage
 
-#         self.display = pygame.display.get_surface()
-#         self.container = CombatManager.get_variable('battle_container')
+        self.display = pygame.display.get_surface()
+        self.container = CombatManager.get_variable('battle_container')
 
-#         self.helper_surface = pygame.Surface(pygame.display.get_surface().get_size(), pygame.SRCALPHA)
+        self.dice_creation_counter = 0
+        self.dice_creation_rate = FPS
 
-#         self.explosion_creation_counter = 0
-#         self.explosion_creation_rate = FPS/2
+        self.player_graph = self.__player.graph
 
-#         self.player_graph = self.__player.graph
+        self.dices_group = pygame.sprite.Group()
 
-#         self.explosions: list[NodeExplosion] = []
+        self.dices: list = []
 
-#         self.__duration = FPS * 10  # O Ataque dura 10 segundos
-#         self.__duration_counter = 0
+        self.__duration = FPS * 10  # O Ataque dura 10 segundos
+        self.__duration_counter = 0
 
-#         CombatManager.global_draw_functions.append(self.draw)
-    
-#     def draw(self, *args, **kwargs):
-#         self.display.blit(self.helper_surface, self.helper_surface.get_rect())
-#         self.helper_surface.fill((0,0,0,0))
+        CombatManager.global_groups.append(self.dices_group)
 
-#         for node_explosion in self.explosions:
-#             node_explosion.draw(self.helper_surface)
+    def run(self):
+        if self.dice_creation_counter == 0:
+            self.player.apply_effect('confused')
+        self.dice_creation_counter += 1
 
-#     def run(self):
-#         if self.__duration_counter == 0:
-#             self.__player.apply_effect('prisioned')
+        if self.dice_creation_counter >= self.dice_creation_rate:
+            self.dice_creation_counter = 0
+            self.dices.append(Dice(self.dices_group))
+            self.dices.append(Dice(self.dices_group))
 
-#         self.explosion_creation_counter += 1
-
-#         if self.explosion_creation_counter >= self.explosion_creation_rate:
-#             self.explosion_creation_counter = 0
-#             random_node = random.choice([
-#                 'A','B','C','D','E','F','G','H','I'
-#             ])
-#             self.explosions.append(NodeExplosion(
-#                 self.player_graph[random_node]['pos'],
-#                 self.damage
-#             ))
-
-#             random_node = random.choice([
-#                 'A','B','C','D','E','F','G','H','I'
-#             ])
-#             self.explosions.append(NodeExplosion(
-#                 self.player_graph[random_node]['pos'],
-#                 self.damage
-#             ))
         
-#         for node_explosion in self.explosions:
-#             node_explosion.update()
+        for dice in self.dices:
+            dice.update()
 
-#         self.__duration_counter += 1
+        self.__duration_counter += 1
+
+        if pygame.sprite.spritecollide(self.player, self.dices_group, True, pygame.sprite.collide_mask):
+            self.player.take_damage(self.damage)
         
-#         if self.__duration_counter >= self.__duration:
-#             self.explosions.clear()
-#             pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
+        if self.__duration_counter >= self.__duration:
+            self.dices.clear()
+            self.dices_group.empty()
+            pygame.event.post(pygame.event.Event(PLAYER_TURN_EVENT))
     
-#     def restart(self):
-#         self.__duration_counter = 0
+    def restart(self):
+        self.__duration_counter = 0
     
-#     @property
-#     def player(self):
-#         return self.__player
+    @property
+    def player(self):
+        return self.__player
 
-#     @property
-#     def duration(self):
-#         return self.__duration
+    @property
+    def duration(self):
+        return self.__duration
     
-#     @property
-#     def duration_counter(self):
-#         return self.__duration_counter
+    @property
+    def duration_counter(self):
+        return self.__duration_counter
