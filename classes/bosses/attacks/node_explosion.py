@@ -20,6 +20,9 @@ class NodeExplosion:
         self.ray_growth_counter = 0
         self.ray_growth_rate = FPS/60
 
+        self.transition_counter = 0
+        self.transition_duration = FPS/2
+
         self.state = 'warning'
 
         self.warning_state_counter = 0
@@ -35,6 +38,10 @@ class NodeExplosion:
                 self.radius += 1
             
             if self.radius >= self.max_radius:
+                self.state = 'transition'
+        elif self.state == 'transition':
+            self.transition_counter += 1
+            if self.transition_counter >= self.transition_duration:
                 self.state = 'boom'
         elif self.state == 'boom':
             if self.radius >= 0:
@@ -46,7 +53,7 @@ class NodeExplosion:
                 self.player.take_damage(self.damage)
     
     def draw(self, screen: pygame.Surface):
-        if self.state == 'warning':
+        if self.state == 'warning' or self.state == 'transition':
             pygame.draw.circle(
                 screen,
                 self.warning_color,

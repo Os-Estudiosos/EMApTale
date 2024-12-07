@@ -61,7 +61,7 @@ class Heart(Player):
         )
         self.container: BattleContainer = container
         self.effect = 'normal'
-        self.speed = 5
+        self.speed = 4
         self.direction = pygame.math.Vector2(0,0)
         self.delay_time = 2000
         self.next_position_time = pygame.time.get_ticks() + self.delay_time
@@ -239,8 +239,8 @@ class Heart(Player):
 
         # Movimentação
         self.direction = pygame.math.Vector2(  # Faço um vetor que representa a direção que estou me movendo
-            sign(keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]),
-            sign(keys[pygame.K_DOWN] - keys[pygame.K_UP])
+            sign((keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) or (keys[pygame.K_d] - keys[pygame.K_a])),
+            sign((keys[pygame.K_DOWN] - keys[pygame.K_UP]) or (keys[pygame.K_s] - keys[pygame.K_w]))
         )
         
         # Normalizo para andar sempre na mesma velocidade

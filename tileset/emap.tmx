@@ -638,7 +638,7 @@
    </properties>
    <point/>
   </object>
-  <object id="1331" name="Pão de Queijo" type="Item" x="782.909" y="217.773">
+  <object id="1331" name="Pão de Queijo" type="Item" x="784.576" y="231.44">
    <properties>
     <property name="day" type="int" value="3"/>
     <property name="item_id" value="cheese-bread"/>
