@@ -61,7 +61,7 @@ class Heart(Player):
         )
         self.container: BattleContainer = container
         self.effect = 'normal'
-        self.speed = 4
+        self.speed = 5
         self.direction = pygame.math.Vector2(0,0)
         self.delay_time = 2000
         self.next_position_time = pygame.time.get_ticks() + self.delay_time
@@ -203,13 +203,13 @@ class Heart(Player):
         # Limitando o movimento
         for event in EventManager.events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.move_to_neighbor("up")
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.move_to_neighbor("down")
-                elif event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.move_to_neighbor("left")
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.move_to_neighbor("right")
 
         # Inicialização da posição do coração
