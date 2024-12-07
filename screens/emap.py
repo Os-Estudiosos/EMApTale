@@ -75,6 +75,12 @@ class EMAp(State):
         self.infos_hud: InfosHud = None
 
     def on_first_execution(self):
+
+        if GameStateManager.previous_state == 'show_day':
+            self.player.reset_position()
+            GlobalManager.pass_day()
+            SaveManager.save()
+        
         SaveManager.load()
         GlobalManager.load_infos()
 
@@ -89,11 +95,6 @@ class EMAp(State):
         self.map_loader.load_interactions()
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
-
-        if GameStateManager.previous_state == 'show_day':
-            self.player.reset_position()
-            GlobalManager.pass_day()
-            SaveManager.save()
         
         if GameStateManager.previous_state == 'intro_cutscene':
             self.player.reset_position()
