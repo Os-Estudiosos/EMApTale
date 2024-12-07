@@ -79,8 +79,10 @@ class EMAp(State):
             self.player.reset_position()
             GlobalManager.pass_day()
             SaveManager.save()
+        
+        if GameStateManager.previous_state == 'intro_cutscene':
+            self.player.reset_position()
 
-        self.player.reset_position()
         SaveManager.load()
         GlobalManager.load_infos()
         SoundManager.stop_music()
@@ -95,7 +97,7 @@ class EMAp(State):
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
 
-        if Player.previous_map_position and GameStateManager.previous_state == 'start':
+        if Player.previous_map_position and (GameStateManager.previous_state == 'start' or GameStateManager.previous_state == 'gameover_cutscene'):
             self.player.reset_position(Player.previous_map_position)
 
         GlobalManager.paused = False
@@ -173,6 +175,7 @@ class EMAp(State):
 
     def on_last_execution(self):
         self.__execution_counter = 0
+        SaveManager.save()
         self.map_loaded = False
     
     @property

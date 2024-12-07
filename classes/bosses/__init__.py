@@ -5,9 +5,6 @@ from config.soundmanager import SoundManager
 
 class Boss(pygame.sprite.Sprite, ABC):
     @abstractmethod
-    def take_damage(self, amount: float):...
-
-    @abstractmethod
     def speak(self, text: str):...
 
     @abstractmethod
