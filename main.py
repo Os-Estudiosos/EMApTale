@@ -46,6 +46,7 @@ class Game:
 
         # Colocando o nome da tela
         pygame.display.set_caption(GAME_NAME)
+        pygame.display.set_icon(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')))
 
         # Criando o objeto do relógio
         self.clock = pygame.time.Clock()
