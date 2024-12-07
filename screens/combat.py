@@ -121,8 +121,6 @@ class Combat(State):
 
         self.starter_text.restart(self.__variables['enemy']['starter_text'])
 
-        Player.load_infos()
-
         # Variáveis para quando o Boss morrer
         self.opacity_helper_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
         self.opacity_helper_surface.fill(pygame.Color(0,0,0,0))

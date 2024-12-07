@@ -52,7 +52,7 @@ class Start(State):
     def on_first_execution(self):
         # Adicionando a opção de continuar jogo se existir um save file
         if SaveManager.save_exists() and len(self.menu_options) == 3:
-            self.menu_options.append({
+            self.menu_options.insert(1, {
                 'label': Text('CONTINUAR JOGO', FontManager.fonts['Gamer'], 50),
                 'func': lambda: GameStateManager.set_state('emap')
             })

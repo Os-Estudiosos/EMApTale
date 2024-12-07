@@ -23,8 +23,6 @@ class Item(pygame.sprite.Sprite):
         if self.type == 'weapon' and ('equiped' not in properties):
             self.equiped = False
             properties['equiped'] = False
-        
-        self.json_item = properties
 
         self.func = self.define_action()
 
@@ -32,6 +30,7 @@ class Item(pygame.sprite.Sprite):
             pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'items', properties['sprite'])),
             properties['scale']
         )
+        self.sprite_name = properties['sprite']
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = position[0]*MAP_SCALE_FACTOR

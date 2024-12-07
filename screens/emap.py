@@ -87,7 +87,7 @@ class EMAp(State):
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "map_audio.wav"))
         self.camera.empty()
         self.items_group.empty()
-        self.player.load_infos()
+        Player.load_infos()
         self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loader.load_items()
         self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
@@ -147,7 +147,7 @@ class EMAp(State):
                 if event.key == pygame.K_ESCAPE:
                     GlobalManager.paused = not GlobalManager.paused
                 if event.key == pygame.K_f and item_collided:
-                    self.player.inventory.add_item(item_collided[0])
+                    Player.inventory.add_item(item_collided[0])
                     item_collided[0].kill()
                     self.infos_hud.update_infos()
                 if event.key == pygame.K_e:

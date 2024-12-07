@@ -77,9 +77,23 @@ class Inventory:
     def get_dict(self):
         inventory_list = []
         for item in self.items:
-            item_json = item.json_item.copy()
-            if 'id' in item_json:
-                del item_json['id']
+            item_json = {
+                'name': item.name,
+                'description': item.description,
+                'type': item.type,
+                'item_id': item.item_id,
+                'scale': item.scale,
+                'sprite': item.sprite_name,
+            }
+
+            if item.type == 'weapon':
+                item_json['damage'] = item.damage
+                item_json['equiped'] = item.equiped
+            elif item.type == 'miscellaneous':
+                item_json['after_effect_text'] = item.after_effect_text
+                item_json['effect'] = item.effect
+                item_json['value'] = item.value
+            
             inventory_list.append(item_json)
         
         return inventory_list
