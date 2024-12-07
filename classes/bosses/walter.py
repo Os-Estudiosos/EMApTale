@@ -60,7 +60,7 @@ class Walter(Boss):
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
             HistogramAttack(self.__damage),
-            # DicesAttack(self.__damage)
+            DicesAttack(self.__damage)
         ]
         self.attack_to_execute = -1
 
