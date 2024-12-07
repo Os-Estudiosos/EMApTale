@@ -89,6 +89,7 @@ class SaveManager:
         new_information['player']['life'] = Player.life
         new_information['player']['max_life'] = Player.max_life
         new_information['player']['map_position'] = Player.map_position
+
         new_information['inventory'] = Player.inventory.get_dict()
 
         new_information['day'] = GlobalManager.day

@@ -324,7 +324,10 @@ class CoffeeAttack(Attack):
                     self.new_rect.top = self.battle_container.inner_rect.bottom - 250
                 
                 # Ajusta a colisão
-                if self.new_rect.colliderect(self._player.rect):
+                puddle_surface = pygame.Surface(self.new_rect.size)
+                puddle_mask = pygame.mask.from_surface(puddle_surface)
+                offset = (self.new_rect.x - self._player.rect.x, self.new_rect.y - self._player.rect.y)
+                if self._player.mask.overlap(puddle_mask, offset):
                     SoundManager.play_sound("arrow.wav")
                     self._player.take_damage(CombatManager.enemy.damage)
                 
@@ -358,10 +361,10 @@ class CoffeeAttack(Attack):
         self.new_rect.height = 0  # Reinicia o preenchimento
         CombatManager.global_draw_functions.append(self.draw_puddle)
         self.new_rect =  pygame.Rect(
-                self.battle_container.inner_rect.left,
-                self.battle_container.inner_rect.bottom,
-                self.battle_container.inner_rect.width,
-                0
+            self.battle_container.inner_rect.left,
+            self.battle_container.inner_rect.bottom,
+            self.battle_container.inner_rect.width,
+            0
         )
 
     def draw_puddle(self, *args, **kwargs):

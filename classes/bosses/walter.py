@@ -258,9 +258,14 @@ class HistogramAttack(Attack):
 
         # Verificar colisões entre o jogador e as barras
         for rect in self.histogram.rects:
-            if self.__player.rect.colliderect(rect):  # Colisão com a barra
-                SoundManager.play_sound("arrow.wav")
-                self.__player.take_damage(self.damage)  # Aplicar dano ao jogador
+            if rect.width >= 0 and rect.height >= 0:
+                rect_surface = pygame.Surface(rect.size)
+                rect_mask = pygame.mask.from_surface(rect_surface)
+                offset = (rect.x-self.__player.rect.x, rect.y-self.__player.rect.y)
+
+                if self.__player.mask.overlap(rect_mask, offset):  # Colisão com a barra
+                    SoundManager.play_sound("arrow.wav")
+                    self.__player.take_damage(self.damage)  # Aplicar dano ao jogador
 
         # Verificar se o tempo do ataque acabou
         if self.__duration_counter >= self.__duration:

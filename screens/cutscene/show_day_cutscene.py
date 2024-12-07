@@ -10,12 +10,11 @@ from config.soundmanager import SoundManager
 from config.fontmanager import FontManager
 from config.gamestatemanager import GameStateManager
 from config.globalmanager import GlobalManager
-from config.savemanager import SaveManager
 
 from constants import *
 
 
-class ShowDay(State):
+class ShowDayCutscene(State):
     def __init__(
         self,
         name: str,

@@ -19,16 +19,14 @@ class Frisk(Player):
 
         self.scale_factor = 2.5  # Fator de escala para o jogador
 
-        self.sprite_sheet = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'frisk.png')).convert_alpha()  # Carrega a imagem do jogador
-        self.frame_width = 19  # Largura de cada quadro de animação
-        self.frame_height = 29  # Altura de cada quadro de animação
+        self.sprite_sheet = pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'frisk_new.png')).convert_alpha()  # Carrega a imagem do jogador
+        self.frame_width = 20  # Largura de cada quadro de animação
+        self.frame_height = 30  # Altura de cada quadro de animação
 
-        self.cols = 2  # Número de colunas na folha de sprites
+        self.cols = 4  # Número de colunas na folha de sprites
         self.rows = 4  # Número de linhas na folha de sprites
 
-        self.frame_offset = (3, 4)
-
-        self.rect = pygame.Rect(150, 350, self.frame_width * self.scale_factor, self.frame_height * self.scale_factor)
+        self.frame_offset = (3, 3)
 
         self.direction = 0  # Direção inicial do jogador
 
@@ -48,7 +46,10 @@ class Frisk(Player):
             self.scale_factor
         )
 
-        self.mask = pygame.mask.from_surface(self.frames[self.direction][self.frame_index])  # Máscara para colisão precisa
+        self.image = self.frames[self.direction][self.frame_index]
+        self.rect = self.image.get_rect()
+
+        self.mask = pygame.mask.from_surface(self.image)  # Máscara para colisão precisa
 
         self.speed = 7
     
@@ -59,32 +60,37 @@ class Frisk(Player):
         else:
             self.rect.centerx = GlobalManager.spawnpoint[0]*MAP_SCALE_FACTOR
             self.rect.centery = GlobalManager.spawnpoint[1]*MAP_SCALE_FACTOR
+        self.update_position(self.rect.centerx, self.rect.centery)
 
     def update_animation(self):
-        if self.direction < len(self.frames):
-            self.frame_index = self.frame_index % len(self.frames[self.direction])
-            self.frame_counter += 1
-            if self.frame_counter >= self.frame_delay:
-                self.frame_counter = 0
-                self.frame_index = (self.frame_index + 1) % len(self.frames[self.direction])
-                
-            # Atualiza a máscara para o quadro atual
-            self.update_mask()
+        self.frame_counter += 1
+        if self.frame_counter >= self.frame_delay:
+            self.frame_counter = 0
+            self.frame_index = (self.frame_index + 1) % len(self.frames[self.direction])
+        
+        self.image = self.frames[self.direction][self.frame_index]
+        self.rect = self.image.get_rect(center=self.rect.center)
+
+        # Atualiza a máscara para o quadro atual
+        self.update_mask()
 
     def update_mask(self):
         # Atualiza a máscara do jogador com o quadro de animação atual
-        current_frame = self.frames[self.direction][self.frame_index]
-        self.mask = pygame.mask.from_surface(current_frame)
+        self.mask = pygame.mask.from_surface(self.image)
 
-    def update_dir(self, direction):
+    def update_dir(self, direction: pygame.Vector2):
         if direction.x > 0:
             self.direction = 3  # Direita
+            self.moving = True
         elif direction.x < 0:
             self.direction = 1  # Esquerda
+            self.moving = True
         elif direction.y > 0:
             self.direction = 0  # Baixo
+            self.moving = True
         elif direction.y < 0:
             self.direction = 2  # Cima
+            self.moving = True
 
     def move(self, keys):
         direction = pygame.math.Vector2(
@@ -99,6 +105,14 @@ class Frisk(Player):
         self.update_dir(direction)
         if direction.length() != 0:
             self.update_animation()
+            direction = direction.normalize()
+        else:
+            self.frame_index = 0
+            self.image = self.frames[self.direction][self.frame_index]
+            self.rect = self.image.get_rect(center=self.rect.center)
+
+            # Atualiza a máscara para o quadro atual
+            self.update_mask()
         
         # Verifica colisão de máscara com as paredes
         # Movimenta o jogador

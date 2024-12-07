@@ -6,6 +6,7 @@ from classes.polygon.polygon import Polygon
 from classes.map.interaction import Interaction, BossIntercation, CamachoInteraction
 from config.globalmanager import GlobalManager
 
+from classes.player import Player
 from classes.item import Item
 
 
@@ -65,14 +66,14 @@ class MapLoader:
         for layer in self.tmx_data.layers:
             if layer.name == "Objs":
                 for obj in layer:
-                    
-                    if obj.properties.get('day') == GlobalManager.day:
+                    if obj.properties.get('day') == GlobalManager.day and not Player.inventory.has(obj.id):
                         Item(
                             GlobalManager.get_item(obj.properties.get('item_id')),
                             (
                                 obj.x,
                                 obj.y
                             ),
+                            obj.id,
                             GlobalManager.groups['items'],
                             GlobalManager.camera
                         )

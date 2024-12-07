@@ -65,7 +65,7 @@ class Soledad(Boss):
         # Lista dos ataques que ele vai fazer
         self.__attacks = [
             GraphClosingAttack(self.__damage),
-            # AttachedToGraph(self.__damage)
+            AttachedToGraph(self.__damage)
         ]
         self.attack_to_execute = -1
 

@@ -19,7 +19,6 @@ from screens.menu.new_name import NewName
 
 from screens.combat import Combat
 from screens.emap import EMAp
-from screens.show_day import ShowDay
 
 from classes.text.text import Text
 
@@ -27,6 +26,7 @@ from classes.text.text import Text
 from screens.cutscene.intro_cutscene import IntroCutscene # Teste Brunão ONE
 from screens.cutscene.gameover_cutscene import GameoverCutscene # Teste Brunão DOIS
 from screens.cutscene.final_cutscene import FinalCutscene # Teste Brunão III
+from screens.cutscene.show_day_cutscene import ShowDayCutscene
 
 class Game:
     """Classe responsável pelo gerenciamento das partes mais internas do game, como volume,
@@ -46,6 +46,7 @@ class Game:
 
         # Colocando o nome da tela
         pygame.display.set_caption(GAME_NAME)
+        pygame.display.set_icon(pygame.image.load(os.path.join(GET_PROJECT_PATH(), 'sprites', 'player', 'hearts', 'heart.png')))
 
         # Criando o objeto do relógio
         self.clock = pygame.time.Clock()
@@ -66,7 +67,7 @@ class Game:
         self.EMAp = EMAp('emap', self.display)
 
         # Cena que mostra qual dia o player está
-        self.ShowDay = ShowDay('show_day', self.display)
+        self.ShowDay = ShowDayCutscene('show_day', self.display)
 
         # Cenas das Cutscenes
         self.IntroCutscene = IntroCutscene('intro_cutscene', self.display)

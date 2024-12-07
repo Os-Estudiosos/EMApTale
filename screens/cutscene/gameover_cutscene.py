@@ -42,6 +42,7 @@ class GameoverCutscene(State):
         )
 
         self.gameover_image = pygame.image.load(os.path.join(GET_PROJECT_PATH(), "sprites", "cutscene", "gameover.jpg"))
+        self.go_to_map = False
 
 
     def get_resolution_display(self):
@@ -65,7 +66,22 @@ class GameoverCutscene(State):
     def on_first_execution(self):
         SoundManager.stop_sound
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "gameover_music.mp3"))
+        self.current_text.restart(self.random_messages[randint(0,len(self.random_messages)-1)])
+        self.opacity_helper_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
+        self.opacity_helper_surface.fill(pygame.Color(0,0,0,0))
 
+        self.transition_rate = FPS
+
+        self.transition_counter = 0
+
+        self.white_transition_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)
+        self.transition_alpha = 0
+        self.transition_counter = 0
+        self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
+        self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())
+
+        self.go_to_next_screen_transition_time = FPS  # Demora 1 segundo para sair do combate e ir pro próximo dia
+        self.go_to_next_screen_transition_measurer = 0
 
     def run(self):
         if not self.__execution_counter > 0:
@@ -104,6 +120,28 @@ class GameoverCutscene(State):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_SPACE:
                     SoundManager.stop_music()
+                    self.go_to_map = True
+        
+        if self.go_to_map:
+            if self.transition_counter == 0:
+                SoundManager.stop_music()
+                SoundManager.play_sound('cymbal.ogg', 1)
+                self.go_to_next_screen_transition_measurer = pygame.time.get_ticks()
+            
+            self.transition_counter += 1
+            
+            if self.transition_counter%self.transition_rate == 0 and self.transition_alpha + 1 <= 255:
+                self.transition_alpha += 1
+
+            self.white_transition_surface.fill(pygame.Color(255,255,255,self.transition_alpha))
+
+            self.opacity_helper_surface.blit(self.white_transition_surface, self.white_transition_surface.get_rect())    
+
+            self.__display.blit(self.opacity_helper_surface, self.opacity_helper_surface.get_rect())
+
+            if not SoundManager.is_chanel_playing(1):
+                actual_ticks = pygame.time.get_ticks()
+                if actual_ticks - self.go_to_next_screen_transition_measurer >= 2000:
                     GameStateManager.set_state('emap')
 
         pygame.display.flip()
