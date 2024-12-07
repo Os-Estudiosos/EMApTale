@@ -7,6 +7,7 @@ from config.soundmanager import SoundManager
 from config.gamestatemanager import GameStateManager
 from config.fontmanager import FontManager
 from config.eventmanager import EventManager
+from config.savemanager import SaveManager
 
 from classes.text.text import Text
 
@@ -31,18 +32,15 @@ class Start(State):
                 'func': lambda: GameStateManager.set_state('new_game_confirmation')
             },
             {
-                'label': Text('CONTINUAR JOGO', FontManager.fonts['Gamer'], 50),
-                'func': lambda: GameStateManager.set_state('emap')
+                'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50),
+                'func': lambda: GameStateManager.set_state('options')
             },
-            # {
-            #     'label': Text('OPÇÕES', FontManager.fonts['Gamer'], 50),
-            #     'func': lambda: GameStateManager.set_state('options')
-            # },
             {
                 'label': Text('SAIR', FontManager.fonts['Gamer'], 50),
                 'func': lambda: pygame.quit()
             }
         ]
+
         self.selected_option = 0  # Opção que está selecionada
         self.option_measures = [500, 105]  # Medidas de cada Opção
         self.display_info = pygame.display.Info()  # Informações sobre a tela
@@ -52,9 +50,16 @@ class Start(State):
         self.cursor_rect = self.cursor_icon.get_rect()
     
     def on_first_execution(self):
+        # Adicionando a opção de continuar jogo se existir um save file
+        if SaveManager.save_exists() and len(self.menu_options) == 3:
+            self.menu_options.append({
+                'label': Text('CONTINUAR JOGO', FontManager.fonts['Gamer'], 50),
+                'func': lambda: GameStateManager.set_state('emap')
+            })
+
         # Inicializando a Música
-        if not SoundManager.is_playing():
-            SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'))
+        SoundManager.stop_music()
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', 'msc_the_field_of_dreams.mp3'), -1)
 
         # Checo se ele não iniciou a cena segurando o botão de confirmar
         EventManager.clear()
