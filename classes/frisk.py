@@ -60,6 +60,7 @@ class Frisk(Player):
         else:
             self.rect.centerx = GlobalManager.spawnpoint[0]*MAP_SCALE_FACTOR
             self.rect.centery = GlobalManager.spawnpoint[1]*MAP_SCALE_FACTOR
+        self.update_position(self.rect.centerx, self.rect.centery)
 
     def update_animation(self):
         self.frame_counter += 1

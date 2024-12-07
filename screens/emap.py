@@ -85,7 +85,7 @@ class EMAp(State):
         GlobalManager.load_infos()
 
         SoundManager.stop_music()
-        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "map_audio.wav"))
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "map_audio.wav"), -1)
         self.camera.empty()
         self.items_group.empty()
         Player.load_infos()

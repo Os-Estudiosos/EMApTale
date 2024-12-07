@@ -7,7 +7,7 @@ from uuid import uuid4
 from classes.player import Player
 
 class Item(pygame.sprite.Sprite):
-    def __init__(self, properties: dict, position: tuple = (0,0), *groups):
+    def __init__(self, properties: dict, position: tuple = (0,0), tmx_item_id: int = None, *groups):
         super().__init__(*groups)
 
         self.id = uuid4()
@@ -19,6 +19,9 @@ class Item(pygame.sprite.Sprite):
             **self.__dict__,
             **properties
         }
+        self.tmx_item_id = tmx_item_id
+        if 'tmx_item_id' in properties:
+            self.tmx_item_id = properties['tmx_item_id']
 
         if self.type == 'weapon' and ('equiped' not in properties):
             self.equiped = False

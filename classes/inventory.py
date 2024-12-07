@@ -84,6 +84,7 @@ class Inventory:
                 'item_id': item.item_id,
                 'scale': item.scale,
                 'sprite': item.sprite_name,
+                'tmx_item_id': item.tmx_item_id
             }
 
             if item.type == 'weapon':
@@ -97,6 +98,12 @@ class Inventory:
             inventory_list.append(item_json)
         
         return inventory_list
+
+    def has(self, map_id):
+        for item in self.items:
+            if item.tmx_item_id == map_id:
+                return True
+        return False
 
     def __len__(self):
         return len(self.items)
