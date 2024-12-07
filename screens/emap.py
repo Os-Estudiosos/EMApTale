@@ -75,28 +75,34 @@ class EMAp(State):
         self.infos_hud: InfosHud = None
 
     def on_first_execution(self):
+
         if GameStateManager.previous_state == 'show_day':
             self.player.reset_position()
             GlobalManager.pass_day()
             SaveManager.save()
-
-        self.player.reset_position()
+        
         SaveManager.load()
         GlobalManager.load_infos()
+
         SoundManager.stop_music()
-        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "map_audio.wav"))
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "map_audio.wav"), -1)
         self.camera.empty()
         self.items_group.empty()
-        self.player.load_infos()
+        Player.load_infos()
         self.map_loader = MapLoader(os.path.join(GET_PROJECT_PATH(), 'tileset', 'emap.tmx'))
         self.map_loader.load_items()
         self.map_loader.load_walls()  # Carrega as áreas de colisão do mapa
         self.map_loader.load_interactions()
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
+        
+        if GameStateManager.previous_state == 'intro_cutscene':
+            self.player.reset_position()
 
-        if Player.previous_map_position and GameStateManager.previous_state == 'start':
+        if Player.previous_map_position and (GameStateManager.previous_state == 'start' or GameStateManager.previous_state == 'gameover_cutscene'):
             self.player.reset_position(Player.previous_map_position)
+        else:
+            self.player.reset_position()
 
         GlobalManager.paused = False
 
@@ -147,7 +153,7 @@ class EMAp(State):
                 if event.key == pygame.K_ESCAPE:
                     GlobalManager.paused = not GlobalManager.paused
                 if event.key == pygame.K_f and item_collided:
-                    self.player.inventory.add_item(item_collided[0])
+                    Player.inventory.add_item(item_collided[0])
                     item_collided[0].kill()
                     self.infos_hud.update_infos()
                 if event.key == pygame.K_e:
@@ -173,6 +179,7 @@ class EMAp(State):
 
     def on_last_execution(self):
         self.__execution_counter = 0
+        SaveManager.save()
         self.map_loaded = False
     
     @property

@@ -332,7 +332,7 @@ class EliminationAttack(Attack):
         ):
             # Segundo raio que segue o player
             beam2 = HorizontalBeam(self.horizontal_beans_group)
-            beam2.max_rect_height = self.container.inner_rect.height//self.rows
+            beam2.max_rect_height = self.container.inner_rect.height//self.rows-10
             beam2.correct_center_position = (
                 self.container.inner_rect.centerx,
                 self.player.rect.centery

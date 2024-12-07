@@ -2,7 +2,7 @@
     "Walter": {
         "name": "Walter Sande",
         "sound":"Walter_theme.wav",
-        "life": 15,
+        "life": 25,
         "defense": 1,
         "damage": 2,
         "voice": "walter_txt.wav",
@@ -17,7 +17,7 @@
             {
                 "label": "Checar",
                 "responses": [
-                    "ATK - 3  DEF - 100"
+                    "ATK - 2  DEF - 1"
                 ],
                 "effect": null
             },
@@ -54,7 +54,7 @@
     "Pinho": {
         "name": "Rafael Pinho",
         "sound":"Pinho_theme.wav",
-        "life": 20,
+        "life": 30,
         "defense": 2,
         "damage": 2,
         "voice": "pinho_txt.wav",
@@ -70,7 +70,7 @@
             {
                 "label": "Checar",
                 "responses": [
-                    "ATK - 3  DEF - 100"
+                    "ATK - 2  DEF - 2"
                 ],
                 "effect": null
             },
@@ -101,7 +101,7 @@
     
     "Branco": {
         "name": "Branco Saraiva",
-        "life": 25,
+        "life": 34,
         "sound":"Branco_Theme.mp3",
         "defense": 2,
         "damage": 3,
@@ -117,7 +117,7 @@
             {
                 "label": "Checar",
                 "responses": [
-                    "ATK - 3  DEF - 100"
+                    "ATK - 3  DEF - 2"
                 ],
                 "effect": null
             },
@@ -150,7 +150,7 @@
     "Soledad": {
         "name": "Maria Soledad",
         "sound":"Soledad_Theme.mp3",
-        "life": 30,
+        "life": 37,
         "defense": 3,
         "damage": 3,
         "voice": "soledad_txt.wav",
@@ -165,7 +165,7 @@
             {
                 "label": "Checar",
                 "responses": [
-                    "ATK - 3  DEF - 100"
+                    "ATK - 3  DEF - 3"
                 ],
                 "effect": null
             },
@@ -198,7 +198,7 @@
     
     "Yuri" : {
         "name": "Yuri Saporito",
-        "life": 35,
+        "life": 40,
         "sound":"Yuri_Theme.mp3",
         "defense": 4,
         "damage": 4,
@@ -216,7 +216,7 @@
             {
                 "label": "Checar",
                 "responses": [
-                    "ATK - 3  DEF - 100"
+                    "ATK - 4  DEF - 4"
                 ],
                 "effect": null
             },

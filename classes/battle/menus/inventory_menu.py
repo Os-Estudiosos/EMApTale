@@ -33,15 +33,6 @@ class InventoryMenu(BattleMenu):
             1.5
         )
         self.cursor_rect = self.cursor.get_rect()
-        
-        self.page = 0
-        self.items_per_column = 100
-        for i, opt in enumerate(self.__options):
-            if opt['text'].rect.height*i > self.container.inner_rect.height:
-                self.items_per_column = i
-                break
-        
-        self.items_per_page = self.items_per_column * 2
 
         self.runtime_counter = 0  # Previnir que entre clicando nos itens
 
@@ -85,7 +76,7 @@ class InventoryMenu(BattleMenu):
         self.__options = []
 
         # Adicionando os itens como minhas opções
-        for i, item in enumerate(CombatManager.get_variable('player').inventory):
+        for i, item in enumerate(Player.inventory):
             if item.type == 'miscellaneous':
                 self.__options.append({
                     'text': Text(f'* {item.name}', FontManager.fonts['Gamer'], int((450*100)/self.display.get_height())),
@@ -93,6 +84,15 @@ class InventoryMenu(BattleMenu):
                     'id': item.id,
                     'after_effect_text': item.after_effect_text
                 })
+        
+        self.page = 0
+        self.items_per_column = 100
+        for i, opt in enumerate(self.__options):
+            if opt['text'].rect.height*i > self.container.inner_rect.height:
+                self.items_per_column = i
+                break
+        
+        self.items_per_page = self.items_per_column * 2
 
     def update(self):
         if self.runtime_counter == 0:

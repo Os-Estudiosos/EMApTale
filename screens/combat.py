@@ -117,11 +117,9 @@ class Combat(State):
         CombatManager.turn = 'player'
         BattleMenuManager.active_menu = 'MainMenu'
 
-        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music))
+        SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), 'sounds', CombatManager.enemy.music), -1)
 
         self.starter_text.restart(self.__variables['enemy']['starter_text'])
-
-        Player.load_infos()
 
         # Variáveis para quando o Boss morrer
         self.opacity_helper_surface = pygame.Surface(self.__display.get_size(), pygame.SRCALPHA)

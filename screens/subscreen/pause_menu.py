@@ -80,7 +80,7 @@ class PauseMenu(State):
     def save_game(self):
         try:
             SaveManager.save()
-        except:
+        except Exception as e:
             self.save_response_text = Text('NÃO FOI POSSÍVEL SALVAR O JOGO', FontManager.fonts['Gamer'], 70)
         else:
             self.save_response_text = Text('JOGO SALVO COM SUCESSO', FontManager.fonts['Gamer'], 70, (252, 219, 3))

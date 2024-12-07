@@ -5,7 +5,7 @@
       "sprite": "pencil.png",
       "name": "Lápis",
       "type": "weapon",
-      "damage": "5",
+      "damage": 5,
       "description": "É o que eu tinha na mochila"
     },
     {
@@ -14,7 +14,7 @@
       "scale": 1.1,
       "name": "Caneta",
       "type": "weapon",
-      "damage": "10",
+      "damage": 7,
       "description": "Uma caneta bem afiada. Agora posso pedir revisão da prova"
     },
     {
@@ -23,7 +23,7 @@
       "scale": 0.6,
       "name": "Simulado",
       "type": "weapon",
-      "damage": "15",
+      "damage": 9,
       "description": "Finalmente um simulado que tá no nível da prova"
     },
     {
@@ -32,7 +32,7 @@
       "sprite": "book.png",
       "name": "Livro",
       "type": "weapon",
-      "damage": "20",
+      "damage": 11,
       "description": "Você pegou emprestado na biblioteca"
     },
   
