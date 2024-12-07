@@ -75,16 +75,9 @@ class EMAp(State):
         self.infos_hud: InfosHud = None
 
     def on_first_execution(self):
-        if GameStateManager.previous_state == 'show_day':
-            self.player.reset_position()
-            GlobalManager.pass_day()
-            SaveManager.save()
-        
-        if GameStateManager.previous_state == 'intro_cutscene':
-            self.player.reset_position()
-
         SaveManager.load()
         GlobalManager.load_infos()
+
         SoundManager.stop_music()
         SoundManager.play_music(os.path.join(GET_PROJECT_PATH(), "sounds", "map_audio.wav"))
         self.camera.empty()
@@ -97,8 +90,18 @@ class EMAp(State):
         self.map_loaded = True
         self.infos_hud = InfosHud(self.items_group)
 
+        if GameStateManager.previous_state == 'show_day':
+            self.player.reset_position()
+            GlobalManager.pass_day()
+            SaveManager.save()
+        
+        if GameStateManager.previous_state == 'intro_cutscene':
+            self.player.reset_position()
+
         if Player.previous_map_position and (GameStateManager.previous_state == 'start' or GameStateManager.previous_state == 'gameover_cutscene'):
             self.player.reset_position(Player.previous_map_position)
+        else:
+            self.player.reset_position()
 
         GlobalManager.paused = False
 
